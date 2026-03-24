@@ -1,0 +1,11 @@
+{
+  "name": "development",
+  "description": "Developer workflow tools — session handoffs, context management, and productivity utilities.",
+  "version": "0.0.1",
+  "author": {
+    "name": "Mark Phelps"
+  },
+  "repository": "https://github.com/markphelps/claude-plugins",
+  "license": "MIT",
+  "keywords": ["development", "workflow", "handoff", "session", "productivity"]
+}

@@ -13,11 +13,14 @@ plugin with its own `.claude-plugin/plugin.json` manifest.
 ```
 claude-plugins/
 ├── .claude-plugin/marketplace.json  # Marketplace manifest listing all plugins
-└── vault/                           # Individual plugin directory
-    ├── .claude-plugin/plugin.json   # Plugin manifest
-    ├── commands/                    # Slash commands (markdown prompts)
-    ├── agents/                      # Subagent definitions
-    └── skills/                      # Context-aware skills
+├── vault/                           # Zettelkasten vault manager plugin
+│   ├── .claude-plugin/plugin.json
+│   ├── commands/
+│   ├── agents/
+│   └── skills/
+└── development/                     # Developer workflow tools plugin
+    ├── .claude-plugin/plugin.json
+    └── skills/
 ```
 
 ## Plugin Architecture

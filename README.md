@@ -4,9 +4,10 @@ A collection of plugins for [Claude Code](https://claude.ai/code).
 
 ## Available Plugins
 
-| Plugin            | Description                                                                                                               |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [vault](./vault/) | Zettelkasten-style vault manager for Obsidian. Process inbox, organize files, research topics, and think with your notes. |
+| Plugin                        | Description                                                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| [vault](./vault/)             | Zettelkasten-style vault manager for Obsidian. Process inbox, organize files, research topics, and think with your notes. |
+| [development](./development/) | Developer workflow tools — session handoffs, context management, and productivity utilities.                              |
 
 ## Installation
 

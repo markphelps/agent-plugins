@@ -12,6 +12,12 @@
       "source": "./vault",
       "description": "Zettelkasten-style vault manager for Obsidian. Process inbox items into linked notes, organize files, and research topics.",
       "category": "productivity"
+    },
+    {
+      "name": "development",
+      "source": "./development",
+      "description": "Developer workflow tools — session handoffs, context management, and productivity utilities.",
+      "category": "development"
     }
   ]
 }
