@@ -1,6 +1,6 @@
 # Claude Plugins
 
-A collection of plugins for [Claude Code](https://claude.ai/code).
+A collection of plugins for AI
 
 ## Available Plugins
 
@@ -17,8 +17,26 @@ A collection of plugins for [Claude Code](https://claude.ai/code).
 
 # Install individual plugins
 /plugin install vault
+```
 
-# Or browse available plugins
+## For Codex (`/install`)
+
+From Codex chat, you can install this marketplace with:
+
+```bash
+/plugin marketplace add https://github.com/markphelps/claude-plugins
+```
+
+Then install whichever plugins you want:
+
+```bash
+/plugin install vault
+/plugin install development
+```
+
+You can also browse all available marketplace plugins with:
+
+```bash
 /plugin marketplace list
 ```
 
