@@ -1,7 +1,7 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with
-code in this repository.
+This file provides guidance to AI agents when working with code in this
+repository.
 
 ## Repository Overview
 
@@ -42,6 +42,7 @@ Use `run_in_background: true` for parallel execution.
 
 1. Create a new directory at root level
 2. Add `.claude-plugin/plugin.json` with:
+
    ```json
    {
      "name": "plugin-name",
@@ -50,6 +51,7 @@ Use `run_in_background: true` for parallel execution.
      "author": { "name": "Your Name" }
    }
    ```
+
 3. Register in `.claude-plugin/marketplace.json` under `plugins` array
 4. Add commands in `commands/`, agents in `agents/`, skills in `skills/`
 
