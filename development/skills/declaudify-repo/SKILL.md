@@ -1,5 +1,5 @@
 ---
-name: declaudify-repo
+name: declaudify
 description:
   Migrate repositories away from Claude-specific agent config to neutral,
   portable AI-agent standards. Converts CLAUDE.md/.claude artifacts and Claude
@@ -40,8 +40,7 @@ Use this skill when a repository contains Claude-specific artifacts such as:
   - `category`
 
 See [references/standards-map.md](references/standards-map.md) for detailed
-mappings and [references/skills-sh.md](references/skills-sh.md) for skills
-interoperability.
+mappings.
 
 ## Process
 
