@@ -1,29 +1,31 @@
 ---
 name: vault-workflows
 description:
-  Operate an Obsidian-style vault by initializing structure, processing inbox
-  content into linked notes, organizing files, and appending sourced research.
+  Operate an Obsidian-style vault with a raw-first pipeline, curated notes, and
+  index/log maintenance.
 ---
 
 # Vault Workflows
 
-Use this skill to help users maintain a Zettelkasten-style Obsidian vault.
+Use this skill to maintain a raw-first Obsidian vault.
 
 ## Supported workflows
 
-- Initialize vault structure (`inbox/`, `daily/`, `_templates/`,
-  `._meta/plans/`)
-- Process inbox content into notes with links and related sections
-- Reorganize naming/frontmatter conventions
-- Research a topic and append findings with sources
+- Initialize vault structure (`raw/*`, `daily/`, `_templates/`, `index.md`,
+  `log.md`)
+- Process `raw/inbox` captures into curated linked notes/projects
+- Preserve provenance by storing canonical sources in `raw/sources`
+- Archive processed originals into `raw/processed/YYYY-MM-DD/`
+- Reorganize curated files without touching `raw/*`
+- Append operation history to `log.md`
 
 ## Operating rules
 
 - Default to non-destructive edits.
 - Never delete user content unless explicitly requested.
-- Preserve existing note content and frontmatter keys.
-- When uncertain about taxonomy, prefer minimal safe edits and explain choices.
-- For research, include sources and a confidence level.
+- Treat `raw/sources/` as immutable evidence.
+- Preserve existing note content and frontmatter keys when possible.
+- For research additions, include sources and confidence.
 
 ## Frontmatter baseline
 
@@ -32,13 +34,14 @@ Use this skill to help users maintain a Zettelkasten-style Obsidian vault.
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 tags: [topic, concept]
-source: inbox | url | manual | compacted
+source: raw-inbox | url | manual | compacted
 status: active | someday | done | archived
 ---
 ```
 
 ## Typical outputs
 
-- A clear list of created/updated files
-- A summary of linking decisions
-- Next recommended vault action (for example: process -> organize -> review)
+- Created/updated curated pages
+- Stored source files under `raw/sources/`
+- Archived originals under `raw/processed/YYYY-MM-DD/`
+- `index.md` updates and appended `log.md` entry
