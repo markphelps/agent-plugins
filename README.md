@@ -34,7 +34,7 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 This repo also provides top-level installable skills under `skills/`.
 
 ```bash
-npx skills add markphelps/agent-plugins --skill declaudify-repo
+npx skills add markphelps/agent-plugins --skill declaudify
 ```
 
 ## Development
