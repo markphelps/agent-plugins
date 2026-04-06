@@ -1,0 +1,3 @@
+display_name: Declaudify
+short_description: Migrate Claude-specific repos to portable + Codex-compatible standards
+default_prompt: Normalize this repository's Claude-specific setup to AGENTS.md, SKILL.md-based skills, and Codex plugin manifests/marketplace.

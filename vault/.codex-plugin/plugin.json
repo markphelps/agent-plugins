@@ -1,0 +1,32 @@
+{
+  "name": "vault",
+  "version": "0.0.2",
+  "description": "Zettelkasten-style vault manager for Obsidian. Process inbox items into linked notes, organize files, and research topics.",
+  "author": {
+    "name": "Mark Phelps"
+  },
+  "repository": "https://github.com/markphelps/agent-plugins",
+  "license": "MIT",
+  "keywords": [
+    "obsidian",
+    "zettelkasten",
+    "notes",
+    "research",
+    "linking",
+    "ai"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Vault",
+    "shortDescription": "Obsidian vault workflows",
+    "longDescription": "Organize and reason over an Obsidian vault using structured workflows.",
+    "developerName": "Mark Phelps",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write", "Web Search"],
+    "defaultPrompt": [
+      "Initialize a new vault structure in this folder.",
+      "Process inbox notes into organized, linked notes.",
+      "Research this note topic and append findings with sources."
+    ]
+  }
+}

@@ -1,8 +1,8 @@
 {
-  "name": "claude-plugins",
+  "name": "agent-plugins",
   "version": "0.0.1",
   "private": true,
-  "description": "Claude Code plugin marketplace",
+  "description": "Reusable agent plugins and skills",
   "scripts": {
     "format": "prettier --write '**/*.{md,json}'",
     "format:check": "prettier --check '**/*.{md,json}'",
@@ -16,6 +16,6 @@
   },
   "lint-staged": {
     "*.{md,json}": "bash scripts/format-staged-files.sh",
-    "**/.claude-plugin/plugin.json": "node scripts/validate-plugins.js"
+    "**/.codex-plugin/plugin.json": "node scripts/validate-plugins.js"
   }
 }

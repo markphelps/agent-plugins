@@ -37,16 +37,19 @@ if (args.length > 0) {
 } else {
   const pluginFiles = []
 
-  function findPlugins(dir) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true })
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name)
-      if (entry.isDirectory() && !entry.name.startsWith('.')) {
-        findPlugins(fullPath)
-      } else if (entry.name === 'plugin.json') {
-        pluginFiles.push(fullPath)
+function findPlugins(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true })
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name)
+    if (entry.isDirectory()) {
+      if (entry.name === '.git' || entry.name === 'node_modules') {
+        continue
       }
+      findPlugins(fullPath)
+    } else if (entry.name === 'plugin.json') {
+      pluginFiles.push(fullPath)
     }
+  }
   }
 
   findPlugins(process.cwd())

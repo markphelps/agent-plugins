@@ -1,67 +1,51 @@
-# Claude Plugins
+# Agent Plugins
 
-A collection of plugins for AI
+Reusable agent plugins and skills following AGENTS/skills conventions.
 
-## Available Plugins
+## Standards
 
-| Plugin                        | Description                                                                                                               |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| [vault](./vault/)             | Zettelkasten-style vault manager for Obsidian. Process inbox, organize files, research topics, and think with your notes. |
-| [development](./development/) | Developer workflow tools — session handoffs, context management, and productivity utilities.                              |
+- AGENTS.md: https://agents.md/
+- skills format: https://skills.sh/docs
 
-## Installation
+## Plugins
 
-```bash
-# Add this repository as a plugin marketplace
-/plugin marketplace add https://github.com/markphelps/claude-plugins
+| Plugin                        | Description                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes |
+| [development](./development/) | Session handoff, workflows, and declaudify migration  |
 
-# Install individual plugins
-/plugin install vault
-```
+## Layout
 
-## For Codex (`/install`)
+- `.agents/plugins/marketplace.json` - local plugin marketplace for Codex
+- `*/.codex-plugin/plugin.json` - plugin manifests
+- `*/skills/*/SKILL.md` - skill implementations
+- `.codex/agents/*.toml` - project-scoped Codex subagents
+- `AGENTS.md` - repository-level agent instructions
 
-From Codex chat, you can install this marketplace with:
+## Using With Codex
 
-```bash
-/plugin marketplace add https://github.com/markphelps/claude-plugins
-```
+1. Open this repo in Codex.
+2. Restart Codex so plugin discovery refreshes.
+3. Install from the Plugin Directory (marketplace:
+   `.agents/plugins/marketplace.json`).
 
-Then install whichever plugins you want:
+## Using With skills.sh
 
-```bash
-/plugin install vault
-/plugin install development
-```
-
-You can also browse all available marketplace plugins with:
+This repo also provides top-level installable skills under `skills/`.
 
 ```bash
-/plugin marketplace list
+npx skills add markphelps/agent-plugins --skill declaudify-repo
 ```
-
-## Creating Your Own Plugin
-
-See [CLAUDE.md](./CLAUDE.md) for plugin architecture and structure.
-
-For official documentation, see the
-[Claude Code Plugins Guide](https://code.claude.com/docs/en/plugins).
 
 ## Development
 
 ```bash
-npm install          # Install dev dependencies (sets up husky hooks)
-npm run format       # Format all markdown and JSON files
-npm run validate     # Validate all plugin.json manifests
+npm install
+npm run format
+npm run validate
+./scripts/sync-skills.sh
 ```
-
-Pre-commit hooks automatically format staged files and validate plugin
-manifests.
-
-## Author
-
-Mark Phelps
 
 ## License
 
-[MIT](LICENSE.md)
+[MIT](LICENSE)

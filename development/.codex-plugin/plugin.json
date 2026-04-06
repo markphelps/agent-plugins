@@ -1,0 +1,25 @@
+{
+  "name": "development",
+  "version": "0.0.2",
+  "description": "Developer workflow tools — session handoffs, context management, and repo migration utilities.",
+  "author": {
+    "name": "Mark Phelps"
+  },
+  "repository": "https://github.com/markphelps/agent-plugins",
+  "license": "MIT",
+  "keywords": ["development", "workflow", "handoff", "session", "productivity"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Development",
+    "shortDescription": "Workflow and migration tools",
+    "longDescription": "Session handoff and repository migration workflows for modern agent standards.",
+    "developerName": "Mark Phelps",
+    "category": "Development",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "Create a detailed handoff for this coding session.",
+      "Summarize repo state and next steps for the next agent.",
+      "Migrate this repo from Claude-specific config to AGENTS/skills standards."
+    ]
+  }
+}
