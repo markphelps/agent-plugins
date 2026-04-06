@@ -36,7 +36,7 @@ vault-compact --max-lines 30          # Only target very small notes
 ### Step 1: Find small notes
 
 Scan all `.md` files in the target path (recursively). Skip hidden folders,
-`inbox/`, `_processed/`, `._meta/`, `_templates/`.
+`raw/inbox/`, `raw/processed/`, `raw/sources/`, `raw/assets/`, `_templates/`.
 
 For each file:
 
@@ -160,9 +160,9 @@ Place the compacted file in the most logical location:
 2. If files are scattered → place in the folder that has the most source files
 3. Move any source files from other locations into the chosen folder first
 
-### Step 6: Build and save execution plan
+### Step 6: Build execution plan
 
-Save to `._meta/plans/`:
+Keep as an in-memory execution plan (do not persist to disk):
 
 ```json
 {
@@ -228,7 +228,7 @@ Summary:
   - 18 files → 3 files
   - 6 wikilinks to update
 
-Plan saved: ._meta/plans/2026-02-23-153000.json
+Plan prepared in memory for confirmation
 ```
 
 **If `--dry-run`:** Stop here.
@@ -246,7 +246,6 @@ For each cluster:
 3. Write the compacted file
 4. Update wikilinks in all affected vault files
 5. Delete the original source files
-6. Update plan status to `"executed"`
 
 ### Step 9: Report results
 
@@ -266,7 +265,7 @@ blog-ideas: 5 files → notes/ideas/blog-ideas.md
   - 2 wikilinks updated
 
 Total: 18 files compacted into 3 files
-Plan: ._meta/plans/2026-02-23-153000.json (executed)
+Plan executed from confirmed in-memory operations
 ```
 
 ## Subagent Strategy
@@ -282,15 +281,16 @@ Plan: ._meta/plans/2026-02-23-153000.json (executed)
 
 - Notes with `status: active` (in-progress projects)
 - Notes over the line threshold (they're substantial enough to stand alone)
-- Notes in `inbox/` or `_processed/` (use `vault-process` and `vault-cleanup`)
+- Notes in `raw/inbox/` or `raw/processed/` (use `vault-process` and
+  `vault-cleanup`)
 - Notes that are the only file on their topic (no cluster partner)
 - Template files in `_templates/`
 
 ## Safety
 
 - **Always confirm** before executing (unless `--yes`)
-- **Save plan to disk** before making changes
+- **Use dry-run preview** before making changes
 - **Preserve all content** — compaction merges, never deletes content
 - **Update wikilinks** — don't break the link graph
 - **Git-aware** — if in a git repo, suggest committing before compacting
-- **Reversible** — plan file records exactly what was done
+- **Reversible** — summarize exact operations in the final report

@@ -33,8 +33,8 @@ vault-ideas --focus projects      # Focus on project ideas
 
 Scan the vault to understand what's there:
 
-1. Use Glob to find all `.md` files (skip hidden folders, `inbox/`,
-   `_processed/`, `._meta/`)
+1. Use Glob to find all `.md` files (skip hidden folders, `raw/inbox/`,
+   `raw/processed/`, `raw/sources/`, `raw/assets/`)
 2. Read each file's frontmatter (tags, status, updated date)
 3. Build a topic index from tags and filenames
 4. Note which topics have the most notes (clusters)
