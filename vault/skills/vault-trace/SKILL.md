@@ -38,7 +38,8 @@ Cast a wide net across the vault:
 3. **Tag matches** — Search frontmatter tags for related terms
 4. **Wikilink matches** — Search for `[[links]]` that reference the topic
 
-Skip hidden folders, `inbox/`, `_processed/`, `._meta/`.
+Skip hidden folders, `raw/inbox/`, `raw/processed/`, `raw/sources/`,
+`raw/assets/`.
 
 Collect all matching files with their `updated` (and `created` if present)
 dates.

@@ -1,11 +1,11 @@
 ---
 name: vault-init
-description: Initialize vault folder structure in the current project
+description: Initialize raw-first vault folder structure in the current project
 ---
 
 # Initialize Vault
 
-Set up the vault plugin folder structure in the current directory.
+Set up a raw-first vault structure in the target directory.
 
 ## Arguments
 
@@ -15,42 +15,40 @@ directory.
 **Examples:**
 
 ```
-vault-init                     # Initialize in current directory
-vault-init ./my-vault          # Initialize in specific folder
-vault-init ~/Documents/notes   # Absolute path
+vault-init
+vault-init ./my-vault
+vault-init ~/Documents/notes
 ```
 
 ## Process
 
 ### Step 1: Confirm location
 
-Tell the user where you'll create the vault structure:
-
-```
-Initializing vault in: /path/to/vault
-```
+Report target path before creating files.
 
 ### Step 2: Create folder structure
 
-Create these folders if they don't exist:
+Create if missing:
 
 ```
 vault/
-├── inbox/           # Where raw captures go
-├── daily/           # Daily notes (used by vault-review)
-├── _templates/      # Note templates
-│   └── daily.md     # Daily note template (for Obsidian)
-└── ._meta/
-    └── plans/       # Execution plans saved here
+├── raw/
+│   ├── inbox/        # unprocessed captures
+│   ├── sources/      # immutable source material
+│   ├── assets/       # attachments/media
+│   └── processed/    # archived originals by date
+├── daily/
+├── _templates/
+│   └── daily.md
+├── notes/
+├── projects/
+├── index.md
+└── log.md
 ```
-
-Use `mkdir -p` to create folders (safe if they already exist).
 
 ### Step 3: Create daily note template
 
-Create the template file for daily notes:
-
-**\_templates/daily.md:**
+Create `_templates/daily.md` if missing:
 
 ```markdown
 ---
@@ -78,73 +76,22 @@ tags: [daily]
 -
 ```
 
-The `{{date}}` placeholders work with Obsidian's Templater or core Templates
-plugin. Users can also just use `vault-review` which creates daily notes
-directly.
+### Step 4: Create starter operational files
 
-### Step 4: Create starter files (optional)
+Create `index.md` and `log.md` if missing with minimal boilerplate.
 
-If `inbox/` was just created (was empty), create a welcome file:
-
-**inbox/welcome.md:**
-
-```markdown
-# Welcome to your vault inbox
-
-Drop ideas, links, and thoughts here. Then run `vault-process` to turn them into
-linked notes.
-
-## Examples of what to capture
-
-- URLs you want to remember
-- Shower thoughts and random ideas
-- Daily logs with `## Heading` separators
-- Anything you don't want to forget
-
----
-
-Delete this file once you've added your first real item.
-```
+Create `raw/inbox/welcome.md` only when `raw/inbox/` is empty.
 
 ### Step 5: Report results
 
-```
-✓ Vault initialized
+Summarize created vs existing paths and suggest:
 
-Created:
-  - inbox/
-  - daily/
-  - _templates/daily.md
-  - ._meta/plans/
-
-Next steps:
-  1. Add items to inbox/ (links, thoughts, daily logs)
-  2. Run vault-process to create linked notes
-  3. Run vault-review morning to start your day
-  4. Run vault-organize to clean up file structure
-```
-
-If folders already existed, say so:
-
-```
-✓ Vault already initialized
-
-Existing folders found:
-  - inbox/ (5 items)
-  - daily/
-  - ._meta/plans/
-
-Ready to use. Run vault-process to process inbox items.
-```
-
-**Obsidian tip:** Enable the Daily Notes core plugin and set:
-
-- Template: `_templates/daily`
-- Folder: `daily`
-- Date format: `YYYY-MM-DD`
+1. Add captures to `raw/inbox/`
+2. Run `vault-process`
+3. Run `vault-index` and `vault-log` as needed
 
 ## Safety
 
-- Never overwrite existing files
-- Never delete anything
-- Safe to run multiple times (idempotent)
+- Never overwrite existing content without explicit permission.
+- Never delete anything.
+- Idempotent on repeated runs.

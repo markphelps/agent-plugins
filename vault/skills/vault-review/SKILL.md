@@ -79,7 +79,7 @@ Read from the vault to understand current state:
 1. **Yesterday's daily note** — Check for carry-forward items
 2. **Active projects** — Find notes with `status: active`, sorted by `updated`
 3. **Recent notes** — Notes updated in the last 3 days
-4. **Inbox status** — How many items are in `inbox/`?
+4. **Inbox status** — How many items are in `raw/inbox/`?
 
 ### Step 2: Build the plan
 
@@ -97,7 +97,7 @@ Present a suggested plan:
 - [[project-a]] — Last updated X days ago
 - [[project-b]] — Last updated Y days ago
 
-**Inbox:** N items waiting to be processed
+**Raw Inbox:** N items waiting to be processed
 
 **Suggested focus:** Based on your recent activity, consider:
 
@@ -119,7 +119,7 @@ Read today's daily note and recent vault activity:
 
 1. **Today's plan** — What was planned?
 2. **Files modified today** — What notes were created or updated?
-3. **Inbox additions** — Anything captured today?
+3. **Raw inbox additions** — Anything captured today?
 
 ### Step 2: Prompt reflection
 
@@ -143,7 +143,7 @@ Update the daily note with:
 
 - Worked on [[project-a]] — updated research section
 - Created [[new-note]] from inbox processing
-- Added 3 items to inbox
+- Added 3 items to raw/inbox
 ```
 
 **`## Ideas` section** — Any new thoughts captured during review:
@@ -161,7 +161,7 @@ Update the daily note with:
 ## Carry Forward
 
 - [ ] Finish research on [[project-b]]
-- [ ] Process inbox (5 items waiting)
+- [ ] Process raw inbox (5 items waiting)
 ```
 
 Update the `updated` field in frontmatter.

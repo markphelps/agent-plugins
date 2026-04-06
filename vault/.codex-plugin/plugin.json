@@ -1,7 +1,7 @@
 {
   "name": "vault",
-  "version": "0.0.2",
-  "description": "Zettelkasten-style vault manager for Obsidian. Process inbox items into linked notes, organize files, and research topics.",
+  "version": "0.0.3",
+  "description": "Raw-first Obsidian vault manager. Process raw inbox captures into curated linked notes with index/log maintenance.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -13,20 +13,21 @@
     "notes",
     "research",
     "linking",
-    "ai"
+    "ai",
+    "knowledge-base"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vault",
-    "shortDescription": "Obsidian vault workflows",
-    "longDescription": "Organize and reason over an Obsidian vault using structured workflows.",
+    "shortDescription": "Raw-first Obsidian workflows",
+    "longDescription": "Operate an Obsidian vault with immutable raw sources, curated wiki notes, and index/log maintenance.",
     "developerName": "Mark Phelps",
     "category": "Productivity",
     "capabilities": ["Read", "Write", "Web Search"],
     "defaultPrompt": [
-      "Initialize a new vault structure in this folder.",
-      "Process inbox notes into organized, linked notes.",
-      "Research this note topic and append findings with sources."
+      "Initialize a raw-first vault structure in this folder.",
+      "Process raw inbox captures into curated linked notes and archive originals.",
+      "Refresh index and append a structured operation log entry."
     ]
   }
 }

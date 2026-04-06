@@ -30,7 +30,8 @@ vault-drift --path ./notes     # Specific folder
 
 ### Step 1: Load the vault
 
-Scan all `.md` files (skip hidden folders, `inbox/`, `_processed/`, `._meta/`).
+Scan all `.md` files (skip hidden folders, `raw/inbox/`, `raw/processed/`,
+`raw/sources/`, `raw/assets/`).
 
 For large vaults (20+ files), use small model subagents to parallelize reading.
 

@@ -1,13 +1,16 @@
 # Vault Plugin
 
-Zettelkasten-style vault workflows for Obsidian.
+Raw-first vault workflows for Obsidian.
 
 ## What It Provides
 
+- Raw capture pipeline
+  (`raw/inbox -> raw/sources -> curated notes -> raw/processed`)
 - Inbox processing into linked notes
 - Vault organization and compaction workflows
 - Daily review workflows
 - Research-oriented note enrichment
+- Index and operation-log maintenance helpers
 
 ## Skill Set
 
@@ -16,6 +19,9 @@ Zettelkasten-style vault workflows for Obsidian.
 - `vault-organize`
 - `vault-compact`
 - `vault-cleanup`
+- `vault-index`
+- `vault-log`
+- `vault-lint`
 - `vault-ideas`
 - `vault-trace`
 - `vault-connect`
@@ -41,4 +47,5 @@ Zettelkasten-style vault workflows for Obsidian.
 
 - Skills are the runtime source of truth.
 - Workflows should be non-destructive by default.
+- `raw/sources/` is immutable evidence; curated interpretation belongs in notes.
 - Keep user note content intact unless explicit deletion is requested.
