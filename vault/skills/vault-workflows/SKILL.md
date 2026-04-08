@@ -9,6 +9,21 @@ description:
 
 Use this skill to maintain a raw-first Obsidian vault.
 
+This is the top-level orientation skill for the vault. Load it first when an
+agent needs the overall operating model, structural rules, or the relationship
+between vault skills.
+
+For concrete actions, prefer the narrower specialized skills instead of doing
+everything through this one.
+
+Examples:
+
+- use `vault-process` for ingest
+- use `vault-project-tracker` for lifecycle state changes
+- use `vault-concept-promoter` for canonical synthesis updates
+- use `vault-archive-audit` for shrinking the active surface
+- use `vault-index` and `vault-log` for navigation/history maintenance
+
 ## Supported workflows
 
 - Initialize vault structure (`raw/*`, `notes/`, `projects/`, `archive/`,
