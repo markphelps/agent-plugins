@@ -116,7 +116,8 @@ Read today's daily note and recent vault activity:
 
 1. **Today's plan** — What was planned?
 2. **Files modified today** — What notes were created or updated?
-3. **Source additions** — Anything added to `raw/sources/` today?
+3. **Source flow** — Anything added to `raw/sources/` or moved to
+   `raw/processed/` today?
 
 ### Step 2: Prompt reflection
 
@@ -140,7 +141,7 @@ Update the daily note with:
 
 - Worked on [[project-a]] — updated research section
 - Created [[new-note]] from source processing
-- Added 3 source files to raw/sources
+- Added 3 source files to raw/sources and processed 2 into raw/processed
 ```
 
 **`## Ideas` section** — Any new thoughts captured during review:

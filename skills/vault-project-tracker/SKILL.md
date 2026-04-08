@@ -36,16 +36,6 @@ of the vault and to manage project lifecycle transitions.
 State transition details should be gathered interactively from the user instead
 of requiring fully-specified arguments at call time.
 
-Examples:
-
-```text
-vault-project-tracker lift
-vault-project-tracker sherpa
-vault-project-tracker go-links
-vault-project-tracker gmail-classifier
-vault-project-tracker audit
-```
-
 ## Process
 
 ### Step 1: Run interactive intake first

@@ -1,11 +1,11 @@
 ---
 name: vault-cleanup
-description: Delete old raw/processed archives after confirmation
+description: Delete old processed-source archives after confirmation
 ---
 
 # Cleanup
 
-Delete old dated archives from `raw/processed/`.
+Delete old dated processed-source archives from `raw/processed/`.
 
 ## Arguments
 

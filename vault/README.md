@@ -4,7 +4,8 @@ Raw-first vault workflows for Obsidian.
 
 ## What It Provides
 
-- Raw capture pipeline (`raw/sources -> curated notes -> raw/processed`)
+- Raw capture pipeline (`raw/sources` inbox -> curated notes -> `raw/processed`
+  archive)
 - Source processing into linked notes
 - Archive-aware curation with `archive/` for superseded notes and dead projects
 - Concept-promotion workflow for recurring themes and durable synthesis
@@ -22,7 +23,7 @@ Raw-first vault workflows for Obsidian.
 | `vault-process`           | Turns `raw/sources/` captures into curated notes or project docs.                            | When new source material needs to be ingested.                 |
 | `vault-organize`          | Reorganizes active curated files without touching raw evidence.                              | When notes/projects need cleanup, renaming, or grouping.       |
 | `vault-compact`           | Compresses or consolidates verbose note content.                                             | When notes are too long or repetitive and need shrinking.      |
-| `vault-cleanup`           | Removes old `raw/processed/` archives after confirmation.                                    | When cleaning stale working-copy archives.                     |
+| `vault-cleanup`           | Removes old `raw/processed/` archives after confirmation.                                    | When cleaning stale processed-source archives.                 |
 | `vault-index`             | Refreshes `index.md` from durable active content.                                            | When navigation drifts or new durable pages appear.            |
 | `vault-log`               | Appends a structured entry to `log.md`.                                                      | After any material vault operation.                            |
 | `vault-lint`              | Audits the active vault for contradictions, stale pages, weak linking, and missing concepts. | On regular hygiene passes or before larger cleanup sessions.   |
@@ -55,8 +56,8 @@ Raw-first vault workflows for Obsidian.
 
 - Skills are the runtime source of truth.
 - Workflows should be non-destructive by default.
-- `raw/sources/` is immutable evidence; curated interpretation belongs in notes.
-- `raw/processed/` is for archived working copies, not canonical sources.
+- `raw/sources/` is an unprocessed inbox for new captures.
+- `raw/processed/` is the canonical immutable archive for processed sources.
 - `archive/` is for archived curated material and is excluded from active
   navigation by default.
 - Repeated patterns should graduate into canonical concept pages instead of

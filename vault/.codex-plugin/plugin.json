@@ -1,6 +1,6 @@
 {
   "name": "vault",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Raw-first Obsidian vault manager. Capture directly into raw/sources, curate linked notes, and maintain index/log.",
   "author": {
     "name": "Mark Phelps"

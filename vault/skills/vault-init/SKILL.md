@@ -33,9 +33,9 @@ Create if missing:
 ```
 vault/
 ├── raw/
-│   ├── sources/      # immutable source material
+│   ├── sources/      # unprocessed source inbox
 │   ├── assets/       # attachments/media
-│   └── processed/    # archived originals by date
+│   └── processed/    # immutable processed-source archive by date
 ├── notes/
 ├── projects/
 ├── archive/

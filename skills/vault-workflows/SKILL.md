@@ -9,13 +9,29 @@ description:
 
 Use this skill to maintain a raw-first Obsidian vault.
 
+This is the top-level orientation skill for the vault. Load it first when an
+agent needs the overall operating model, structural rules, or the relationship
+between vault skills.
+
+For concrete actions, prefer the narrower specialized skills instead of doing
+everything through this one.
+
+Examples:
+
+- use `vault-process` for ingest
+- use `vault-project-tracker` for lifecycle state changes
+- use `vault-concept-promoter` for canonical synthesis updates
+- use `vault-archive-audit` for shrinking the active surface
+- use `vault-index` and `vault-log` for navigation/history maintenance
+
 ## Supported workflows
 
 - Initialize vault structure (`raw/*`, `notes/`, `projects/`, `archive/`,
   `resources/`, `index.md`, `log.md`)
 - Process `raw/sources/` captures into curated linked notes/projects
-- Preserve provenance by treating `raw/sources/` as canonical evidence
-- Archive temporary working copies into `raw/processed/YYYY-MM-DD/`
+- Preserve provenance by moving processed captures into
+  `raw/processed/YYYY-MM-DD/`
+- Treat `raw/processed/` as canonical immutable source evidence
 - Reorganize curated files without touching `raw/*`
 - Move superseded curated pages into `archive/` while keeping wikilinks intact
 - Promote recurring patterns into canonical concept pages under
@@ -26,7 +42,8 @@ Use this skill to maintain a raw-first Obsidian vault.
 
 - Default to non-destructive edits.
 - Never delete user content unless explicitly requested.
-- Treat `raw/sources/` as immutable evidence.
+- Treat `raw/sources/` as an unprocessed capture inbox.
+- Treat `raw/processed/` as immutable evidence.
 - Preserve existing note content and frontmatter keys when possible.
 - For research additions, include sources and confidence.
 - Prefer durable synthesis over one-off digests when a topic repeats.
@@ -51,7 +68,7 @@ status: active | someday | done | archived
 
 - Created/updated curated pages
 - Created/updated concept pages under `notes/concepts/`
-- Stored source files under `raw/sources/`
-- Archived originals under `raw/processed/YYYY-MM-DD/`
+- Processed source files moved from `raw/sources/` to
+  `raw/processed/YYYY-MM-DD/`
 - Archived curated pages under `archive/`
 - `index.md` updates and appended `log.md` entry

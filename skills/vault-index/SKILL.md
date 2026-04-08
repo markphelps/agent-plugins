@@ -20,7 +20,8 @@ Update `index.md` so it remains the top-level navigation page.
 ## Safety
 
 - Only edit `index.md` unless explicitly requested otherwise.
-- Do not index raw evidence files from `raw/sources/` directly as topic pages.
+- Do not index raw evidence files from `raw/sources/` or `raw/processed/`
+  directly as topic pages.
 - Prefer durable concept pages, trackers, and active project pages over
   transient notes.
 - Keep archived material out of the main index except for a single

@@ -30,7 +30,7 @@ For each processed item:
 
 1. Source capture starts in `raw/sources/`.
 2. Curated interpretation is written to `notes/` and/or `projects/`.
-3. If an original working draft exists outside `raw/sources/`, archive it to
+3. After successful curation, move the processed source from `raw/sources/` to
    `raw/processed/YYYY-MM-DD/`.
 4. If the source reinforces an existing recurring theme, update the canonical
    concept page instead of creating another fragment.
@@ -41,7 +41,8 @@ For each processed item:
 
 ### Step 1: Discover capture items
 
-Scan `raw/sources/` for markdown/text captures and skip hidden files.
+Scan `raw/sources/` for unprocessed markdown/text captures and skip hidden
+files.
 
 ### Step 2: Classify captures
 
@@ -51,8 +52,8 @@ Scan `raw/sources/` for markdown/text captures and skip hidden files.
 
 ### Step 3: Preserve source provenance
 
-For each item, keep the canonical source in `raw/sources/` using a stable,
-kebab-case filename.
+For each item, use a stable, kebab-case filename and preserve source content
+unchanged.
 
 ### Step 4: Curate notes
 
@@ -70,7 +71,7 @@ Add contextual wikilinks and backlinks for touched pages.
 
 ### Step 6: Archive originals
 
-Move any temporary working copy to `raw/processed/YYYY-MM-DD/`.
+Move each successfully processed source file to `raw/processed/YYYY-MM-DD/`.
 
 ### Step 7: Update index and log
 
@@ -84,7 +85,9 @@ links.
 
 ## Safety
 
-- Treat `raw/sources/` as immutable evidence.
-- Do not mutate or delete files in `raw/sources/` or `raw/assets/`.
+- Treat `raw/sources/` as an unprocessed inbox.
+- Treat `raw/processed/` as immutable evidence.
+- Do not mutate file contents under `raw/sources/`, `raw/processed/`, or
+  `raw/assets/`.
 - Do not assume or create an inbox staging layer.
 - Confirm before execution unless `--yes`.
