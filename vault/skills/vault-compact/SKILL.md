@@ -36,7 +36,7 @@ vault-compact --max-lines 30          # Only target very small notes
 ### Step 1: Find small notes
 
 Scan all `.md` files in the target path (recursively). Skip hidden folders,
-`raw/inbox/`, `raw/processed/`, `raw/sources/`, `raw/assets/`, `_templates/`.
+`raw/processed/`, `raw/sources/`, `raw/assets/`.
 
 For each file:
 
@@ -281,10 +281,8 @@ Plan executed from confirmed in-memory operations
 
 - Notes with `status: active` (in-progress projects)
 - Notes over the line threshold (they're substantial enough to stand alone)
-- Notes in `raw/inbox/` or `raw/processed/` (use `vault-process` and
-  `vault-cleanup`)
+- Notes in `raw/processed/` (use `vault-process` and `vault-cleanup`)
 - Notes that are the only file on their topic (no cluster partner)
-- Template files in `_templates/`
 
 ## Safety
 

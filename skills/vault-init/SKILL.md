@@ -33,65 +33,34 @@ Create if missing:
 ```
 vault/
 ├── raw/
-│   ├── inbox/        # unprocessed captures
 │   ├── sources/      # immutable source material
 │   ├── assets/       # attachments/media
 │   └── processed/    # archived originals by date
-├── daily/
-├── _templates/
-│   └── daily.md
 ├── notes/
 ├── projects/
+├── archive/
+├── resources/
 ├── index.md
 └── log.md
 ```
 
-### Step 3: Create daily note template
-
-Create `_templates/daily.md` if missing:
-
-```markdown
----
-created: { { date } }
-updated: { { date } }
-tags: [daily]
----
-
-# {{date}}
-
-## Plan
-
--
-
-## Log
-
--
-
-## Ideas
-
--
-
-## Carry Forward
-
--
-```
-
-### Step 4: Create starter operational files
+### Step 3: Create starter operational files
 
 Create `index.md` and `log.md` if missing with minimal boilerplate.
 
-Create `raw/inbox/welcome.md` only when `raw/inbox/` is empty.
-
-### Step 5: Report results
+### Step 4: Report results
 
 Summarize created vs existing paths and suggest:
 
-1. Add captures to `raw/inbox/`
+1. Add captures directly to `raw/sources/`
 2. Run `vault-process`
-3. Run `vault-index` and `vault-log` as needed
+3. Move superseded curated pages into `archive/` when they no longer belong in
+   active navigation
+4. Run `vault-index` and `vault-log` as needed
 
 ## Safety
 
 - Never overwrite existing content without explicit permission.
+- Never create or depend on an inbox staging layer.
 - Never delete anything.
 - Idempotent on repeated runs.

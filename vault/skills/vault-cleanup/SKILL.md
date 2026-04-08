@@ -44,4 +44,5 @@ Show total deleted and oldest remaining retained date.
 - Always require confirmation (except `--dry-run` which never deletes).
 - Never delete from `raw/sources/`.
 - Never delete from `raw/assets/`.
+- Never delete from `notes/`, `projects/`, or `resources/`.
 - Never touch curated notes/projects unless explicitly requested.

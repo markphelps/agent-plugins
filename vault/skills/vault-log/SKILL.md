@@ -12,6 +12,7 @@ Append a structured operation entry to `log.md`.
 - heading: `## [YYYY-MM-DD] <operation> | <summary>`
 - bullets: key actions
 - touched list: changed file paths
+- keep entries append-only and concise
 
 ## Process
 

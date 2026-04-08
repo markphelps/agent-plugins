@@ -15,15 +15,26 @@ Run a vault hygiene pass and propose/execute safe fixes.
 - Stale pages based on `updated` and topic activity
 - Missing concept pages repeatedly referenced
 - Broken/ambiguous wikilinks
+- Duplicate concepts split across multiple pages
+- Dead project cruft that should be archived or removed from navigation
+- Active notes that should move to `archive/` because they are superseded or
+  purely historical
+- Repeated patterns that still live only in drift reports, traces, or dated
+  notes but deserve a canonical concept page
 
 ## Process
 
-1. Build issue list with file references.
+1. Build issue list with file references, focusing on the active vault surface
+   by default.
 2. Rank by severity/impact.
-3. Propose fixes; apply when approved.
-4. Summarize outcomes and append lint entry to `log.md`.
+3. Call out concept-promotion candidates explicitly when the same idea recurs
+   across multiple files.
+4. Propose fixes; apply when approved.
+5. Summarize outcomes and append lint entry to `log.md`.
 
 ## Safety
 
 - Default to report-first on ambiguous edits.
 - Avoid destructive cleanup unless explicitly approved.
+- Exclude `archive/` from active lint checks unless the user asks for an archive
+  audit.

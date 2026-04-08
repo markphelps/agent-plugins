@@ -11,12 +11,15 @@ Use this skill to maintain a raw-first Obsidian vault.
 
 ## Supported workflows
 
-- Initialize vault structure (`raw/*`, `daily/`, `_templates/`, `index.md`,
-  `log.md`)
-- Process `raw/inbox` captures into curated linked notes/projects
-- Preserve provenance by storing canonical sources in `raw/sources`
-- Archive processed originals into `raw/processed/YYYY-MM-DD/`
+- Initialize vault structure (`raw/*`, `notes/`, `projects/`, `archive/`,
+  `resources/`, `index.md`, `log.md`)
+- Process `raw/sources/` captures into curated linked notes/projects
+- Preserve provenance by treating `raw/sources/` as canonical evidence
+- Archive temporary working copies into `raw/processed/YYYY-MM-DD/`
 - Reorganize curated files without touching `raw/*`
+- Move superseded curated pages into `archive/` while keeping wikilinks intact
+- Promote recurring patterns into canonical concept pages under
+  `notes/concepts/`
 - Append operation history to `log.md`
 
 ## Operating rules
@@ -26,6 +29,11 @@ Use this skill to maintain a raw-first Obsidian vault.
 - Treat `raw/sources/` as immutable evidence.
 - Preserve existing note content and frontmatter keys when possible.
 - For research additions, include sources and confidence.
+- Prefer durable synthesis over one-off digests when a topic repeats.
+- Keep `archive/` out of the active wiki surface except through
+  `archive/index.md`.
+- Treat drift reports and traces as intermediate synthesis artifacts; concept
+  pages should become the durable endpoints.
 
 ## Frontmatter baseline
 
@@ -34,7 +42,7 @@ Use this skill to maintain a raw-first Obsidian vault.
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 tags: [topic, concept]
-source: raw-inbox | url | manual | compacted
+source: raw-sources | url | manual | compacted
 status: active | someday | done | archived
 ---
 ```
@@ -42,6 +50,8 @@ status: active | someday | done | archived
 ## Typical outputs
 
 - Created/updated curated pages
+- Created/updated concept pages under `notes/concepts/`
 - Stored source files under `raw/sources/`
 - Archived originals under `raw/processed/YYYY-MM-DD/`
+- Archived curated pages under `archive/`
 - `index.md` updates and appended `log.md` entry

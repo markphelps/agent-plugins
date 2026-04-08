@@ -2,7 +2,7 @@
 name: vault-organize
 description:
   Reorganize curated vault files (rename/group/frontmatter) without touching raw
-  pipeline
+  evidence
 ---
 
 # Organize Vault
@@ -25,7 +25,6 @@ Reorganize curated markdown files (naming, grouping, frontmatter, wikilinks).
 Never move/rename files under:
 
 - `raw/`
-- `raw/inbox/`
 - `raw/sources/`
 - `raw/assets/`
 - `raw/processed/`
@@ -35,7 +34,9 @@ Never move/rename files under:
 
 ### Step 1: Discover candidate markdown files
 
-Analyze only curated areas such as `notes/`, `projects/`, `resources/`.
+Analyze only active curated areas such as `notes/`, `projects/`, `resources/`.
+Treat `archive/` as out-of-scope unless the user explicitly asks to reorganize
+archived material.
 
 ### Step 2: Build execution plan (in-memory)
 
@@ -62,3 +63,6 @@ Apply plan operations, then report actual changes.
 - Default to non-destructive edits.
 - Never touch `raw/*` content.
 - Keep wikilinks consistent after renames/moves.
+- Treat `notes/`, `projects/`, and `resources/` as the default organize targets.
+- Do not move files into or out of `archive/` unless the reorganization goal
+  explicitly calls for archiving or restoring.

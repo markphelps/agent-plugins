@@ -1,7 +1,7 @@
 {
   "name": "vault",
-  "version": "0.0.3",
-  "description": "Raw-first Obsidian vault manager. Process raw inbox captures into curated linked notes with index/log maintenance.",
+  "version": "0.0.4",
+  "description": "Raw-first Obsidian vault manager. Capture directly into raw/sources, curate linked notes, and maintain index/log.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -26,7 +26,7 @@
     "capabilities": ["Read", "Write", "Web Search"],
     "defaultPrompt": [
       "Initialize a raw-first vault structure in this folder.",
-      "Process raw inbox captures into curated linked notes and archive originals.",
+      "Process source captures from raw/sources into curated linked notes.",
       "Refresh index and append a structured operation log entry."
     ]
   }

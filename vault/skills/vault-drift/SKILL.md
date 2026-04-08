@@ -9,6 +9,9 @@ Surface ideas, themes, and phrases that keep appearing across unrelated notes
 without a clear thread. Reveals what your thinking is gravitating toward — even
 if you haven't noticed it yet.
 
+The durable output target is `notes/concepts/`, not a separate `notes/drifts/`
+folder.
+
 ## Arguments
 
 `arguments` - Optional path and flags.
@@ -30,8 +33,8 @@ vault-drift --path ./notes     # Specific folder
 
 ### Step 1: Load the vault
 
-Scan all `.md` files (skip hidden folders, `raw/inbox/`, `raw/processed/`,
-`raw/sources/`, `raw/assets/`).
+Scan all `.md` files (skip hidden folders, `raw/processed/`, `raw/sources/`,
+`raw/assets/`, `archive/`).
 
 For large vaults (20+ files), use small model subagents to parallelize reading.
 
@@ -95,7 +98,7 @@ For each cluster:
 ### Step 5: Present findings
 
 ```markdown
-# Drift Report
+# Drift Findings
 
 **Scanned:** YYYY-MM-DD **Notes analyzed:** N **Drifts detected:** M
 
@@ -134,10 +137,21 @@ Questions that keep surfacing across your notes:
 - [What these drifts suggest about where your thinking is heading]
 ```
 
-### Step 6: Offer next actions
+### Step 6: Promote durable concepts
 
-- "Want me to create a dedicated note for [drift theme]?"
-- "Want me to run `vault-trace` on [strongest drift]?"
+For the strongest drift clusters:
+
+- update an existing canonical concept page under `notes/concepts/`, or
+- create a new concept page under `notes/concepts/` if the pattern is clearly
+  durable
+
+If needed, include a short summary section in the response, but do not create a
+separate long-lived report file under `notes/drifts/`.
+
+### Step 7: Offer next actions
+
+- "Want me to update the canonical concept page for [drift theme]?"
+- "Want me to run `vault-trace` and merge the timeline into that concept page?"
 - "Want me to run `vault-ideas` to generate ideas from these patterns?"
 
 ## Subagent Strategy
@@ -157,3 +171,4 @@ Questions that keep surfacing across your notes:
 - Limit to ~5 drifts (focus on strongest signals)
 - Be honest when the vault is too small or uniform to detect drift
 - Don't psychoanalyze — present patterns, let the user interpret
+- Prefer concept-page updates over creating standalone drift files

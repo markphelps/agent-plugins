@@ -1,13 +1,13 @@
 ---
 name: vault-process
 description:
-  Process raw inbox captures into curated notes with linking and archival
+  Process source captures into curated notes with linking and archival
 ---
 
-# Process Raw Inbox
+# Process Sources
 
-Process captures from `raw/inbox/` into curated notes/projects while preserving
-source provenance.
+Process captures from `raw/sources/` into curated notes/projects while
+preserving source provenance.
 
 ## Arguments
 
@@ -15,9 +15,9 @@ source provenance.
 
 **Path behavior:**
 
-- `vault-process` defaults to `./raw/inbox`
-- `vault-process raw/inbox` uses relative path
-- `vault-process /abs/path/raw/inbox` uses absolute path
+- `vault-process` defaults to `./raw/sources`
+- `vault-process raw/sources` uses relative path
+- `vault-process /abs/path/raw/sources` uses absolute path
 
 **Flags:**
 
@@ -28,10 +28,12 @@ source provenance.
 
 For each processed item:
 
-1. Source capture starts in `raw/inbox/`.
-2. Canonical source copy is stored in `raw/sources/`.
-3. Curated interpretation is written to `notes/` and/or `projects/`.
-4. Original inbox item is moved to `raw/processed/YYYY-MM-DD/`.
+1. Source capture starts in `raw/sources/`.
+2. Curated interpretation is written to `notes/` and/or `projects/`.
+3. If an original working draft exists outside `raw/sources/`, archive it to
+   `raw/processed/YYYY-MM-DD/`.
+4. If the source reinforces an existing recurring theme, update the canonical
+   concept page instead of creating another fragment.
 5. `index.md` is updated for new durable pages.
 6. `log.md` receives an operation entry.
 
@@ -39,7 +41,7 @@ For each processed item:
 
 ### Step 1: Discover capture items
 
-Scan input folder for markdown/text captures and skip hidden files.
+Scan `raw/sources/` for markdown/text captures and skip hidden files.
 
 ### Step 2: Classify captures
 
@@ -49,12 +51,18 @@ Scan input folder for markdown/text captures and skip hidden files.
 
 ### Step 3: Preserve source provenance
 
-For each item, store canonical source in `raw/sources/` before or during
-curation using a stable, kebab-case filename.
+For each item, keep the canonical source in `raw/sources/` using a stable,
+kebab-case filename.
 
 ### Step 4: Curate notes
 
 Create/update target pages with frontmatter and `## Related` links.
+
+When a theme repeats across captures or notes, prefer:
+
+- updating an existing concept page under `notes/concepts/`
+- creating a new concept page if the pattern is clearly durable
+- linking transient reports back to the concept page
 
 ### Step 5: Link and backlink pass
 
@@ -62,7 +70,7 @@ Add contextual wikilinks and backlinks for touched pages.
 
 ### Step 6: Archive originals
 
-Move processed item to `raw/processed/YYYY-MM-DD/`.
+Move any temporary working copy to `raw/processed/YYYY-MM-DD/`.
 
 ### Step 7: Update index and log
 
@@ -78,5 +86,5 @@ links.
 
 - Treat `raw/sources/` as immutable evidence.
 - Do not mutate or delete files in `raw/sources/` or `raw/assets/`.
-- Only move files out of `raw/inbox/` into dated `raw/processed/` folders.
+- Do not assume or create an inbox staging layer.
 - Confirm before execution unless `--yes`.

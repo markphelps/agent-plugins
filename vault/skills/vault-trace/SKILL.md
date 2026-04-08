@@ -9,6 +9,9 @@ Track how a specific idea or topic has evolved over time across your vault.
 Shows when it first appeared, how your thinking changed, and what it's connected
 to now.
 
+The durable output target is the topic's canonical concept page in
+`notes/concepts/`.
+
 ## Arguments
 
 `arguments` - The topic to trace, plus optional path and flags.
@@ -38,8 +41,8 @@ Cast a wide net across the vault:
 3. **Tag matches** — Search frontmatter tags for related terms
 4. **Wikilink matches** — Search for `[[links]]` that reference the topic
 
-Skip hidden folders, `raw/inbox/`, `raw/processed/`, `raw/sources/`,
-`raw/assets/`.
+Skip hidden folders, `raw/processed/`, `raw/sources/`, `raw/assets/`,
+`archive/`.
 
 Collect all matching files with their `updated` (and `created` if present)
 dates.
@@ -114,9 +117,22 @@ YYYY-MM-DD in [[latest-note]] **Total mentions:** N notes
 - [Something surprising about the timeline]
 ```
 
-### Step 6: Offer next actions
+### Step 6: Merge into canonical synthesis
 
-- "Want me to create a synthesis note capturing this evolution?"
+If a matching concept page exists in `notes/concepts/`, update it with:
+
+- a concise origin/evolution section
+- key supporting evidence
+- important tensions or implications discovered in the trace
+
+If no canonical concept page exists and the topic is durable, create one under
+`notes/concepts/`.
+
+Do not create a long-lived file under `notes/drifts/`.
+
+### Step 7: Offer next actions
+
+- "Want me to merge this evolution into the canonical concept page?"
 - "Want me to run `vault-connect` between this and [related topic]?"
 - "Want me to run `vault-challenge` to pressure-test your current thinking?"
 
@@ -135,3 +151,4 @@ YYYY-MM-DD in [[latest-note]] **Total mentions:** N notes
 - Quote directly from notes — don't paraphrase
 - If fewer than 3 mentions found, say so and suggest broadening the search term
 - Keep the timeline readable — summarize, don't dump every mention
+- Prefer concept-page updates over standalone trace files
