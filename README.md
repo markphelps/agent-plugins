@@ -43,7 +43,7 @@ npx skills add markphelps/agent-plugins --skill declaudify-repo
 npm install
 npm run format
 npm run validate
-./scripts/sync-skills.sh
+npm run sync
 ```
 
 ## License

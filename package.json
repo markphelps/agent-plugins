@@ -7,6 +7,7 @@
     "format": "prettier --write '**/*.{md,json}'",
     "format:check": "prettier --check '**/*.{md,json}'",
     "validate": "node scripts/validate-plugins.js",
+    "sync": "./scripts/sync-skills.sh",
     "prepare": "husky"
   },
   "devDependencies": {
