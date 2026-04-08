@@ -23,7 +23,7 @@ Raw-first vault workflows for Obsidian.
 | `vault-process`           | Turns `raw/sources/` captures into curated notes or project docs.                            | When new source material needs to be ingested.                 |
 | `vault-organize`          | Reorganizes active curated files without touching raw evidence.                              | When notes/projects need cleanup, renaming, or grouping.       |
 | `vault-compact`           | Compresses or consolidates verbose note content.                                             | When notes are too long or repetitive and need shrinking.      |
-| `vault-cleanup`           | Removes old `raw/processed/` archives after confirmation.                                    | When cleaning stale processed-source archives.                 |
+| `vault-cleanup`           | Audits `raw/processed/` integrity and optional safe hygiene fixes.                           | When checking archive health without deleting evidence.        |
 | `vault-index`             | Refreshes `index.md` from durable active content.                                            | When navigation drifts or new durable pages appear.            |
 | `vault-log`               | Appends a structured entry to `log.md`.                                                      | After any material vault operation.                            |
 | `vault-lint`              | Audits the active vault for contradictions, stale pages, weak linking, and missing concepts. | On regular hygiene passes or before larger cleanup sessions.   |

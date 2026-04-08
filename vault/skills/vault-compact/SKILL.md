@@ -245,7 +245,8 @@ For each cluster:
 2. Build the consolidated content (following the format from Step 3)
 3. Write the compacted file
 4. Update wikilinks in all affected vault files
-5. Delete the original source files
+5. Archive original files under `archive/` with mirrored paths (or delete only
+   if explicitly requested)
 
 ### Step 9: Report results
 
@@ -281,14 +282,15 @@ Plan executed from confirmed in-memory operations
 
 - Notes with `status: active` (in-progress projects)
 - Notes over the line threshold (they're substantial enough to stand alone)
-- Notes in `raw/processed/` (use `vault-process` and `vault-cleanup`)
+- Notes in `raw/processed/` (canonical evidence; never compact)
 - Notes that are the only file on their topic (no cluster partner)
 
 ## Safety
 
 - **Always confirm** before executing (unless `--yes`)
 - **Use dry-run preview** before making changes
-- **Preserve all content** — compaction merges, never deletes content
+- **Preserve all content** — ensure merged content is complete before archiving
+  originals
 - **Update wikilinks** — don't break the link graph
 - **Git-aware** — if in a git repo, suggest committing before compacting
 - **Reversible** — summarize exact operations in the final report

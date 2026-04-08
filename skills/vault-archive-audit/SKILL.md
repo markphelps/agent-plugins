@@ -15,6 +15,7 @@ active vault surface.
 - keep `projects/` and active `notes/` small and current
 - move dead curated material into `archive/`
 - avoid accidental deletion by preferring archival moves
+- never operate on `raw/processed/` evidence; this skill is for curated content
 
 ## Reuse Existing Skills
 
@@ -86,7 +87,6 @@ For project folders, prefer routing the change through the behavior defined by
 ### Step 4: Update control planes
 
 - keep `projects/project-tracker.md` lightweight
-- refresh `archive/index.md` if needed
 - append to `log.md`
 
 ## Safety

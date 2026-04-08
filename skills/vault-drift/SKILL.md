@@ -141,9 +141,9 @@ Questions that keep surfacing across your notes:
 
 For the strongest drift clusters:
 
-- update an existing canonical concept page under `notes/concepts/`, or
-- create a new concept page under `notes/concepts/` if the pattern is clearly
-  durable
+- default to reporting promotion candidates
+- if the user asks to apply, route concept updates through
+  `vault-concept-promoter`
 
 If needed, include a short summary section in the response, but do not create a
 separate long-lived report file under `notes/drifts/`.

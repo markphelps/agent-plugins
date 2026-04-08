@@ -1,11 +1,11 @@
 ---
 name: vault-cleanup
-description: Delete old processed-source archives after confirmation
+description: Audit processed-source archives for integrity and hygiene
 ---
 
 # Cleanup
 
-Delete old dated processed-source archives from `raw/processed/`.
+Audit `raw/processed/` for hygiene issues without deleting canonical evidence.
 
 ## Arguments
 
@@ -13,35 +13,46 @@ Delete old dated processed-source archives from `raw/processed/`.
 
 **Flags:**
 
-- `--days N` delete items older than N days (default: 90)
-- `--dry-run` preview only
+- `--days N` report folders older than N days (default: 90)
+- `--apply-safe` allow safe non-destructive fixes (empty-folder removal only)
+- `--dry-run` preview only (default behavior)
 
 ## Process
 
-### Step 1: Find old archive folders
+### Step 1: Scan archive health
 
-Scan `raw/processed/YYYY-MM-DD/` and identify folders older than threshold.
+Scan `raw/processed/YYYY-MM-DD/` and identify:
+
+- date folders older than threshold
+- empty date folders
+- non-date folders or naming anomalies
+- duplicate filenames across multiple dates
 
 ### Step 2: Present summary
 
-Show folders/files to be deleted and ask for confirmation.
+Show findings and classify each as:
 
-### Step 3: Execute deletion
+- informational only
+- safe fix available
+- needs manual decision
 
-Delete approved old date folders from `raw/processed/`.
+### Step 3: Optional safe fixes
+
+If `--apply-safe`, remove only empty date folders after confirmation.
 
 ### Step 4: Report results
 
-Show total deleted and oldest remaining retained date.
+Show findings, optional fixes applied, and any manual follow-up actions.
 
 ## Edge Cases
 
 - If `raw/processed/` missing: report no-op.
-- If nothing old enough: report no-op.
+- If no findings: report clean state.
 
 ## Safety
 
-- Always require confirmation (except `--dry-run` which never deletes).
+- Treat `raw/processed/` as canonical immutable evidence.
+- Never delete processed source files from `raw/processed/`.
 - Never delete from `raw/sources/`.
 - Never delete from `raw/assets/`.
 - Never delete from `notes/`, `projects/`, or `resources/`.

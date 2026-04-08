@@ -14,6 +14,7 @@ concept pages.
 - keep `notes/concepts/` as the canonical synthesis layer
 - prevent repeated ideas from remaining trapped in dated notes
 - strengthen existing concept pages with new evidence over time
+- act as the primary skill for applying concept-page create/update changes
 
 ## Reuse Existing Skills
 

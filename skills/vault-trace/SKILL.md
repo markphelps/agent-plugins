@@ -119,14 +119,15 @@ YYYY-MM-DD in [[latest-note]] **Total mentions:** N notes
 
 ### Step 6: Merge into canonical synthesis
 
-If a matching concept page exists in `notes/concepts/`, update it with:
+If a matching concept page exists in `notes/concepts/`, recommend updating it
+with:
 
 - a concise origin/evolution section
 - key supporting evidence
 - important tensions or implications discovered in the trace
 
-If no canonical concept page exists and the topic is durable, create one under
-`notes/concepts/`.
+If no canonical concept page exists and the topic is durable, recommend creating
+one under `notes/concepts/` via `vault-concept-promoter`.
 
 Do not create a long-lived file under `notes/drifts/`.
 

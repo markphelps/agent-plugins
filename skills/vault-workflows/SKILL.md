@@ -44,11 +44,11 @@ Examples:
 - Never delete user content unless explicitly requested.
 - Treat `raw/sources/` as an unprocessed capture inbox.
 - Treat `raw/processed/` as immutable evidence.
+- `vault-cleanup` is audit-first and must not delete processed evidence.
 - Preserve existing note content and frontmatter keys when possible.
 - For research additions, include sources and confidence.
 - Prefer durable synthesis over one-off digests when a topic repeats.
-- Keep `archive/` out of the active wiki surface except through
-  `archive/index.md`.
+- Keep `archive/` out of the active wiki surface by default.
 - Treat drift reports and traces as intermediate synthesis artifacts; concept
   pages should become the durable endpoints.
 

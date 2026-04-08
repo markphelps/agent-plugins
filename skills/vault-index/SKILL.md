@@ -24,6 +24,5 @@ Update `index.md` so it remains the top-level navigation page.
   directly as topic pages.
 - Prefer durable concept pages, trackers, and active project pages over
   transient notes.
-- Keep archived material out of the main index except for a single
-  `archive/index.md` entry.
+- Keep archived material out of the main index unless explicitly requested.
 - If concept pages exist, treat them as the primary top-level note entry points.

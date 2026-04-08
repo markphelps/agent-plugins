@@ -15,7 +15,7 @@ of the vault and to manage project lifecycle transitions.
 - Reflect the true state of each project: active, exploring, paused, shipped, or
   archived
 - Move dead project material to `archive/` when appropriate
-- Keep `archive/index.md` and `log.md` in sync with lifecycle changes
+- Keep `projects/project-tracker.md` and `log.md` in sync with lifecycle changes
 
 ## Lifecycle States
 
@@ -94,7 +94,6 @@ Choose the smallest correct action:
 - Move project docs from `projects/...` to `archive/projects/dead/...`
 - Rewrite inbound links outside the folder to point to the archive path
 - Update `projects/project-tracker.md`
-- Add or refresh an entry in `archive/index.md`
 
 ### Step 5: Keep the tracker lightweight
 
@@ -102,7 +101,7 @@ Choose the smallest correct action:
 
 - Keep active/exploring/shipped sections concise
 - Use `Archived` only for recent archive activity
-- Point older historical detail to `[[archive/index]]`
+- Point older historical detail to `archive/projects/dead/`
 
 ### Step 6: Record the change
 
