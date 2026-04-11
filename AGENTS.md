@@ -5,7 +5,7 @@ This repository contains multiple plugins. Use progressive disclosure.
 ## Plugin-Specific Instructions
 
 - Vault plugin: see `vault/AGENTS.md`
-- Development plugin: see `development/AGENTS.md` (if present)
+- Development plugin: see `development/AGENTS.md`
 
 ## Skill Sync
 
