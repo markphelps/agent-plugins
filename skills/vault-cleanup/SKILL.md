@@ -7,42 +7,29 @@ description: Audit processed-source archives for integrity and hygiene
 
 Audit `raw/processed/` for hygiene issues without deleting canonical evidence.
 
-## Arguments
+## Parameters
 
-`arguments` - Optional flags.
+- `--days N` report folders older than `N` days (default: `90`)
+- `--mode report|apply-safe|apply` (default: `report`)
 
-**Flags:**
+`apply-safe` and `apply` are both non-destructive here: only empty-folder
+cleanup is permitted.
 
-- `--days N` report folders older than N days (default: 90)
-- `--apply-safe` allow safe non-destructive fixes (empty-folder removal only)
-- `--dry-run` preview only (default behavior)
+## Workflow
 
-## Process
-
-### Step 1: Scan archive health
-
-Scan `raw/processed/YYYY-MM-DD/` and identify:
-
-- date folders older than threshold
-- empty date folders
-- non-date folders or naming anomalies
-- duplicate filenames across multiple dates
-
-### Step 2: Present summary
-
-Show findings and classify each as:
-
-- informational only
-- safe fix available
-- needs manual decision
-
-### Step 3: Optional safe fixes
-
-If `--apply-safe`, remove only empty date folders after confirmation.
-
-### Step 4: Report results
-
-Show findings, optional fixes applied, and any manual follow-up actions.
+1. Scan `raw/processed/YYYY-MM-DD/` and flag:
+   - date folders older than threshold
+   - empty date folders
+   - non-date folder anomalies
+   - duplicate filenames across dates
+2. Classify findings:
+   - informational
+   - safe fix available
+   - manual decision required
+3. Execute by mode:
+   - `report`: findings only
+   - `apply-safe` / `apply`: remove empty date folders after confirmation
+4. Return summary and follow-up actions.
 
 ## Edge Cases
 
@@ -57,3 +44,11 @@ Show findings, optional fixes applied, and any manual follow-up actions.
 - Never delete from `raw/assets/`.
 - Never delete from `notes/`, `projects/`, or `resources/`.
 - Never touch curated notes/projects unless explicitly requested.
+
+## Output
+
+Return:
+
+- findings by class
+- fixes applied (if any)
+- manual follow-up items

@@ -12,3 +12,9 @@ This plugin contains vault-focused skills.
 - The `skills/` directory is the source of truth for runtime behavior.
 - Keep skills non-destructive by default.
 - Preserve user notes and only delete content with explicit approval.
+- For hosted-vault retrieval/preflight/update flows, prefer `vault-qmd` instead
+  of duplicating qmd command logic across other skills.
+- Mode convention for action-oriented skills:
+  - `--mode report|apply-safe|apply` (default `report`)
+  - keep domain selectors (`morning/evening`, topic kind, etc.) separate from
+    operation mode
