@@ -5,34 +5,55 @@ description: Audit processed-source archives for integrity and hygiene
 
 # Cleanup
 
-Audit `raw/processed/` hygiene and optionally apply safe, non-destructive fixes.
+Audit `raw/processed/` for hygiene issues without deleting canonical evidence.
 
 ## Arguments
 
-`arguments` may include:
+`arguments` - Optional flags.
 
-- `--days N` stale-threshold hint (default: 90)
-- `--mode report|apply-safe|apply` (default: `report`)
+**Flags:**
+
+- `--days N` report folders older than N days (default: 90)
+- `--apply-safe` allow safe non-destructive fixes (empty-folder removal only)
+- `--dry-run` preview only (default behavior)
 
 ## Process
 
-1. Inspect `raw/processed/YYYY-MM-DD/` structure and date-folder integrity.
-2. Report anomalies: malformed folder names, empty date folders, obvious
-   structural drift.
-3. In `report`, return findings only.
-4. In `apply-safe`, remove empty date folders only after explicit confirmation.
-5. `apply` behaves like `apply-safe` for this skill (no destructive escalation).
-6. Append a concise cleanup entry to `log.md` when changes are applied.
+### Step 1: Scan archive health
+
+Scan `raw/processed/YYYY-MM-DD/` and identify:
+
+- date folders older than threshold
+- empty date folders
+- non-date folders or naming anomalies
+- duplicate filenames across multiple dates
+
+### Step 2: Present summary
+
+Show findings and classify each as:
+
+- informational only
+- safe fix available
+- needs manual decision
+
+### Step 3: Optional safe fixes
+
+If `--apply-safe`, remove only empty date folders after confirmation.
+
+### Step 4: Report results
+
+Show findings, optional fixes applied, and any manual follow-up actions.
+
+## Edge Cases
+
+- If `raw/processed/` missing: report no-op.
+- If no findings: report clean state.
 
 ## Safety
 
-- Never modify content files inside processed folders.
-- Never delete source evidence.
-
-## Output
-
-Return:
-
-- findings
-- safe fixes applied/proposed
-- touched files
+- Treat `raw/processed/` as canonical immutable evidence.
+- Never delete processed source files from `raw/processed/`.
+- Never delete from `raw/sources/`.
+- Never delete from `raw/assets/`.
+- Never delete from `notes/`, `projects/`, or `resources/`.
+- Never touch curated notes/projects unless explicitly requested.

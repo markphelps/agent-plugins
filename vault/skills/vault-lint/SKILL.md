@@ -6,43 +6,39 @@ description:
 
 # Lint Vault
 
-Run an active-surface hygiene pass and route execution to specialized skills.
-
-## Arguments
-
-`arguments` may include:
-
-- optional scope/path
-- `--mode report|apply-safe|apply` (default: `report`)
+Run a vault hygiene pass and propose safe fixes.
 
 ## Checks
 
-- contradictions across related notes
-- stale pages and weakly connected/orphan pages
-- broken/ambiguous wikilinks
-- duplicated concept surfaces
-- archive candidates and concept-promotion candidates
+- Contradictions across related notes
+- Orphan pages (no meaningful links in/out)
+- Stale pages based on `updated` and topic activity
+- Missing concept pages repeatedly referenced
+- Broken/ambiguous wikilinks
+- Duplicate concepts split across multiple pages
+- Dead project cruft that should be archived or removed from navigation
+- Active notes that should move to `archive/` because they are superseded or
+  purely historical
+- Repeated patterns that still live only in drift reports, traces, or dated
+  notes but deserve a canonical concept page
 
 ## Process
 
-1. Build prioritized issue list with file references.
-2. In `report`, return findings only.
-3. In `apply-safe`, apply low-risk direct fixes (link normalization,
-   formatting-level hygiene).
-4. In `apply`, additionally invoke `vault-archive-audit --mode apply-safe` and
-   `vault-concept-promoter --mode apply-safe` where confidence is high.
-5. Append lint entry to `log.md` when changes are applied.
+1. Build issue list with file references, focusing on the active vault surface
+   by default.
+2. Rank by severity/impact.
+3. Call out concept-promotion candidates explicitly when the same idea recurs
+   across multiple files.
+4. Propose fixes; apply only low-risk direct fixes when approved.
+5. Route archival moves to `vault-archive-audit` instead of performing them
+   here.
+6. Summarize outcomes and append lint entry to `log.md`.
 
 ## Safety
 
-- Exclude `raw/*` and `archive/*` unless explicitly requested.
-- Keep destructive actions out of lint.
-
-## Output
-
-Return:
-
-- findings by severity
-- actions applied/deferred
-- follow-up skills recommended
-- touched files
+- Default to report-first on ambiguous edits.
+- Avoid destructive cleanup unless explicitly approved.
+- Exclude `archive/` from active lint checks unless the user asks for an archive
+  audit.
+- Keep `vault-lint` diagnostic-first; use `vault-archive-audit` for archive
+  execution.

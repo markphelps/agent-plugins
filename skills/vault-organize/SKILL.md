@@ -7,36 +7,62 @@ description:
 
 # Organize Vault
 
-Reorganize curated notes/projects with minimal churn.
+Reorganize curated markdown files (naming, grouping, frontmatter, wikilinks).
 
 ## Arguments
 
-`arguments` may include:
+`arguments` - Path and optional flags.
 
-- optional scope/path (default active curated surface)
-- `--mode report|apply-safe|apply` (default: `report`)
+**Flags:**
+
+- `--dry-run` show plan only
+- `--yes` execute without confirmation
+- `--no-move` frontmatter/link updates only
+- `--shallow` top-level only
+
+## Mandatory Skips
+
+Never move/rename files under:
+
+- `raw/`
+- `raw/sources/`
+- `raw/assets/`
+- `raw/processed/`
+- hidden/system dirs (`.git/`, `.obsidian/`, etc.)
 
 ## Process
 
-1. Detect naming/layout/frontmatter inconsistencies.
-2. Propose a concrete file-operation plan (moves/renames/frontmatter fixes).
-3. In `report`, output plan only.
-4. In `apply-safe`, apply low-risk operations with straightforward link
-   rewrites.
-5. In `apply`, allow broader folder regrouping when link updates are clear.
-6. Rewrite affected wikilinks and append `log.md` entry.
+### Step 1: Discover candidate markdown files
+
+Analyze only active curated areas such as `notes/`, `projects/`, `resources/`.
+Treat `archive/` as out-of-scope unless the user explicitly asks to reorganize
+archived material.
+
+### Step 2: Build execution plan (in-memory)
+
+Create a plan object for:
+
+- folder creates/renames
+- file moves/renames
+- frontmatter updates
+- wikilink updates
+- empty-folder cleanup
+
+Do not persist plan JSON to disk.
+
+### Step 3: Present plan
+
+Show a readable preview and ask for confirmation unless `--yes`.
+
+### Step 4: Execute
+
+Apply plan operations, then report actual changes.
 
 ## Safety
 
-- Never touch `raw/*`.
-- Keep filenames kebab-case.
-- Prefer small batches over large reshuffles.
-
-## Output
-
-Return:
-
-- plan + confidence
-- operations executed/proposed
-- link rewrites
-- touched files
+- Default to non-destructive edits.
+- Never touch `raw/*` content.
+- Keep wikilinks consistent after renames/moves.
+- Treat `notes/`, `projects/`, and `resources/` as the default organize targets.
+- Do not move files into or out of `archive/` unless the reorganization goal
+  explicitly calls for archiving or restoring.

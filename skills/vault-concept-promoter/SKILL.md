@@ -6,44 +6,108 @@ description:
 
 # Concept Promoter
 
-Keep `notes/concepts/` as the canonical synthesis layer for recurring ideas.
+Use this skill to turn repeated patterns in the active vault into durable
+concept pages.
 
-## Arguments
+## Purpose
 
-`arguments` may include:
+- keep `notes/concepts/` as the canonical synthesis layer
+- prevent repeated ideas from remaining trapped in dated notes
+- strengthen existing concept pages with new evidence over time
+- act as the primary skill for applying concept-page create/update changes
 
-- optional topic/scope
-- `--mode report|apply-safe|apply` (default: `report`)
+## Reuse Existing Skills
 
-## Compose Existing Skills
+Prefer these existing skills as components instead of duplicating their logic:
 
-- `vault-lint` for repetition and missing-concept signals
-- `vault-synthesis --kind drift` for recurring cross-domain patterns
-- `vault-synthesis --kind trace` for historical evolution
-- `vault-index` for navigation refresh when needed
-- `vault-log` for operation history
+- `vault-lint` to identify repeated patterns and missing concept pages
+- `vault-drift` to surface cross-domain recurring signals
+- `vault-trace` to gather evolution/history for a specific concept
+- `vault-index` if concept changes require top-level navigation refresh
+- `vault-log` to append the operation entry
+
+## Modes
+
+- `audit` - report concept-promotion candidates only
+- `apply` - update or create concept pages
+
+If no mode is specified, default to `audit`.
 
 ## Process
 
-1. Identify repeated themes across active notes/projects.
-2. Decide update-vs-create for concept pages.
-3. In `report`, propose promotions only.
-4. In `apply-safe`, apply additive updates to existing concept pages.
-5. In `apply`, allow creation of clear new concept pages when evidence is strong
-   (3+ unrelated notes).
-6. Normalize references to point at canonical concepts.
-7. Refresh `index.md` if navigation changed and append `log.md` entry.
+### Step 1: Scan for concept candidates
+
+Focus on active curated areas only:
+
+- `notes/`
+- `projects/`
+- `resources/`
+
+Ignore:
+
+- `archive/`
+- `raw/`
+
+Look for:
+
+- themes appearing across 3+ unrelated notes
+- repeated language in current project docs and durable notes
+- dated or transient notes that should point to a canonical concept page
+
+### Step 2: Decide whether to update or create
+
+For each candidate:
+
+- if a matching concept page already exists, update it
+- if no concept page exists and the pattern is clearly durable, create one in
+  `notes/concepts/`
+- if confidence is weak, report only
+
+### Step 3: Strengthen the concept page
+
+When updating or creating a concept page:
+
+- add a concise core claim
+- add strong evidence links
+- add implications or operating rules
+- add `## Related` links to nearby concepts
+
+### Step 4: Normalize references
+
+If a dated note, report, or trace currently acts as the main home for the idea:
+
+- link it to the canonical concept page
+- reduce dependence on transient notes as the primary reference target
+
+### Step 5: Refresh navigation and history
+
+- if concepts changed materially, run the logic of `vault-index`
+- append a concise entry to `log.md` using `vault-log`
+
+## Apply Thresholds
+
+Auto-apply only when all are true:
+
+- theme appears in 3+ unrelated notes
+- evidence is concrete, not speculative
+- destination concept is clear
+- edits are additive and low-risk
+
+Otherwise, stay in `audit` mode.
 
 ## Safety
 
-- Prefer updating existing pages over creating near-duplicates.
-- No archival/deletion actions in this skill.
+- do not create concept spam
+- prefer updating existing concept pages over creating near-duplicates
+- do not archive or delete notes from this skill
+- do not use `archive/` as evidence unless it is historically important to the
+  concept
 
 ## Output
 
-Return:
+Report:
 
-- concepts created/updated
-- evidence used
-- reference normalization
-- touched files
+- concepts updated or created
+- evidence sources used
+- references normalized
+- whether `index.md` and `log.md` were updated
