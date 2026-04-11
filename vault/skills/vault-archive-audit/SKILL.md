@@ -7,100 +7,43 @@ description:
 
 # Archive Audit
 
-Use this skill to identify dead or superseded material that should leave the
-active vault surface.
+Identify dead or superseded curated material and move it to `archive/` when
+confidence is high.
 
-## Purpose
+## Arguments
 
-- keep `projects/` and active `notes/` small and current
-- move dead curated material into `archive/`
-- avoid accidental deletion by preferring archival moves
-- never operate on `raw/processed/` evidence; this skill is for curated content
+`arguments` may include:
 
-## Reuse Existing Skills
+- optional target scope/path
+- `--mode report|apply-safe|apply` (default: `report`)
 
-Prefer these existing skills as components instead of duplicating their logic:
+## Compose Existing Skills
 
-- `vault-project-tracker audit` for lifecycle mismatches and project-state
-  review
-- `vault-lint` for stale active material and archive candidates
-- `vault-project-tracker` for applying project archival transitions
+- `vault-project-tracker` for project lifecycle transitions
+- `vault-lint` for stale/orphan candidate signals
 - `vault-log` for append-only history
-
-## Modes
-
-- `report` - identify candidates only
-- `apply` - perform safe archive moves for high-confidence candidates
-
-If no mode is specified, default to `report`.
-
-## Candidate Types
-
-### Projects
-
-Archive candidates typically have:
-
-- no longer part of current active/exploring work
-- low or manageable inbound references
-- no recent updates
-- a clear archived destination under `archive/projects/dead/`
-
-### Notes
-
-Archive candidates typically have:
-
-- dated/transient naming patterns
-- superseded brainstorms or reviews
-- weak navigation value in the active wiki
 
 ## Process
 
-### Step 1: Audit the active surface
-
-Inspect:
-
-- `projects/`
-- active note areas under `notes/`
-- `projects/project-tracker.md`
-
-### Step 2: Rank candidates
-
-Classify each candidate as:
-
-- `safe to archive now`
-- `archive with link updates`
-- `keep active`
-- `needs human decision`
-
-### Step 3: Apply only high-confidence moves
-
-When in `apply` mode, auto-apply only if:
-
-- the item is clearly not current
-- the destination is obvious
-- inbound references are low or easy to rewrite
-- no deletion is required
-
-For project folders, prefer routing the change through the behavior defined by
-`vault-project-tracker`.
-
-### Step 4: Update control planes
-
-- keep `projects/project-tracker.md` lightweight
-- append to `log.md`
+1. Scan active curated surface (`projects/`, active `notes/`).
+2. Rank candidates: `safe`, `needs-link-rewrite`, `keep`, `needs-decision`.
+3. In `report`, output candidates only.
+4. In `apply-safe`, archive only high-confidence candidates with obvious
+   destination and low-risk rewrites.
+5. In `apply`, also archive medium-confidence candidates when evidence is clear.
+6. Update tracker/navigation references and append `log.md` entry.
 
 ## Safety
 
-- never delete from curated areas unless explicitly requested
-- prefer `report` mode when confidence is mixed
-- do not archive currently active or exploring projects without explicit user
-  instruction or prior user-declared policy
+- Never delete curated files here; archive moves only.
+- Never operate on `raw/processed/`.
+- Do not archive active/exploring projects without explicit evidence.
 
 ## Output
 
-Report:
+Return:
 
-- archive candidates found
-- actions applied or deferred
-- link rewrites required or completed
-- tracker/archive/log updates made
+- candidates and confidence
+- applied/deferred actions
+- rewrites completed/proposed
+- touched files
