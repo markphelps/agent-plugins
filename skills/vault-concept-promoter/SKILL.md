@@ -6,108 +6,58 @@ description:
 
 # Concept Promoter
 
-Use this skill to turn repeated patterns in the active vault into durable
-concept pages.
+Promote recurring patterns into canonical concept pages and keep concept
+navigation coherent.
 
-## Purpose
+## Parameters
 
-- keep `notes/concepts/` as the canonical synthesis layer
-- prevent repeated ideas from remaining trapped in dated notes
-- strengthen existing concept pages with new evidence over time
-- act as the primary skill for applying concept-page create/update changes
+- optional topic or scope path
+- `--mode report|apply-safe|apply` (default: `report`)
 
-## Reuse Existing Skills
+## Compose Existing Skills
 
-Prefer these existing skills as components instead of duplicating their logic:
+- `vault-lint` for repeated-theme candidate discovery
+- `vault-drift` for cross-domain recurrence signals
+- `vault-index` when concept navigation needs refresh
+- `vault-log` for append-only operation history
 
-- `vault-lint` to identify repeated patterns and missing concept pages
-- `vault-drift` to surface cross-domain recurring signals
-- `vault-trace` to gather evolution/history for a specific concept
-- `vault-index` if concept changes require top-level navigation refresh
-- `vault-log` to append the operation entry
+## Workflow
 
-## Modes
-
-- `audit` - report concept-promotion candidates only
-- `apply` - update or create concept pages
-
-If no mode is specified, default to `audit`.
-
-## Process
-
-### Step 1: Scan for concept candidates
-
-Focus on active curated areas only:
-
-- `notes/`
-- `projects/`
-- `resources/`
-
-Ignore:
-
-- `archive/`
-- `raw/`
-
-Look for:
-
-- themes appearing across 3+ unrelated notes
-- repeated language in current project docs and durable notes
-- dated or transient notes that should point to a canonical concept page
-
-### Step 2: Decide whether to update or create
-
-For each candidate:
-
-- if a matching concept page already exists, update it
-- if no concept page exists and the pattern is clearly durable, create one in
-  `notes/concepts/`
-- if confidence is weak, report only
-
-### Step 3: Strengthen the concept page
-
-When updating or creating a concept page:
-
-- add a concise core claim
-- add strong evidence links
-- add implications or operating rules
-- add `## Related` links to nearby concepts
-
-### Step 4: Normalize references
-
-If a dated note, report, or trace currently acts as the main home for the idea:
-
-- link it to the canonical concept page
-- reduce dependence on transient notes as the primary reference target
-
-### Step 5: Refresh navigation and history
-
-- if concepts changed materially, run the logic of `vault-index`
-- append a concise entry to `log.md` using `vault-log`
+1. Scan active curated areas (`notes/`, `projects/`, `resources/`).
+2. Detect recurring themes and candidate concept targets.
+3. Decide action per candidate:
+   - update existing concept page
+   - create new concept page
+   - defer (insufficient evidence)
+4. Apply by mode:
+   - `report`: propose concept actions only
+   - `apply-safe`: update existing concept pages only
+   - `apply`: update existing pages and create new pages when thresholds are met
+5. Normalize references so transient notes point to canonical concept pages.
+6. Refresh `index.md` when concept navigation changed.
+7. Append concise operation entry to `log.md`.
 
 ## Apply Thresholds
 
-Auto-apply only when all are true:
+Allow creation (`apply`) only when all are true:
 
 - theme appears in 3+ unrelated notes
-- evidence is concrete, not speculative
+- evidence is concrete and linkable
 - destination concept is clear
-- edits are additive and low-risk
-
-Otherwise, stay in `audit` mode.
+- change is additive and low-risk
 
 ## Safety
 
-- do not create concept spam
-- prefer updating existing concept pages over creating near-duplicates
-- do not archive or delete notes from this skill
-- do not use `archive/` as evidence unless it is historically important to the
-  concept
+- Prefer updating existing concept pages over creating near-duplicates.
+- Do not archive/delete notes from this skill.
+- Use `archive/` as evidence only when historically necessary.
 
 ## Output
 
-Report:
+Return:
 
-- concepts updated or created
-- evidence sources used
-- references normalized
-- whether `index.md` and `log.md` were updated
+- concepts created/updated/proposed
+- evidence links used
+- reference normalization performed
+- whether `index.md` / `log.md` were updated
+- touched files

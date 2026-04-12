@@ -3,24 +3,38 @@ name: vault-log
 description: Append structured entries to log.md for vault operations
 ---
 
-# Append Vault Log
+# Vault Log
 
-Append a structured operation entry to `log.md`.
+Append one structured operation entry to `log.md`.
 
-## Entry Format
+## Parameters
 
-- heading: `## [YYYY-MM-DD] <operation> | <summary>`
-- bullets: key actions
-- touched list: changed file paths
-- keep entries append-only and concise
+- `--mode report|apply` (default: `apply`)
+- Required operation context:
+  - operation name
+  - short summary
+  - key actions
+  - touched files
 
-## Process
+## Workflow
 
-1. Parse requested operation details.
-2. Append one new entry at end of `log.md`.
-3. Avoid rewriting historical entries.
+1. Normalize to one entry shape:
+   - heading: `## [YYYY-MM-DD] <operation> | <summary>`
+   - bullet list: key actions
+   - `Touched:` list with relative file paths
+2. Execute by mode:
+   - `report`: preview exact entry text, no write
+   - `apply`: append entry to end of `log.md`
+3. Keep entry concise and factual.
 
 ## Safety
 
-- Append-only behavior.
-- Never delete or reorder existing log history.
+- Append-only.
+- Never delete, reorder, or rewrite historical entries.
+
+## Output
+
+Return:
+
+- rendered entry text
+- append status

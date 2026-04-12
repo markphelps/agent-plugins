@@ -9,16 +9,14 @@ description:
 
 Reorganize curated markdown files (naming, grouping, frontmatter, wikilinks).
 
-## Arguments
+## Parameters
 
-`arguments` - Path and optional flags.
-
-**Flags:**
-
-- `--dry-run` show plan only
-- `--yes` execute without confirmation
-- `--no-move` frontmatter/link updates only
-- `--shallow` top-level only
+- Path input (optional): scope target directory
+- Flags:
+  - `--mode report|apply-safe|apply` (default: `report`)
+  - `--yes` execute without confirmation
+  - `--no-move` frontmatter/link updates only
+  - `--shallow` top-level only
 
 ## Mandatory Skips
 
@@ -30,33 +28,22 @@ Never move/rename files under:
 - `raw/processed/`
 - hidden/system dirs (`.git/`, `.obsidian/`, etc.)
 
-## Process
+## Workflow
 
-### Step 1: Discover candidate markdown files
-
-Analyze only active curated areas such as `notes/`, `projects/`, `resources/`.
-Treat `archive/` as out-of-scope unless the user explicitly asks to reorganize
-archived material.
-
-### Step 2: Build execution plan (in-memory)
-
-Create a plan object for:
-
-- folder creates/renames
-- file moves/renames
-- frontmatter updates
-- wikilink updates
-- empty-folder cleanup
-
-Do not persist plan JSON to disk.
-
-### Step 3: Present plan
-
-Show a readable preview and ask for confirmation unless `--yes`.
-
-### Step 4: Execute
-
-Apply plan operations, then report actual changes.
+1. Discover candidate markdown files in active curated areas:
+   - `notes/`, `projects/`, `resources/`
+   - exclude `archive/` unless explicitly requested
+2. Build an in-memory execution plan:
+   - folder creates/renames
+   - file moves/renames
+   - frontmatter updates
+   - wikilink updates
+   - empty-folder cleanup
+3. Present a readable preview; confirm unless `--yes`.
+4. Execute by mode:
+   - `report`: preview only
+   - `apply-safe`: high-confidence operations only
+   - `apply`: full confirmed plan
 
 ## Safety
 
@@ -66,3 +53,11 @@ Apply plan operations, then report actual changes.
 - Treat `notes/`, `projects/`, and `resources/` as the default organize targets.
 - Do not move files into or out of `archive/` unless the reorganization goal
   explicitly calls for archiving or restoring.
+
+## Output
+
+Return:
+
+- planned/executed moves and renames
+- frontmatter/link updates
+- skipped items and why

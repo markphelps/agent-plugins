@@ -19,7 +19,8 @@
     "defaultPrompt": [
       "Create a detailed handoff for this coding session.",
       "Summarize repo state and next steps for the next agent.",
-      "Migrate this repo from Claude-specific config to AGENTS/skills standards."
+      "Migrate this repo from Claude-specific config to AGENTS/skills standards.",
+      "Create a branch, commit smartly scoped changes, push, and open a PR (ask whether draft)."
     ]
   }
 }
