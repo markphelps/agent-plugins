@@ -1,7 +1,7 @@
 ---
 name: vault-session-sync
 description:
-  End-of-session sync for vault state: update project tracker, notes/index, and
+  End-of-session sync for vault state update project tracker, notes/index, and
   operation log from session context
 ---
 
