@@ -14,6 +14,7 @@ Raw-first vault workflows for Obsidian.
 - Research-oriented note enrichment
 - Index and operation-log maintenance helpers
 - QMD-backed retrieval and publish-readiness helpers for hosted vaults
+- End-of-session sync workflow for keeping project state current
 
 ## Skill Set
 
@@ -25,6 +26,7 @@ Raw-first vault workflows for Obsidian.
 | `vault-cleanup`           | Audits `raw/processed/` integrity and optional safe hygiene fixes.                           | When checking archive health without deleting evidence.              |
 | `vault-index`             | Refreshes `index.md` from durable active content.                                            | When navigation drifts or new durable pages appear.                  |
 | `vault-log`               | Appends a structured entry to `log.md`.                                                      | After any material vault operation.                                  |
+| `vault-session-sync`      | Syncs session outcomes into tracker/index/log from recent work context.                      | At the end of a coding or research session.                          |
 | `vault-qmd`               | Uses `qmd` for retrieval, inspect, preflight, and index-update flows for hosted vaults.      | When searching, validating, or refreshing hosted-vault index health. |
 | `vault-lint`              | Audits the active vault for contradictions, stale pages, weak linking, and missing concepts. | On regular hygiene passes or before larger cleanup sessions.         |
 | `vault-ideas`             | Extracts promising ideas and patterns from notes.                                            | When looking for product, writing, or synthesis opportunities.       |
