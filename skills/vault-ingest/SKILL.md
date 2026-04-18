@@ -1,8 +1,9 @@
 ---
 name: vault-ingest
 description:
-  Move captured sources through ingestion pipeline: process captures, create curated notes,
-  promote themes to concepts, archive sources, update index, and audit processed archives
+  Move captured sources through ingestion pipeline. Process captures, create
+  curated notes, promote themes to concepts, archive sources, update index, and
+  audit processed archives
 ---
 
 # Vault Ingest
