@@ -1,62 +1,55 @@
 ---
 name: vault-lint
-description:
-  Lint vault for contradictions, stale pages, orphans, and weak linking
+description: Hygiene pass over notes/ and projects/ surface
 ---
 
 # Lint Vault
 
-Run a vault hygiene pass and propose safe fixes.
+Run a focused hygiene pass over active vault surface and propose fixes.
 
 ## Parameters
 
-- optional target path/scope
-- `--mode report|apply-safe|apply` (default: `report`)
+- `--scope notes|projects|all` (default: `all`)
+- `--mode report|apply` (default: `report`)
 
 ## Checks
 
-- Contradictions across related notes
-- Orphan pages (no meaningful links in/out)
-- Stale pages based on `updated` and topic activity
-- Missing concept pages repeatedly referenced
-- Broken/ambiguous wikilinks
-- Duplicate concepts split across multiple pages
-- Dead project cruft that should be archived or removed from navigation
-- Active notes that should move to `archive/` because they are superseded or
-  purely historical
-- Repeated patterns that still live only in drift reports or dated notes but
-  deserve a canonical concept page
+- **Orphan pages**: No inbound links from active surface
+- **Stale pages**: `updated` date threshold + topic inactivity
+- **Contradictions**: Conflicting claims across related notes
+- **Broken/ambiguous wikilinks**: Invalid or unclear [[links]]
+- **Missing concepts**: Repeated themes without canonical page
+- **Mismatched states**: Project directory location vs tracker status
+
+## Scope
+
+- **notes/** and **projects/** only (exclude archive/ unless explicitly requested)
+- Does NOT move files (use `vault-tracker` for lifecycle changes)
+- Does NOT delete content
 
 ## Workflow
 
-1. Build issue list with file references, focusing on the active vault surface
-   by default.
-2. Rank by severity/impact.
-3. Call out concept-promotion candidates explicitly when the same idea recurs
-   across multiple files.
-4. In `report`, propose fixes only.
-5. In `apply-safe`, apply only low-risk direct fixes when approved.
-6. In `apply`, route archival/concept execution to specialized skills:
-   `vault-archive-audit --mode apply-safe` and
-   `vault-concept-promoter --mode apply-safe`.
-7. For publish-facing lint runs, call `vault-qmd --mode report` to validate
-   retrieval/index health.
-8. Summarize outcomes and append lint entry to `log.md`.
+1. Scan scoped directories and build issue list with file references.
+2. Classify by severity: info, warning, critical.
+3. In `report` mode: list issues and proposed fixes only.
+4. In `apply` mode: fix link issues, flag decisions needing manual review.
+5. Call out concept-promotion candidates (themes appearing 3+ times).
+6. Report mismatched project states for `vault-tracker` handling.
+7. Summarize outcomes.
 
 ## Safety
 
-- Default to report-first on ambiguous edits.
-- Avoid destructive cleanup unless explicitly approved.
-- Exclude `archive/` from active lint checks unless the user asks for an archive
-  audit.
-- Keep `vault-lint` diagnostic-first; use `vault-archive-audit` for archive
-  execution.
+- Report-first by default on all ambiguous issues.
+- Never delete content or move files.
+- Never modify raw/, processed/, or assets/.
+- Exclude archive/ from automatic scans.
 
 ## Output
 
 Return:
 
-- issue list with severity
-- proposed/applied fixes by mode
-- archive/concept promotions delegated
-- touched files and log entry status
+- Issue list with severity and file references
+- Fixes applied (link corrections only)
+- Decisions requiring manual review
+- Concept promotion candidates
+- Mismatched states flagged for vault-tracker

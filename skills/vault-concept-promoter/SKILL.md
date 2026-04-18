@@ -17,9 +17,8 @@ navigation coherent.
 ## Compose Existing Skills
 
 - `vault-lint` for repeated-theme candidate discovery
-- `vault-drift` for cross-domain recurrence signals
-- `vault-index` when concept navigation needs refresh
-- `vault-log` for append-only operation history
+- `vault-concepts` for the current canonical concept workflow
+- `vault-maintain` for periodic full-vault maintenance
 
 ## Workflow
 
@@ -34,8 +33,9 @@ navigation coherent.
    - `apply-safe`: update existing concept pages only
    - `apply`: update existing pages and create new pages when thresholds are met
 5. Normalize references so transient notes point to canonical concept pages.
-6. Refresh `index.md` when concept navigation changed.
-7. Append concise operation entry to `log.md`.
+6. Refresh supporting navigation manually if your vault keeps a curated
+   `index.md`.
+7. Append a concise operation entry manually if your vault keeps `log.md`.
 
 ## Apply Thresholds
 
@@ -59,5 +59,5 @@ Return:
 - concepts created/updated/proposed
 - evidence links used
 - reference normalization performed
-- whether `index.md` / `log.md` were updated
+- whether supporting navigation or logs were updated
 - touched files
