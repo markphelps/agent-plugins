@@ -25,13 +25,12 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 
 ## Removed Skills
 
-The following 12 skills are deprecated and removed:
+The following 15 skills were deprecated and are now removed:
 
 - vault-archive-audit → merged into vault-tracker
 - vault-challenge → workflow now explicit
 - vault-cleanup → merged into vault-ingest
 - vault-compact → manual workflow
-- vault-concept-promoter → renamed vault-concepts
 - vault-connect → manual cross-linking
 - vault-drift → merged into vault-concepts
 - vault-ideas → explicit ideas/ directory
