@@ -23,7 +23,8 @@ Run a focused hygiene pass over active vault surface and propose fixes.
 
 ## Scope
 
-- **notes/** and **projects/** only (exclude archive/ unless explicitly requested)
+- **notes/** and **projects/** only (exclude archive/ unless explicitly
+  requested)
 - Does NOT move files (use `vault-tracker` for lifecycle changes)
 - Does NOT delete content
 

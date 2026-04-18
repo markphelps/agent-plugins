@@ -5,11 +5,13 @@ description: Maintain canonical concept pages and surface recurring themes
 
 # Concepts
 
-Promote recurring themes into canonical concept pages and keep concept navigation coherent.
+Promote recurring themes into canonical concept pages and keep concept
+navigation coherent.
 
 ## Purpose
 
-Maintain `notes/concepts/` as the durable vocabulary of your vault. Surface cross-domain patterns and decide when transience deserves permanence.
+Maintain `notes/concepts/` as the durable vocabulary of your vault. Surface
+cross-domain patterns and decide when transience deserves permanence.
 
 ## Parameters
 
@@ -27,7 +29,8 @@ Only create new concept pages when ALL are true:
 
 ## Workflow
 
-1. **Scan**: Read active surface (`notes/`, `projects/`, `resources/`) for recurring themes
+1. **Scan**: Read active surface (`notes/`, `projects/`, `resources/`) for
+   recurring themes
 2. **Detect**: Extract patterns across unrelated notes:
    - Phrases/metaphors that recur
    - Principles or mental models
@@ -41,7 +44,8 @@ Only create new concept pages when ALL are true:
    - Update existing concept page
    - Create new concept page (if thresholds met)
    - Defer (insufficient evidence)
-6. **Normalize**: Rewrite transient note references to point to canonical concepts
+6. **Normalize**: Rewrite transient note references to point to canonical
+   concepts
 7. **Refresh**: Update `index.md` when concept navigation changes
 8. **Log**: Append concise operation entry
 

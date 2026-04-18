@@ -1,12 +1,15 @@
 ---
 name: vault-ingest
-description: Move captured sources through ingestion pipeline. Process captures, create curated notes, promote themes to concepts, archive sources, update index, and audit processed archives
+description:
+  Move captured sources through ingestion pipeline. Process captures, create
+  curated notes, promote themes to concepts, archive sources, update index, and
+  audit processed archives
 ---
 
 # Vault Ingest
 
-Ingest captures from `raw/sources/` into curated notes and projects, archive processed
-sources, update navigation, and audit processed archives for hygiene.
+Ingest captures from `raw/sources/` into curated notes and projects, archive
+processed sources, update navigation, and audit processed archives for hygiene.
 
 ## Parameters
 
@@ -22,7 +25,8 @@ For each ingestion cycle:
 - Source starts in `raw/sources/` (unprocessed inbox)
 - Curated interpretation lives in `notes/` and/or `projects/`
 - Recurring themes are promoted to `notes/concepts/` as canonical concept pages
-- Source is archived to `raw/processed/YYYY-MM-DD/` only after successful curation
+- Source is archived to `raw/processed/YYYY-MM-DD/` only after successful
+  curation
 - New durable pages are reflected in `index.md`
 - All material operations are logged in `log.md`
 - `raw/processed/` is audited for empty folders and anomalies
@@ -51,11 +55,14 @@ For each ingestion cycle:
 
 ## Safety
 
-- Never delete from `raw/sources/` — only archive moves after successful processing
-- Treat `raw/processed/` as immutable evidence — never delete processed source files
+- Never delete from `raw/sources/` — only archive moves after successful
+  processing
+- Treat `raw/processed/` as immutable evidence — never delete processed source
+  files
 - Non-destructive edits by default — curated pages are only added to or updated
 - Confirm before execution unless `--yes`
-- Do not mutate file contents under `raw/sources/`, `raw/processed/`, or `raw/assets/`
+- Do not mutate file contents under `raw/sources/`, `raw/processed/`, or
+  `raw/assets/`
 - Do not assume or create an inbox staging layer
 
 ## Output
