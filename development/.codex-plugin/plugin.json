@@ -1,18 +1,26 @@
 {
   "name": "development",
   "version": "0.0.2",
-  "description": "Developer workflow tools — session handoffs, context management, and repo migration utilities.",
+  "description": "Developer workflow tools — session handoffs, context management, worktrees, and repo migration utilities.",
   "author": {
     "name": "Mark Phelps"
   },
   "repository": "https://github.com/markphelps/agent-plugins",
   "license": "MIT",
-  "keywords": ["development", "workflow", "handoff", "session", "productivity"],
+  "keywords": [
+    "development",
+    "workflow",
+    "handoff",
+    "session",
+    "productivity",
+    "worktree",
+    "wt"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Workflow and migration tools",
-    "longDescription": "Session handoff and repository migration workflows for modern agent standards.",
+    "shortDescription": "Workflow, worktree, and migration tools",
+    "longDescription": "Session handoff, Git worktree, and repository migration workflows for modern agent standards.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
@@ -20,7 +28,8 @@
       "Create a detailed handoff for this coding session.",
       "Summarize repo state and next steps for the next agent.",
       "Migrate this repo from Claude-specific config to AGENTS/skills standards.",
-      "Create a branch, commit smartly scoped changes, push, and open a PR (ask whether draft)."
+      "Create a branch, commit smartly scoped changes, push, and open a PR (ask whether draft).",
+      "Create or check out a task branch using wt and work from its worktree path."
     ]
   }
 }

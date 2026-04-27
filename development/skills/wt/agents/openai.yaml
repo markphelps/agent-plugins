@@ -1,0 +1,3 @@
+display_name: wt
+short_description: Manage Git worktrees with wt for branch-per-task development
+default_prompt: Create or check out a task branch using wt, work from its worktree path, and use wt status to keep branch state clean.
