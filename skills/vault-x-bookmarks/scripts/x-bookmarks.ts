@@ -22,6 +22,8 @@ export interface CliOptions {
 export interface BookmarkPost {
   id: string
   text: string
+  article?: BookmarkArticle
+  linkedContent?: BookmarkLinkedContent[]
   authorId?: string
   authorName?: string
   authorHandle?: string
@@ -32,6 +34,21 @@ export interface BookmarkPost {
     reply_count?: number
     quote_count?: number
   }
+  links: string[]
+}
+
+export interface BookmarkLinkedContent {
+  url: string
+  finalUrl?: string
+  title?: string
+  text: string
+  contentType?: string
+}
+
+export interface BookmarkArticle {
+  title?: string
+  previewText?: string
+  text: string
   links: string[]
 }
 
@@ -81,6 +98,7 @@ export interface CollectionResult {
 
 type JsonRecord = Record<string, unknown>
 export type XurlJsonRunner = (args: string[]) => Promise<JsonRecord>
+export type LinkContentFetcher = (url: string) => Promise<BookmarkLinkedContent>
 
 const DEFAULT_OPTIONS: CliOptions = {
   limit: 15,
@@ -94,6 +112,9 @@ const SAVED_CURSOR_REJECTED =
 
 const execFileAsync = promisify(execFile)
 const XURL_MAX_BUFFER_BYTES = 64 * 1024 * 1024
+const MAX_LINKS_PER_BOOKMARK = 3
+const MAX_LINK_TEXT_CHARS = 20_000
+const LINK_FETCH_TIMEOUT_MS = 10_000
 
 export function parseArgs(argv: string[]): CliOptions {
   const options = { ...DEFAULT_OPTIONS }
@@ -135,7 +156,7 @@ export function parseArgs(argv: string[]): CliOptions {
   return options
 }
 
-export function selectOldestReachableUnreviewed(
+export function selectNewestReachableUnreviewed(
   pagesNewestFirst: BookmarkPost[][],
   reviewedIds: Set<string>,
   limit: number,
@@ -151,8 +172,7 @@ export function selectOldestReachableUnreviewed(
       seen.add(post.id)
       return true
     })
-    .slice(-limit)
-    .reverse()
+    .slice(0, limit)
 }
 
 export function mergePagesWithoutDuplicatePosts(
@@ -192,14 +212,14 @@ function recordNewestFirstOrder(
   return ordinal
 }
 
-function orderSelectedOldestToNewest(
+function orderSelectedNewestToOldest(
   selected: BookmarkPost[],
   postOrder: Map<string, number>,
 ): BookmarkPost[] {
   return [...selected].sort((left, right) => {
     const leftOrder = postOrder.get(left.id) ?? -1
     const rightOrder = postOrder.get(right.id) ?? -1
-    return rightOrder - leftOrder
+    return leftOrder - rightOrder
   })
 }
 
@@ -211,11 +231,13 @@ export function buildSourceMarkdown(
   const author = post.authorName?.trim() || 'Unknown author'
   const postedAt = post.createdAt?.trim() || 'unknown'
   const sourceUrl = `https://x.com/${handle}/status/${post.id}`
-  const title = markdownTitle(post.text)
+  const title = markdownTitle(post.article?.title ?? post.text)
   const links = post.links.length
     ? post.links.map((link) => `- ${link}`).join('\n')
     : '- unknown'
   const metrics = post.publicMetrics ?? {}
+  const article = articleMarkdown(post.article)
+  const linkedContent = linkedContentMarkdown(post.linkedContent)
 
   return `---
 tags:
@@ -242,6 +264,8 @@ ${post.text.trim() || 'unknown'}
 ## Links
 
 ${links}
+${article}
+${linkedContent}
 
 ## Metadata
 
@@ -347,7 +371,7 @@ export async function collectSelectedBookmarks(
     }
   }
 
-  for (const post of selectOldestReachableUnreviewed(
+  for (const post of selectNewestReachableUnreviewed(
     headPages,
     reviewedIds,
     options.limit,
@@ -358,7 +382,7 @@ export async function collectSelectedBookmarks(
 
   if (selected.length >= options.limit) {
     return {
-      selected: orderSelectedOldestToNewest(selected, postOrder),
+      selected: orderSelectedNewestToOldest(selected, postOrder),
       pagesFetched,
       nextBacklogToken: checkpoint.backlog_token ?? headCursor,
       backlogExhausted: checkpoint.backlog_exhausted ?? false,
@@ -369,7 +393,7 @@ export async function collectSelectedBookmarks(
 
   if (checkpoint.backlog_exhausted) {
     return {
-      selected: orderSelectedOldestToNewest(selected, postOrder),
+      selected: orderSelectedNewestToOldest(selected, postOrder),
       pagesFetched,
       nextBacklogToken: null,
       backlogExhausted: true,
@@ -420,9 +444,9 @@ export async function collectSelectedBookmarks(
       newestFirstOrdinal,
     )
 
-    const oldestToNewest = [...page.bookmarkPage.posts].reverse()
-    for (let index = 0; index < oldestToNewest.length; index += 1) {
-      const post = oldestToNewest[index]
+    const newestToOldest = page.bookmarkPage.posts
+    for (let index = 0; index < newestToOldest.length; index += 1) {
+      const post = newestToOldest[index]
       if (selectedIds.has(post.id)) {
         continue
       }
@@ -430,7 +454,7 @@ export async function collectSelectedBookmarks(
       selectedIds.add(post.id)
       if (selected.length >= options.limit) {
         nextBacklogToken =
-          index < oldestToNewest.length - 1
+          index < newestToOldest.length - 1
             ? page.bookmarkPage.requestToken
             : page.bookmarkPage.nextToken
         break
@@ -451,7 +475,7 @@ export async function collectSelectedBookmarks(
   }
 
   return {
-    selected: orderSelectedOldestToNewest(selected, postOrder),
+    selected: orderSelectedNewestToOldest(selected, postOrder),
     pagesFetched,
     nextBacklogToken,
     backlogExhausted,
@@ -463,6 +487,7 @@ export async function collectSelectedBookmarks(
 export async function run(
   options: CliOptions,
   xurlJson: XurlJsonRunner = runXurlJsonCommand,
+  linkContentFetcher: LinkContentFetcher = fetchLinkedContent,
 ): Promise<void> {
   const runId = new Date().toISOString().replace(/[-:.TZ]/g, '')
   const startedAt = new Date().toISOString()
@@ -473,6 +498,7 @@ export async function run(
   const checkpointPath = path.join(stateDir, 'checkpoint.json')
   const sourceRecords: string[] = []
   const writeErrors: string[] = []
+  const linkErrors: string[] = []
 
   await mkdir(stateDir, { recursive: true })
   await mkdir(sourcesDir, { recursive: true })
@@ -496,14 +522,26 @@ export async function run(
 
   for (const post of collection.selected) {
     const capturedAt = new Date().toISOString()
-    const desiredPath = path.join(sourcesDir, sourceFilename(post, capturedAt))
+    const hydratedPost = await hydrateLinkedContent(
+      post,
+      linkContentFetcher,
+      linkErrors,
+    )
+    const desiredPath = path.join(
+      sourcesDir,
+      sourceFilename(hydratedPost, capturedAt),
+    )
 
     try {
       const sourcePath = await uniquePath(desiredPath)
-      await writeFile(sourcePath, buildSourceMarkdown(post, capturedAt), {
-        encoding: 'utf8',
-        flag: 'wx',
-      })
+      await writeFile(
+        sourcePath,
+        buildSourceMarkdown(hydratedPost, capturedAt),
+        {
+          encoding: 'utf8',
+          flag: 'wx',
+        },
+      )
       const reviewedEntry: ReviewedEntry = {
         post_id: post.id,
         reviewed_at: capturedAt,
@@ -530,7 +568,7 @@ export async function run(
     }
   }
 
-  const allErrors = [...collection.errors, ...writeErrors]
+  const allErrors = [...collection.errors, ...linkErrors, ...writeErrors]
   const finishedAt = new Date().toISOString()
   const runEntry: RunEntry = {
     run_id: runId,
@@ -586,8 +624,8 @@ async function fetchBookmarkPage(
 ): Promise<NormalizedPage> {
   const query = new URLSearchParams({
     max_results: '100',
-    expansions: 'author_id,attachments.media_keys',
-    'tweet.fields': 'author_id,created_at,entities,note_tweet,public_metrics',
+    expansions: 'author_id,attachments.media_keys,article.cover_media,article.media_entities',
+    'tweet.fields': 'article,author_id,created_at,entities,note_tweet,public_metrics',
     'user.fields': 'id,name,username',
     'media.fields': 'url,preview_image_url,type',
   })
@@ -601,6 +639,89 @@ async function fetchBookmarkPage(
   ])
 
   return normalizeBookmarkPage(response, paginationToken)
+}
+
+export async function hydrateLinkedContent(
+  post: BookmarkPost,
+  fetcher: LinkContentFetcher,
+  errors: string[] = [],
+): Promise<BookmarkPost> {
+  const linkedContent: BookmarkLinkedContent[] = []
+
+  for (const url of relevantLinkedContentUrls(post).slice(
+    0,
+    MAX_LINKS_PER_BOOKMARK,
+  )) {
+    try {
+      linkedContent.push(await fetcher(url))
+    } catch (error) {
+      errors.push(
+        `Failed to fetch linked content for ${post.id} (${url}): ${errorMessage(error)}`,
+      )
+    }
+  }
+
+  if (linkedContent.length === 0) {
+    return post
+  }
+
+  return {
+    ...post,
+    linkedContent,
+  }
+}
+
+export function relevantLinkedContentUrls(post: BookmarkPost): string[] {
+  const articleLinks = new Set(post.article?.links ?? [])
+  return mergeUniqueStrings(post.links)
+    .filter((link) => !articleLinks.has(link))
+    .filter(isFetchableExternalContentUrl)
+}
+
+async function fetchLinkedContent(url: string): Promise<BookmarkLinkedContent> {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), LINK_FETCH_TIMEOUT_MS)
+
+  try {
+    const response = await fetch(url, {
+      redirect: 'follow',
+      signal: controller.signal,
+      headers: {
+        accept: 'text/html,text/plain;q=0.9,*/*;q=0.1',
+        'user-agent': 'vault-x-bookmarks/1.0',
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+
+    const contentType = response.headers.get('content-type') ?? undefined
+    if (!isTextContentType(contentType)) {
+      throw new Error(`unsupported content type: ${contentType ?? 'unknown'}`)
+    }
+
+    const rawText = await response.text()
+    const extracted = contentType?.toLowerCase().includes('html')
+      ? extractHtmlContent(rawText)
+      : {
+          title: undefined,
+          text: normalizeWhitespace(rawText),
+        }
+    const text = extracted.text.slice(0, MAX_LINK_TEXT_CHARS).trim()
+    if (!text) {
+      throw new Error('no readable text found')
+    }
+
+    return {
+      url,
+      finalUrl: response.url && response.url !== url ? response.url : undefined,
+      title: extracted.title,
+      text,
+      contentType,
+    }
+  } finally {
+    clearTimeout(timeout)
+  }
 }
 
 async function runXurlJsonCommand(args: string[]): Promise<JsonRecord> {
@@ -681,6 +802,10 @@ function normalizePost(
     optionalRecord(tweet.public_metrics) ?? optionalRecord(tweet.publicMetrics)
   const noteTweet =
     optionalRecord(tweet.note_tweet) ?? optionalRecord(tweet.noteTweet)
+  const article = normalizeArticle(
+    optionalRecord(tweet.article),
+    extractLinks(tweet, noteTweet),
+  )
   const text =
     stringValue(noteTweet?.text) ?? stringValue(tweet.text) ?? ''
 
@@ -710,7 +835,41 @@ function normalizePost(
         publicMetrics?.quote_count ?? publicMetrics?.quoteCount,
       ),
     },
-    links: extractLinks(tweet, noteTweet),
+    links: mergeUniqueStrings([
+      ...extractLinks(tweet, noteTweet),
+      ...(article?.links ?? []),
+    ]),
+    article,
+  }
+}
+
+function normalizeArticle(
+  article: JsonRecord | undefined,
+  tweetLinks: string[],
+): BookmarkArticle | undefined {
+  if (!article) {
+    return undefined
+  }
+
+  const text =
+    stringValue(article.plain_text) ??
+    stringValue(article.plainText) ??
+    stringValue(article.text)
+  if (!text) {
+    return undefined
+  }
+
+  const links = mergeUniqueStrings([
+    ...extractEntityLinks(asRecord(article.entities)),
+    ...tweetLinks.filter(isXArticleUrl),
+  ])
+
+  return {
+    title: stringValue(article.title),
+    previewText:
+      stringValue(article.preview_text) ?? stringValue(article.previewText),
+    text,
+    links,
   }
 }
 
@@ -719,26 +878,220 @@ function extractLinks(
   noteTweet?: JsonRecord,
 ): string[] {
   const entityGroups = [asRecord(tweet.entities), asRecord(noteTweet?.entities)]
-  const seen = new Set<string>()
+  return mergeUniqueStrings(entityGroups.flatMap(extractEntityLinks))
+}
+
+function extractEntityLinks(entities: JsonRecord): string[] {
   const links: string[] = []
 
-  for (const entities of entityGroups) {
-    for (const url of asArray(entities?.urls)) {
-      const urlRecord = asRecord(url)
-      const link =
-        stringValue(urlRecord.unwound_url) ??
-        stringValue(urlRecord.unwoundUrl) ??
-        stringValue(urlRecord.expanded_url) ??
-        stringValue(urlRecord.expandedUrl) ??
-        stringValue(urlRecord.url)
-      if (link && !seen.has(link)) {
-        seen.add(link)
-        links.push(link)
-      }
+  for (const url of asArray(entities.urls)) {
+    const urlRecord = asRecord(url)
+    const link =
+      stringValue(urlRecord.unwound_url) ??
+      stringValue(urlRecord.unwoundUrl) ??
+      stringValue(urlRecord.expanded_url) ??
+      stringValue(urlRecord.expandedUrl) ??
+      stringValue(urlRecord.url) ??
+      stringValue(urlRecord.text)
+    if (link) {
+      links.push(link)
     }
   }
 
   return links
+}
+
+function articleMarkdown(article: BookmarkArticle | undefined): string {
+  if (!article) {
+    return ''
+  }
+
+  const title = article.title?.trim()
+  const preview = article.previewText?.trim()
+  const articleLinks = article.links.length
+    ? `\n\n### Article Links\n\n${article.links.map((link) => `- ${link}`).join('\n')}`
+    : ''
+
+  return `
+
+## Article
+
+${title ? `Title: ${title}\n\n` : ''}${preview ? `Preview: ${preview}\n\n` : ''}${article.text.trim()}${articleLinks}
+`
+}
+
+function linkedContentMarkdown(
+  linkedContent: BookmarkLinkedContent[] | undefined,
+): string {
+  if (!linkedContent?.length) {
+    return ''
+  }
+
+  const sections = linkedContent.map((content) => {
+    const title = content.title?.trim()
+    const finalUrl =
+      content.finalUrl && content.finalUrl !== content.url
+        ? `\nFinal URL: ${content.finalUrl}`
+        : ''
+    return `### ${title || content.url}
+
+URL: ${content.url}${finalUrl}
+
+${content.text.trim()}`
+  })
+
+  return `
+
+## Linked Content
+
+${sections.join('\n\n')}`
+}
+
+function extractHtmlContent(html: string): { title?: string; text: string } {
+  const title =
+    extractMetaContent(html, 'og:title') ??
+    extractTagContent(html, 'title') ??
+    undefined
+  const description =
+    extractMetaContent(html, 'description') ??
+    extractMetaContent(html, 'og:description')
+  const body = html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, ' ')
+    .replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi, ' ')
+    .replace(/<(?:br|p|div|section|article|header|footer|li|h[1-6])\b[^>]*>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+
+  return {
+    title: title ? decodeHtmlEntities(normalizeWhitespace(title)) : undefined,
+    text: normalizeWhitespace(
+      [description, body]
+        .filter((part): part is string => typeof part === 'string')
+        .map(decodeHtmlEntities)
+        .join('\n\n'),
+    ),
+  }
+}
+
+function extractTagContent(html: string, tagName: string): string | undefined {
+  const escapedTag = tagName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = new RegExp(
+    `<${escapedTag}\\b[^>]*>([\\s\\S]*?)<\\/${escapedTag}>`,
+    'i',
+  ).exec(html)
+  return match?.[1]?.trim() || undefined
+}
+
+function extractMetaContent(
+  html: string,
+  nameOrProperty: string,
+): string | undefined {
+  const escapedName = nameOrProperty.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pattern = new RegExp(
+    `<meta\\b(?=[^>]*(?:name|property)=["']${escapedName}["'])(?=[^>]*content=["']([^"']+)["'])[^>]*>`,
+    'i',
+  )
+  return pattern.exec(html)?.[1]?.trim() || undefined
+}
+
+function normalizeWhitespace(value: string): string {
+  return value
+    .replace(/\r/g, '')
+    .replace(/[ \t\f\v]+/g, ' ')
+    .replace(/\n\s+/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
+function decodeHtmlEntities(value: string): string {
+  return value
+    .replace(/&#(\d+);/g, (_, codepoint: string) =>
+      String.fromCodePoint(Number(codepoint)),
+    )
+    .replace(/&#x([0-9a-f]+);/gi, (_, codepoint: string) =>
+      String.fromCodePoint(Number.parseInt(codepoint, 16)),
+    )
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, ' ')
+}
+
+function mergeUniqueStrings(values: string[]): string[] {
+  const seen = new Set<string>()
+  const merged: string[] = []
+
+  for (const value of values) {
+    const trimmed = value.trim()
+    if (!trimmed || seen.has(trimmed)) {
+      continue
+    }
+    seen.add(trimmed)
+    merged.push(trimmed)
+  }
+
+  return merged
+}
+
+function isXArticleUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    return (
+      /(^|\.)x\.com$/i.test(url.hostname) &&
+      url.pathname.startsWith('/i/article/')
+    )
+  } catch {
+    return false
+  }
+}
+
+function isFetchableExternalContentUrl(value: string): boolean {
+  let url: URL
+  try {
+    url = new URL(value)
+  } catch {
+    return false
+  }
+
+  if (!['http:', 'https:'].includes(url.protocol)) {
+    return false
+  }
+  if (isXFamilyHostname(url.hostname)) {
+    return false
+  }
+  if (
+    /\.(?:avif|gif|jpe?g|mov|mp3|mp4|png|svg|webm|webp)(?:$|\?)/i.test(
+      url.pathname,
+    )
+  ) {
+    return false
+  }
+  return true
+}
+
+function isXFamilyHostname(hostname: string): boolean {
+  return (
+    /(^|\.)t\.co$/i.test(hostname) ||
+    /(^|\.)x\.com$/i.test(hostname) ||
+    /(^|\.)twitter\.com$/i.test(hostname) ||
+    /(^|\.)pic\.x\.com$/i.test(hostname)
+  )
+}
+
+function isTextContentType(contentType: string | undefined): boolean {
+  if (!contentType) {
+    return true
+  }
+  const normalized = contentType.toLowerCase()
+  return (
+    normalized.includes('text/html') ||
+    normalized.includes('text/plain') ||
+    normalized.includes('application/xhtml+xml')
+  )
 }
 
 async function appendJsonLine(filePath: string, entry: unknown): Promise<void> {

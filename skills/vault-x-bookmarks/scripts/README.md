@@ -3,6 +3,15 @@
 TypeScript CLI used by the `vault-x-bookmarks` skill to capture selected X
 bookmarks into a vault's `raw/sources/` directory.
 
+For bookmarked posts that contain X Articles, the helper requests the `article`
+post field and writes the article title, preview, body text, and article entity
+links into the captured source record.
+
+For bookmarked posts that link directly to external non-X text/html content, the
+helper fetches that page and writes extracted text into the source record. It
+only fetches URLs present in the bookmark payload and does not crawl links found
+inside fetched pages.
+
 ## Requirements
 
 - Node.js with npm.
@@ -75,6 +84,9 @@ The script writes:
 
 It prints a JSON summary with the `xurl whoami` user ID, pages fetched, captured
 count, created source paths, and any errors.
+
+Captured bookmarks are selected newest-to-oldest from X's bookmark pages, so the
+first source records in a run match the current bookmark order returned by X.
 
 The script never mutates X bookmarks and does not route files into permanent
 vault folders. Run `vault-ingest` afterward to classify captured source records.

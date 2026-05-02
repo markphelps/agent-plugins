@@ -12,20 +12,26 @@ import path from "node:path";
 import test from "node:test";
 import {
   type BookmarkPost,
+  type LinkContentFetcher,
   type XurlJsonRunner,
   buildSourceMarkdown,
   collectSelectedBookmarks,
+  hydrateLinkedContent,
   mergePagesWithoutDuplicatePosts,
   parseArgs,
   readCheckpoint,
   readReviewedIds,
   run,
-  selectOldestReachableUnreviewed,
+  selectNewestReachableUnreviewed,
   sourceFilename,
   uniquePath,
   // The script is loaded by tsx at runtime; the explicit extension is intentional.
   // @ts-ignore TS5097
 } from "./x-bookmarks.ts";
+
+const noLinkedContent: LinkContentFetcher = async (url) => {
+  throw new Error(`Unexpected linked content fetch: ${url}`);
+};
 
 function post(id: string, createdAt = `2026-01-${id.padStart(2, "0")}T00:00:00Z`): BookmarkPost {
   return {
@@ -125,8 +131,8 @@ test("parseArgs returns defaults and validates flags", () => {
   assert.throws(() => parseArgs(["--user-id", "123"]), /Unknown argument: --user-id/);
 });
 
-test("selectOldestReachableUnreviewed chooses oldest reachable unreviewed posts first", () => {
-  const selected = selectOldestReachableUnreviewed(
+test("selectNewestReachableUnreviewed chooses newest reachable unreviewed posts first", () => {
+  const selected = selectNewestReachableUnreviewed(
     [
       [post("5"), post("4")],
       [post("3"), post("2")],
@@ -138,7 +144,7 @@ test("selectOldestReachableUnreviewed chooses oldest reachable unreviewed posts 
 
   assert.deepEqual(
     selected.map((item) => item.id),
-    ["1", "2", "4"]
+    ["5", "4", "2"]
   );
 });
 
@@ -175,6 +181,123 @@ test("buildSourceMarkdown creates an external source record", () => {
   assert.match(markdown, /posted_at: "2026-02-03T04:05:06Z"/);
   assert.doesNotMatch(markdown, /vault_candidate_reason/);
   assert.match(markdown, /## Metadata/);
+});
+
+test("buildSourceMarkdown includes X article title, text, and links", () => {
+  const markdown = buildSourceMarkdown(
+    {
+      ...post("2027435582461259997", "2026-02-27T17:28:05.000Z"),
+      text: "https://t.co/MpSGVYBF2x",
+      authorName: "Noah Vincent",
+      authorHandle: "noahvnct",
+      links: ["http://x.com/i/article/2027430849495367680", "https://youtu.be/demo"],
+      article: {
+        title: "How to Build Your AI Second Brain Using Obsidian + Claude Code",
+        previewText: "Introduction: Why I've Been Losing Sleep Over This",
+        text: "Two weeks ago, I connected Claude Code to my Obsidian vault.",
+        links: ["https://youtu.be/demo"],
+      },
+    },
+    "2026-05-02T23:12:35.712Z"
+  );
+
+  assert.match(
+    markdown,
+    /# X Bookmark: How to Build Your AI Second Brain Using Obsidian \+ Claude Code/
+  );
+  assert.match(markdown, /## Article/);
+  assert.match(markdown, /Title: How to Build Your AI Second Brain/);
+  assert.match(markdown, /Two weeks ago, I connected Claude Code/);
+  assert.match(markdown, /### Article Links/);
+  assert.match(markdown, /https:\/\/youtu\.be\/demo/);
+});
+
+test("buildSourceMarkdown includes fetched linked content", () => {
+  const markdown = buildSourceMarkdown(
+    {
+      ...post("321", "2026-02-03T04:05:06Z"),
+      text: "Useful external article https://example.com/deep-dive",
+      links: ["https://example.com/deep-dive"],
+      linkedContent: [
+        {
+          url: "https://example.com/deep-dive",
+          finalUrl: "https://www.example.com/deep-dive",
+          title: "Durable Notes Deep Dive",
+          text: "This is the extracted external article body.",
+          contentType: "text/html",
+        },
+      ],
+    },
+    "2026-02-04T00:00:00Z"
+  );
+
+  assert.match(markdown, /## Linked Content/);
+  assert.match(markdown, /### Durable Notes Deep Dive/);
+  assert.match(markdown, /URL: https:\/\/example\.com\/deep-dive/);
+  assert.match(markdown, /Final URL: https:\/\/www\.example\.com\/deep-dive/);
+  assert.match(markdown, /This is the extracted external article body/);
+});
+
+test("hydrateLinkedContent fetches direct external links and skips X or media links", async () => {
+  const requestedUrls: string[] = [];
+  const errors: string[] = [];
+  const hydrated = await hydrateLinkedContent(
+    {
+      ...post("456"),
+      links: [
+        "https://example.com/article",
+        "https://x.com/someone/status/123",
+        "https://pbs.twimg.com/media/example.jpg",
+        "https://example.com/article",
+        "https://example.com/demo.mp4",
+      ],
+    },
+    async (url) => {
+      requestedUrls.push(url);
+      return {
+        url,
+        title: "Fetched Article",
+        text: "Fetched article text",
+        contentType: "text/html",
+      };
+    },
+    errors
+  );
+
+  assert.deepEqual(requestedUrls, ["https://example.com/article"]);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(hydrated.linkedContent?.map((content) => content.url), [
+    "https://example.com/article",
+  ]);
+});
+
+test("hydrateLinkedContent does not fetch links that only came from an X article body", async () => {
+  const requestedUrls: string[] = [];
+  const errors: string[] = [];
+  const hydrated = await hydrateLinkedContent(
+    {
+      ...post("789"),
+      links: ["https://example.com/inside-article"],
+      article: {
+        title: "X Article",
+        text: "The article body already includes this external link.",
+        links: ["https://example.com/inside-article"],
+      },
+    },
+    async (url) => {
+      requestedUrls.push(url);
+      return {
+        url,
+        title: "Should Not Fetch",
+        text: "This should not be captured.",
+      };
+    },
+    errors
+  );
+
+  assert.deepEqual(requestedUrls, []);
+  assert.deepEqual(errors, []);
+  assert.equal(hydrated.linkedContent, undefined);
 });
 
 test("sourceFilename includes date, source, identity, and post ID", () => {
@@ -249,7 +372,7 @@ test("collectSelectedBookmarks scans head then backlog and preserves a mid-page 
 
   assert.deepEqual(
     result.selected.map((item) => item.id),
-    ["b1", "h1", "h2"]
+    ["h2", "h1", "b2"]
   );
   assert.equal(result.pagesFetched, 2);
   assert.equal(result.nextBacklogToken, "head-next");
@@ -299,7 +422,7 @@ test("collectSelectedBookmarks does not select duplicate head-page posts twice",
 
   assert.deepEqual(
     result.selected.map((item) => item.id),
-    ["h1", "h2"]
+    ["h2", "h1"]
   );
   assert.deepEqual(requestedTokens, [null]);
 });
@@ -335,7 +458,7 @@ test("run appends JSONL records with a separator when the file lacks a trailing 
     };
 
     try {
-      await run({ limit: 1, maxPages: 1, headPages: 1, vaultRoot }, runner);
+      await run({ limit: 1, maxPages: 1, headPages: 1, vaultRoot }, runner, noLinkedContent);
     } finally {
       console.log = originalConsoleLog;
     }
@@ -398,7 +521,15 @@ test("run captures full note_tweet text when X truncates long posts", async () =
     };
 
     try {
-      await run({ limit: 1, maxPages: 1, headPages: 1, vaultRoot }, runner);
+      await run(
+        { limit: 1, maxPages: 1, headPages: 1, vaultRoot },
+        runner,
+        async (url) => ({
+          url,
+          title: "Linked note source",
+          text: "Linked note source text",
+        })
+      );
     } finally {
       console.log = originalConsoleLog;
     }
@@ -411,6 +542,139 @@ test("run captures full note_tweet text when X truncates long posts", async () =
     );
     assert.match(sourceContent, /Verify, don't assume/);
     assert.match(sourceContent, /https:\/\/agents\.md\//);
+  });
+});
+
+test("run captures X article payload text from article bookmarks", async () => {
+  await withTempDir(async (vaultRoot) => {
+    const originalConsoleLog = console.log;
+    console.log = () => undefined;
+    const runner: XurlJsonRunner = async (args) => {
+      if (args[0] === "whoami") {
+        return { id: "user-1" };
+      }
+      const requestPath = args.at(-1) ?? "";
+      if (requestPath.includes("/bookmarks")) {
+        assert.match(requestPath, /tweet\.fields=.*article/);
+        assert.match(requestPath, /expansions=.*article\.cover_media/);
+        assert.match(requestPath, /expansions=.*article\.media_entities/);
+        return {
+          ...bookmarkResponse(["article-post"]),
+          data: [
+            {
+              ...tweet("article-post", "https://t.co/MpSGVYBF2x"),
+              article: {
+                title: "How to Build Your AI Second Brain Using Obsidian + Claude Code",
+                preview_text: "Introduction: Why I've Been Losing Sleep Over This",
+                plain_text:
+                  "Introduction: Why I've Been Losing Sleep Over This\n\nTwo weeks ago, I connected Claude Code to my Obsidian vault.",
+                entities: {
+                  urls: [
+                    { text: "https://www.youtube.com/watch?v=BLdO-32I6Yc" },
+                    { text: "Claude.ai" },
+                  ],
+                },
+              },
+              entities: {
+                urls: [
+                  {
+                    url: "https://t.co/MpSGVYBF2x",
+                    expanded_url: "http://x.com/i/article/2027430849495367680",
+                  },
+                ],
+              },
+            },
+          ],
+        };
+      }
+      throw new Error(`Unexpected live-style request path: ${requestPath}`);
+    };
+
+    try {
+      await run(
+        { limit: 1, maxPages: 1, headPages: 1, vaultRoot },
+        runner,
+        async (url) => ({
+          url,
+          title: "Linked article source",
+          text: "Linked article source text",
+        })
+      );
+    } finally {
+      console.log = originalConsoleLog;
+    }
+
+    const sourceFiles = await readdir(path.join(vaultRoot, "raw", "sources"));
+    assert.equal(sourceFiles.length, 1);
+    const sourceContent = await readFile(
+      path.join(vaultRoot, "raw", "sources", sourceFiles[0]),
+      "utf8"
+    );
+    assert.match(sourceContent, /# X Bookmark: How to Build Your AI Second Brain/);
+    assert.match(sourceContent, /## Article/);
+    assert.match(sourceContent, /Two weeks ago, I connected Claude Code/);
+    assert.match(sourceContent, /https:\/\/www\.youtube\.com\/watch\?v=BLdO-32I6Yc/);
+    assert.match(sourceContent, /http:\/\/x\.com\/i\/article\/2027430849495367680/);
+  });
+});
+
+test("run captures fetched direct external link content without recursive link crawling", async () => {
+  await withTempDir(async (vaultRoot) => {
+    const requestedUrls: string[] = [];
+    const originalConsoleLog = console.log;
+    console.log = () => undefined;
+    const runner: XurlJsonRunner = async (args) => {
+      if (args[0] === "whoami") {
+        return { id: "user-1" };
+      }
+      const requestPath = args.at(-1) ?? "";
+      if (requestPath.includes("/bookmarks")) {
+        return {
+          ...bookmarkResponse(["external-link"]),
+          data: [
+            {
+              ...tweet("external-link", "Good breakdown https://t.co/example"),
+              entities: {
+                urls: [
+                  {
+                    url: "https://t.co/example",
+                    expanded_url: "https://example.com/article",
+                  },
+                ],
+              },
+            },
+          ],
+        };
+      }
+      throw new Error(`Unexpected live-style request path: ${requestPath}`);
+    };
+    const linkFetcher: LinkContentFetcher = async (url) => {
+      requestedUrls.push(url);
+      return {
+        url,
+        title: "External Article",
+        text: "Fetched body with a nested link https://nested.example.com/ignored",
+        contentType: "text/html",
+      };
+    };
+
+    try {
+      await run({ limit: 1, maxPages: 1, headPages: 1, vaultRoot }, runner, linkFetcher);
+    } finally {
+      console.log = originalConsoleLog;
+    }
+
+    assert.deepEqual(requestedUrls, ["https://example.com/article"]);
+
+    const sourceFiles = await readdir(path.join(vaultRoot, "raw", "sources"));
+    assert.equal(sourceFiles.length, 1);
+    const sourceContent = await readFile(
+      path.join(vaultRoot, "raw", "sources", sourceFiles[0]),
+      "utf8"
+    );
+    assert.match(sourceContent, /## Linked Content/);
+    assert.match(sourceContent, /### External Article/);
+    assert.match(sourceContent, /Fetched body with a nested link/);
   });
 });
 

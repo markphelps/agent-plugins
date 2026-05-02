@@ -22,7 +22,9 @@ Optional skills:
 - `vault-research`: Collect external source records and optionally synthesize
   research summaries when requested.
 - `vault-x-bookmarks`: Review a bounded slice of X bookmarks through the X API
-  and capture selected items as `external` source records in `raw/sources/`.
+  and capture selected items, including X Article text when exposed by the API,
+  plus readable one-hop external link content, as `external` source records in
+  `raw/sources/`.
 
 ## Flow
 
@@ -107,8 +109,9 @@ flowchart TD
 - `raw/sources/` is an unprocessed inbox for new captures.
 - `vault-x-bookmarks` is an apply-only capture skill. It calls its bundled
   TypeScript helper, writes selected external bookmark records into
-  `raw/sources/`, and records reviewed IDs under `raw/state/x-bookmarks/`;
-  `vault-ingest` handles later routing.
+  `raw/sources/`, captures X Article title/body/link text when present, fetches
+  direct non-X text/html links at most one level deep, and records reviewed IDs
+  under `raw/state/x-bookmarks/`; `vault-ingest` handles later routing.
 - Known owned ideas should go directly to `ideas/fleeting/`,
   `ideas/incubating/`, `ideas/someday/`, or `ideas/rejected/` instead of
   lingering in `raw/sources/`.
