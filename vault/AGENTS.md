@@ -16,12 +16,13 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 | `vault-tracker`  | Project lifecycle + tracker maintenance                |
 | `vault-maintain` | Weekly orchestrator running all checks                 |
 
-## Optional Skills (2)
+## Optional Skills (3)
 
-| Skill            | Purpose                                                |
-| ---------------- | ------------------------------------------------------ |
-| `vault-concepts` | Promote themes → canonical concept pages               |
-| `vault-research` | External research → source records and optional synthesis |
+| Skill               | Purpose                                                  |
+| ------------------- | -------------------------------------------------------- |
+| `vault-concepts`    | Promote themes → canonical concept pages                 |
+| `vault-research`    | External research → source records and optional synthesis |
+| `vault-x-bookmarks` | Capture bounded X bookmark slices into `raw/sources/`    |
 
 ## Usage Patterns
 
@@ -29,6 +30,13 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 ```
 vault-ingest --mode report    # see pending
 vault-ingest --mode apply     # categorize and move sources
+```
+
+**X bookmark capture:**
+```bash
+vault-x-bookmarks --limit 15
+vault-x-bookmarks --limit 75 --max-pages 25 --head-pages 2
+vault-ingest --mode report
 ```
 
 **Weekly maintenance:**

@@ -21,12 +21,15 @@ Optional skills:
 - `vault-concepts`: Promote recurring themes into canonical concept pages.
 - `vault-research`: Collect external source records and optionally synthesize
   research summaries when requested.
+- `vault-x-bookmarks`: Review a bounded slice of X bookmarks through the X API
+  and capture selected items as `external` source records in `raw/sources/`.
 
 ## Flow
 
 ```mermaid
 flowchart TD
   Capture[New capture] --> KnownIdea{Already known as<br/>your own idea?}
+  XBookmarks[X bookmarks<br/>vault-x-bookmarks] --> Raw
 
   KnownIdea -->|yes| IdeaState{Idea state}
   IdeaState --> Fleeting[ideas/fleeting/]
@@ -102,6 +105,10 @@ flowchart TD
 - Skills are the runtime source of truth.
 - Workflows should be non-destructive by default.
 - `raw/sources/` is an unprocessed inbox for new captures.
+- `vault-x-bookmarks` is an apply-only capture skill. It calls its bundled
+  TypeScript helper, writes selected external bookmark records into
+  `raw/sources/`, and records reviewed IDs under `raw/state/x-bookmarks/`;
+  `vault-ingest` handles later routing.
 - Known owned ideas should go directly to `ideas/fleeting/`,
   `ideas/incubating/`, `ideas/someday/`, or `ideas/rejected/` instead of
   lingering in `raw/sources/`.
