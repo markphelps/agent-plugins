@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  writeFile,
+} from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -314,18 +321,16 @@ test("run appends JSONL records with a separator when the file lacks a trailing 
     const originalToken = process.env.X_USER_ACCESS_TOKEN;
     const originalConsoleLog = console.log;
     const originalRequest = Client.prototype.request;
-    const requestPaths: string[] = [];
     process.env.X_USER_ACCESS_TOKEN = "test-token";
     console.log = () => undefined;
     Client.prototype.request = async function request<T = any>(
       _method: string,
       requestPath: string
     ) {
-      requestPaths.push(requestPath);
-      if (requestPath === "/2/users/me") {
+      if (requestPath.includes("/users/me")) {
         return { data: { id: "user-1" } } as T;
       }
-      if (requestPath.startsWith("/2/users/user-1/bookmarks?")) {
+      if (requestPath.includes("/bookmarks")) {
         return bookmarkResponse(["fresh"]) as T;
       }
       throw new Error(`Unexpected live-style request path: ${requestPath}`);
@@ -353,8 +358,64 @@ test("run appends JSONL records with a separator when the file lacks a trailing 
         .map((line) => JSON.parse(line).post_id),
       ["already-reviewed", "fresh"]
     );
-    assert.equal(requestPaths[0], "/2/users/me");
-    assert.match(requestPaths[1] ?? "", /^\/2\/users\/user-1\/bookmarks\?/);
-    assert.equal(requestPaths.length, 2);
+
+    const sourceFiles = await readdir(path.join(vaultRoot, "raw", "sources"));
+    assert.equal(sourceFiles.length, 1);
+    const sourceContent = await readFile(
+      path.join(vaultRoot, "raw", "sources", sourceFiles[0]),
+      "utf8"
+    );
+    assert.match(sourceContent, /post_id: "fresh"/);
+  });
+});
+
+test("run removes a source record when reviewed append fails", async () => {
+  await withTempDir(async (vaultRoot) => {
+    const stateDir = path.join(vaultRoot, "raw", "state", "x-bookmarks");
+    const reviewedPath = path.join(stateDir, "reviewed.jsonl");
+    const checkpointPath = path.join(stateDir, "checkpoint.json");
+    const sourcesDir = path.join(vaultRoot, "raw", "sources");
+    await mkdir(stateDir, { recursive: true });
+    await writeFile(reviewedPath, "", "utf8");
+
+    const originalToken = process.env.X_USER_ACCESS_TOKEN;
+    const originalConsoleLog = console.log;
+    const originalRequest = Client.prototype.request;
+    process.env.X_USER_ACCESS_TOKEN = "test-token";
+    console.log = () => undefined;
+    Client.prototype.request = async function request<T = any>(
+      _method: string,
+      requestPath: string
+    ) {
+      if (requestPath.includes("/users/me")) {
+        return { data: { id: "user-1" } } as T;
+      }
+      if (requestPath.includes("/bookmarks")) {
+        await rm(reviewedPath, { force: true });
+        await mkdir(reviewedPath);
+        return bookmarkResponse(["cleanup"]) as T;
+      }
+      throw new Error(`Unexpected live-style request path: ${requestPath}`);
+    };
+
+    try {
+      await assert.rejects(
+        run({ limit: 1, maxPages: 1, headPages: 1, vaultRoot }),
+        /Run completed with source\/state write errors; checkpoint was not advanced\./
+      );
+    } finally {
+      if (originalToken === undefined) {
+        delete process.env.X_USER_ACCESS_TOKEN;
+      } else {
+        process.env.X_USER_ACCESS_TOKEN = originalToken;
+      }
+      console.log = originalConsoleLog;
+      Client.prototype.request = originalRequest;
+    }
+
+    assert.deepEqual(await readdir(sourcesDir), []);
+    await assert.rejects(readFile(checkpointPath, "utf8"), (error: unknown) => {
+      return error instanceof Error && "code" in error && error.code === "ENOENT";
+    });
   });
 });
