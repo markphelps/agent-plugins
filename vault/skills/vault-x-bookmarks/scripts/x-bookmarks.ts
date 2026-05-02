@@ -1,5 +1,6 @@
 import {
   mkdir,
+  open,
   readFile,
   rename,
   rm,
@@ -706,11 +707,37 @@ function extractLinks(tweet: JsonRecord): string[] {
 }
 
 async function appendJsonLine(filePath: string, entry: unknown): Promise<void> {
+  const prefix = (await needsJsonLineSeparator(filePath)) ? "\n" : "";
   await writeFile(
     filePath,
-    `${JSON.stringify(entry)}\n`,
+    `${prefix}${JSON.stringify(entry)}\n`,
     { encoding: "utf8", flag: "a" }
   );
+}
+
+async function needsJsonLineSeparator(filePath: string): Promise<boolean> {
+  let fileInfo: Awaited<ReturnType<typeof stat>>;
+  try {
+    fileInfo = await stat(filePath);
+  } catch (error) {
+    if (isNodeError(error) && error.code === "ENOENT") {
+      return false;
+    }
+    throw error;
+  }
+
+  if (fileInfo.size === 0) {
+    return false;
+  }
+
+  const handle = await open(filePath, "r");
+  try {
+    const buffer = Buffer.alloc(1);
+    await handle.read(buffer, 0, 1, fileInfo.size - 1);
+    return buffer[0] !== 10;
+  } finally {
+    await handle.close();
+  }
 }
 
 async function writeCheckpointAtomically(
