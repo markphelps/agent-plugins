@@ -42,7 +42,7 @@ vault-ingest --mode report
 **Weekly maintenance:**
 ```
 vault-maintain --mode report  # full audit
-vault-maintain --mode apply   # apply safe fixes
+vault-maintain --mode apply-safe  # apply safe fixes
 ```
 
 **Project transitions:**
@@ -59,8 +59,12 @@ vault-concepts --mode apply   # create/update concepts
 
 ## Conventions
 
-- **Mode convention:** `--mode report|apply-safe|apply` (default `report`)
-- **Safety first:** All skills are non-destructive by default
+- **Mode convention:** Mode-based skills use
+  `--mode report|apply-safe|apply` (default `report`).
+- **Apply-only exception:** `vault-x-bookmarks` has no report mode; it only runs
+  when explicitly invoked and captures bounded bookmark slices into
+  `raw/sources/`.
+- **Safety first:** Mode-based skills are non-destructive by default.
 - **Manual lifecycle:** Explicit directory structure replaces automation
 - **Raw protection:** Never delete from `raw/sources/` or `raw/processed/`
 - **README maintenance:** Keep `vault/README.md` current for every vault plugin
