@@ -33,9 +33,9 @@ Run these steps in order to produce a complete weekly maintenance report:
 Run `vault-ingest --mode report` to:
 
 - Scan `raw/sources/` for unprocessed captures
-- Preview curated pages to be created/updated
-- Show sources ready for archive
-- Identify themes for concept promotion
+- Preview source categories and destination paths
+- Show high-confidence source moves ready to apply
+- Identify ambiguous captures needing user direction
 
 ### 2. Hygiene Audit
 
@@ -69,7 +69,8 @@ Run `vault-concepts --mode report` to:
 
 Compile findings into a weekly summary including:
 
-- Pending ingestions (count, sources, themes)
+- Pending ingestions (count, source types, routing decisions)
+- Source routing proposals (category, destination, confidence)
 - Hygiene issues by severity (contradictions, orphans, stale)
 - Tracker transitions proposed (state changes, promotions)
 - Concept candidates (updates, creations deferred)
@@ -82,7 +83,7 @@ Append the maintenance entry to `log.md` manually when the vault uses one:
 - Operation: `vault-maintain`
 - Summary: date range and completion status
 - Key actions: counts of items processed in each category
-- Touched files: any modified curated pages plus tracker or concept updates
+- Touched files: moved sources plus tracker, link, or concept updates
 
 ## Mode Behavior
 
@@ -103,7 +104,7 @@ Apply only high-confidence, low-risk changes:
 
 Excluded from `apply-safe`:
 
-- Archive moves requiring link rewrites
+- Source moves requiring link rewrites
 - New concept page creation
 - Ingestion pipeline execution (stays in `report`)
 
@@ -111,13 +112,13 @@ Excluded from `apply-safe`:
 
 Additionally allow medium-confidence actions:
 
-- **Archive moves**: Deterministic file moves with automatic link rewrites
+- **Source moves**: Deterministic file moves with automatic link rewrites
 - **Concept creation**: New concept pages when promotion thresholds are met
   (theme appears in 3+ unrelated notes, evidence is concrete and linkable)
 
 ## Safety
 
-- **Never delete curated notes** — archive moves only
+- **Never delete vault content** — move or archive only
 - **Do not archive ambiguous live projects** without explicit instruction
 - **Keep changes reviewable**: List all touched files with relative paths
 - **Preserve hand-written content**: Favor additive updates over rewrites
@@ -131,7 +132,7 @@ This skill orchestrates the following specialized skills:
 
 | Step | Skill            | Purpose                             |
 | ---- | ---------------- | ----------------------------------- |
-| 1    | `vault-ingest`   | Source ingestion pipeline           |
+| 1    | `vault-ingest`   | Source classification and routing   |
 | 2    | `vault-lint`     | Hygiene and contradiction detection |
 | 3    | `vault-tracker`  | Project lifecycle management        |
 | 4    | `vault-concepts` | Concept promotion and creation      |
@@ -156,6 +157,6 @@ vault-maintain --mode report
 # Apply safe updates only
 vault-maintain --mode apply-safe
 
-# Full maintenance with archive moves and concept creation
+# Full maintenance with source moves and concept creation
 vault-maintain --mode apply
 ```

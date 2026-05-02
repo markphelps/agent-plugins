@@ -9,46 +9,26 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 
 ## Core Skills (4)
 
-| Skill | Purpose | Replaces |
-|-------|---------|----------|
-| `vault-ingest` | Process `raw/sources/` → curated notes/projects | vault-process + vault-cleanup |
-| `vault-lint` | Hygiene: orphans, stale, contradictions, weak links | vault-lint (tightened) |
-| `vault-tracker` | Project lifecycle + tracker maintenance | vault-project-tracker + vault-archive-audit + vault-organize |
-| `vault-maintain` | Weekly orchestrator running all checks | vault-weekly-maintainer + vault-index + vault-log + vault-qmd |
+| Skill            | Purpose                                                |
+| ---------------- | ------------------------------------------------------ |
+| `vault-ingest`   | Categorize `raw/sources/` → correct vault locations    |
+| `vault-lint`     | Hygiene: orphans, stale, contradictions, weak links    |
+| `vault-tracker`  | Project lifecycle + tracker maintenance                |
+| `vault-maintain` | Weekly orchestrator running all checks                 |
 
 ## Optional Skills (2)
 
-| Skill | Purpose | Replaces |
-|-------|---------|----------|
-| `vault-concepts` | Promote themes → canonical concept pages | vault-concept-promoter + vault-drift |
-| `vault-research` | External research → append to note | vault-research (unchanged) |
-
-## Removed Skills
-
-The following 15 skills were deprecated and are now removed:
-
-- vault-archive-audit → merged into vault-tracker
-- vault-challenge → workflow now explicit
-- vault-cleanup → merged into vault-ingest
-- vault-compact → manual workflow
-- vault-connect → manual cross-linking
-- vault-drift → merged into vault-concepts
-- vault-ideas → explicit ideas/ directory
-- vault-index → merged into vault-maintain
-- vault-log → merged into vault-maintain
-- vault-process → merged into vault-ingest
-- vault-project-tracker → merged into vault-tracker
-- vault-qmd → merged into vault-maintain
-- vault-session-sync → manual tracker workflow
-- vault-organize → merged into vault-tracker
-- vault-weekly-maintainer → merged into vault-maintain
+| Skill            | Purpose                                                |
+| ---------------- | ------------------------------------------------------ |
+| `vault-concepts` | Promote themes → canonical concept pages               |
+| `vault-research` | External research → source records and optional synthesis |
 
 ## Usage Patterns
 
 **Daily ingest:**
 ```
 vault-ingest --mode report    # see pending
-vault-ingest --mode apply     # process and archive
+vault-ingest --mode apply     # categorize and move sources
 ```
 
 **Weekly maintenance:**

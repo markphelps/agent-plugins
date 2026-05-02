@@ -1,6 +1,6 @@
 ---
 name: vault-lint
-description: Hygiene pass over notes/ and projects/ surface
+description: Hygiene pass over active notes, ideas, projects, and resources
 ---
 
 # Lint Vault
@@ -23,8 +23,8 @@ Run a focused hygiene pass over active vault surface and propose fixes.
 
 ## Scope
 
-- **notes/** and **projects/** only (exclude archive/ unless explicitly
-  requested)
+- **notes/**, **ideas/**, **projects/**, and **resources/** by default (exclude
+  archive/ unless explicitly requested)
 - Does NOT move files (use `vault-tracker` for lifecycle changes)
 - Does NOT delete content
 
@@ -35,8 +35,12 @@ Run a focused hygiene pass over active vault surface and propose fixes.
 3. In `report` mode: list issues and proposed fixes only.
 4. In `apply` mode: fix link issues, flag decisions needing manual review.
 5. Call out concept-promotion candidates (themes appearing 3+ times).
-6. Report mismatched project states for `vault-tracker` handling.
-7. Summarize outcomes.
+6. Report idea lifecycle issues:
+   - duplicate ideas across `fleeting/`, `incubating/`, `someday/`, `rejected/`
+   - stale incubating ideas without next action
+   - project-like ideas that may need tracker promotion
+7. Report mismatched project states for `vault-tracker` handling.
+8. Summarize outcomes.
 
 ## Safety
 
@@ -54,3 +58,4 @@ Return:
 - Decisions requiring manual review
 - Concept promotion candidates
 - Mismatched states flagged for vault-tracker
+- Idea lifecycle issues and duplicate idea candidates

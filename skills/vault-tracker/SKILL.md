@@ -30,7 +30,10 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
 - `paused` — temporarily on hold
 - `shipped` — completed/delivered
 - `archived` — moved to `archive/`
+- `fleeting` — rough idea fragment (in `ideas/fleeting/`)
 - `incubating` — idea stage (in `ideas/incubating/`)
+- `someday` — intentionally parked idea (in `ideas/someday/`)
+- `rejected` — explicitly declined idea (in `ideas/rejected/`)
 
 ## Valid Transitions
 
@@ -42,6 +45,9 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
 | `exploring` → `incubating`              | One-way       | Back to idea stage |
 | `active\|exploring\|paused` → `shipped` | One-way       | Completion         |
 | `shipped` → `archived`                  | One-way       | Final archival     |
+| `fleeting` → `incubating`               | One-way       | Idea has shape     |
+| `incubating` → `someday`                | One-way       | Park for later     |
+| `fleeting\|incubating` → `rejected`     | One-way       | Declined idea      |
 
 ## Mode Behavior
 
@@ -61,6 +67,7 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
 5. **Handle idea promotion paths**:
    - `ideas/incubating/` → `projects/active/` (promote to project)
    - `ideas/fleeting/` → `ideas/incubating/` (promote idea)
+   - `ideas/incubating/` → `ideas/someday/` (park idea)
    - `ideas/incubating/` → `ideas/rejected/` (decline idea)
 6. **Apply by mode**:
    - `report`: return proposals with evidence and confidence
