@@ -587,7 +587,7 @@ async function fetchBookmarkPage(
   const query = new URLSearchParams({
     max_results: '100',
     expansions: 'author_id,attachments.media_keys',
-    'tweet.fields': 'author_id,created_at,entities,public_metrics',
+    'tweet.fields': 'author_id,created_at,entities,note_tweet,public_metrics',
     'user.fields': 'id,name,username',
     'media.fields': 'url,preview_image_url,type',
   })
@@ -679,10 +679,14 @@ function normalizePost(
   const author = authorId ? users.get(authorId) : undefined
   const publicMetrics =
     optionalRecord(tweet.public_metrics) ?? optionalRecord(tweet.publicMetrics)
+  const noteTweet =
+    optionalRecord(tweet.note_tweet) ?? optionalRecord(tweet.noteTweet)
+  const text =
+    stringValue(noteTweet?.text) ?? stringValue(tweet.text) ?? ''
 
   return {
     id,
-    text: stringValue(tweet.text) ?? '',
+    text,
     authorId,
     authorName: author ? (stringValue(author.name) ?? undefined) : undefined,
     authorHandle: author
@@ -706,26 +710,31 @@ function normalizePost(
         publicMetrics?.quote_count ?? publicMetrics?.quoteCount,
       ),
     },
-    links: extractLinks(tweet),
+    links: extractLinks(tweet, noteTweet),
   }
 }
 
-function extractLinks(tweet: JsonRecord): string[] {
-  const entities = asRecord(tweet.entities)
+function extractLinks(
+  tweet: JsonRecord,
+  noteTweet?: JsonRecord,
+): string[] {
+  const entityGroups = [asRecord(tweet.entities), asRecord(noteTweet?.entities)]
   const seen = new Set<string>()
   const links: string[] = []
 
-  for (const url of asArray(entities?.urls)) {
-    const urlRecord = asRecord(url)
-    const link =
-      stringValue(urlRecord.expanded_url) ??
-      stringValue(urlRecord.expandedUrl) ??
-      stringValue(urlRecord.unwound_url) ??
-      stringValue(urlRecord.unwoundUrl) ??
-      stringValue(urlRecord.url)
-    if (link && !seen.has(link)) {
-      seen.add(link)
-      links.push(link)
+  for (const entities of entityGroups) {
+    for (const url of asArray(entities?.urls)) {
+      const urlRecord = asRecord(url)
+      const link =
+        stringValue(urlRecord.unwound_url) ??
+        stringValue(urlRecord.unwoundUrl) ??
+        stringValue(urlRecord.expanded_url) ??
+        stringValue(urlRecord.expandedUrl) ??
+        stringValue(urlRecord.url)
+      if (link && !seen.has(link)) {
+        seen.add(link)
+        links.push(link)
+      }
     }
   }
 

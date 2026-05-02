@@ -361,6 +361,59 @@ test("run appends JSONL records with a separator when the file lacks a trailing 
   });
 });
 
+test("run captures full note_tweet text when X truncates long posts", async () => {
+  await withTempDir(async (vaultRoot) => {
+    const fullText =
+      "These 6 principles will make your coding agent write better code.\n\nVerify, don't assume — Run it. Test it. Prove it works.";
+    const originalConsoleLog = console.log;
+    console.log = () => undefined;
+    const runner: XurlJsonRunner = async (args) => {
+      if (args[0] === "whoami") {
+        return { id: "user-1" };
+      }
+      const requestPath = args.at(-1) ?? "";
+      if (requestPath.includes("/bookmarks")) {
+        assert.match(requestPath, /tweet\.fields=.*note_tweet/);
+        return {
+          ...bookmarkResponse(["long-post"]),
+          data: [
+            {
+              ...tweet("long-post", "These 6 principles will make your coding agent write better code."),
+              note_tweet: {
+                text: fullText,
+                entities: {
+                  urls: [
+                    {
+                      url: "https://t.co/example",
+                      expanded_url: "https://agents.md/",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+        };
+      }
+      throw new Error(`Unexpected live-style request path: ${requestPath}`);
+    };
+
+    try {
+      await run({ limit: 1, maxPages: 1, headPages: 1, vaultRoot }, runner);
+    } finally {
+      console.log = originalConsoleLog;
+    }
+
+    const sourceFiles = await readdir(path.join(vaultRoot, "raw", "sources"));
+    assert.equal(sourceFiles.length, 1);
+    const sourceContent = await readFile(
+      path.join(vaultRoot, "raw", "sources", sourceFiles[0]),
+      "utf8"
+    );
+    assert.match(sourceContent, /Verify, don't assume/);
+    assert.match(sourceContent, /https:\/\/agents\.md\//);
+  });
+});
+
 test("run removes a source record when reviewed append fails", async () => {
   await withTempDir(async (vaultRoot) => {
     const stateDir = path.join(vaultRoot, "raw", "state", "x-bookmarks");
