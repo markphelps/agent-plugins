@@ -42,6 +42,7 @@ Only create new concept pages when ALL are true:
 4. **Cluster**: Group related patterns and rank by confidence
 5. **Decide** per candidate:
    - Update existing concept page
+   - Merge near-duplicate concept pages into one canonical concept
    - Create new concept page (if thresholds met)
    - Defer (insufficient evidence)
 6. **Normalize**: Rewrite transient note references to point to canonical
@@ -58,12 +59,28 @@ Only create new concept pages when ALL are true:
 ## Apply Behavior
 
 - **report**: List candidates only, no changes
-- **apply**: Update existing concepts; create new ones when thresholds met
+- **apply**: Update existing concepts; merge high-confidence duplicates; create
+  new ones when thresholds met
+
+## Merge Rules
+
+Merge concept pages when they name the same principle, mental model, or durable
+vocabulary item. Do not merge broad neighboring concepts just because they are
+often linked together.
+
+- Choose the clearest, most established page as canonical.
+- Preserve distinct examples, open questions, and source links from merged
+  pages.
+- Rewrite links from merged pages to the canonical concept.
+- Keep aliases when alternate names are likely search terms.
+- Report medium-confidence concept overlaps instead of merging them.
 
 ## Safety
 
 - Prefer updating existing concepts over creating near-duplicates
 - Never delete notes or archive content
+- Never merge concept pages that represent different decisions or levels of
+  abstraction
 - Never modify raw/, processed/, or assets/
 - Confirm before creating new concept pages
 
@@ -72,6 +89,7 @@ Only create new concept pages when ALL are true:
 Return:
 
 - Concepts created/updated/proposed (with confidence)
+- Concepts merged/proposed for merge
 - Evidence links used
 - Reference normalization performed
 - Index/log update status

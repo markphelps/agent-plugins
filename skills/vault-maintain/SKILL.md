@@ -43,6 +43,7 @@ Run `vault-lint --mode report` to:
 
 - Detect contradictions across related notes
 - Find orphan pages and stale content
+- Find duplicate or overlapping notes, ideas, projects, and resources
 - Identify missing concept pages
 - Flag broken or ambiguous wikilinks
 - Surface promotion candidates from drift reports
@@ -53,6 +54,7 @@ Run `vault-tracker --mode report` to:
 
 - Audit tracker vs filesystem state
 - Detect mismatches and orphan entries
+- Detect duplicate ideas/projects that should be merged
 - Propose lifecycle transitions
 - Identify untracked projects
 
@@ -61,6 +63,7 @@ Run `vault-tracker --mode report` to:
 Run `vault-concepts --mode report` to:
 
 - Scan for recurring themes across curated areas
+- Detect duplicate or overlapping concept pages
 - Detect candidate concept pages
 - Propose updates to existing concepts
 - Surface new concept creation candidates
@@ -72,6 +75,11 @@ Compile findings into a weekly summary including:
 - Pending ingestions (count, source types, routing decisions)
 - Source routing proposals (category, destination, confidence)
 - Hygiene issues by severity (contradictions, orphans, stale)
+- Merge candidates (target, sources, confidence, required link rewrites)
+- Synthesis archive checks (summaries link to complete sources in
+  `raw/processed/YYYY-MM-DD/`)
+- External tag checks (clipped notes tagged `external`, owned notes not tagged
+  `external`)
 - Tracker transitions proposed (state changes, promotions)
 - Concept candidates (updates, creations deferred)
 - Unresolved decisions requiring user input
@@ -100,11 +108,16 @@ Apply only high-confidence, low-risk changes:
 
 - **Link normalization**: Fix broken or ambiguous wikilinks
 - **Tracker updates**: Unambiguous state changes, formatting fixes
+- **Merge prep**: Add backlinks or aliases for high-confidence merge candidates
+  without moving content
+- **Synthesis link repair**: Add missing links from summaries to archived source
+  records when the archive path is unambiguous
 - **Maintenance record**: Append a concise manual entry to `log.md` if present
 
 Excluded from `apply-safe`:
 
 - Source moves requiring link rewrites
+- Content merges
 - New concept page creation
 - Ingestion pipeline execution (stays in `report`)
 
@@ -113,6 +126,11 @@ Excluded from `apply-safe`:
 Additionally allow medium-confidence actions:
 
 - **Source moves**: Deterministic file moves with automatic link rewrites
+- **Content merges**: High-confidence duplicate notes, ideas, projects,
+  resources, or concepts when provenance and links can be preserved
+- **Synthesis archive repair**: Move complete external source records into
+  `raw/processed/YYYY-MM-DD/` when a summary exists without an immutable source
+  archive
 - **Concept creation**: New concept pages when promotion thresholds are met
   (theme appears in 3+ unrelated notes, evidence is concrete and linkable)
 
@@ -122,8 +140,13 @@ Additionally allow medium-confidence actions:
 - **Do not archive ambiguous live projects** without explicit instruction
 - **Keep changes reviewable**: List all touched files with relative paths
 - **Preserve hand-written content**: Favor additive updates over rewrites
+- **Merge conservatively**: When two items are related but distinct, link them
+  instead of merging
+- **Synthesis requires sources**: Summaries and briefs must cite complete
+  archived source records
 - **Exclude `archive/`** from active maintenance unless explicitly scoped
-- **Never touch** `raw/processed/*` or hidden/system directories
+- **Never mutate existing** `raw/processed/*` files; additive archived source
+  copies are allowed for synthesis archive repair
 - **Confirm before execution** unless running in `--mode report`
 
 ## Compose Existing Skills
@@ -143,6 +166,8 @@ Return:
 
 - **Applied changes**: What was modified (by mode)
 - **Deferred/proposed changes**: Pending items for future cycles
+- **Merge report**: Merges applied/proposed, canonical targets, retained
+  provenance
 - **Confidence notes**: High/medium/low confidence per category
 - **Unresolved decisions**: Items requiring explicit user input
 - **Touched files**: List of all modified files with relative paths

@@ -9,7 +9,8 @@ Core skills:
 - `vault-ingest`: Categorize `raw/sources/` and move original source files to
   the correct vault locations.
 - `vault-lint`: Audit active notes, ideas, projects, and resources for
-  contradictions, stale content, weak links, and missing concepts.
+  contradictions, stale content, weak links, merge candidates, and missing
+  concepts.
 - `vault-tracker`: Manage project lifecycle state and reconcile tracker entries
   with filesystem reality.
 - `vault-maintain`: Run the bounded weekly maintenance loop across ingest,
@@ -41,12 +42,19 @@ flowchart TD
   Ingest --> Resources[resources/]
   Ingest --> Assets[raw/assets/]
   Ingest --> Ambiguous[leave in raw/sources/<br/>with decision needed]
+  Ingest --> Merge{Duplicate or continuation?}
+  Merge -->|yes| Existing[merge into existing<br/>note/idea/project/resource]
+  Merge -->|no| Notes
 
-  Resources --> Research{Need synthesis?}
-  Research -->|no| SourceRecords[keep source records]
+  Resources --> ExternalTag{external tag?}
+  ExternalTag -->|no| SourceRecords[keep source records]
+  ExternalTag -->|yes| Research{Summarize?}
+  Research -->|no| SourceRecords
   Research -->|yes| ResearchSkill[vault-research<br/>summary or both]
+  ResearchSkill --> Processed[raw/processed/YYYY-MM-DD/<br/>complete source archive]
   ResearchSkill --> SourceRecords
-  ResearchSkill --> Brief[linked research brief]
+  Processed --> Brief[linked research brief]
+  SourceRecords --> Brief
 
   Incubating --> Tracker[vault-tracker]
   Fleeting --> Tracker
@@ -67,14 +75,14 @@ flowchart TD
   Fleeting --> Maintain
   Incubating --> Maintain
   Maintain --> Lint[vault-lint]
+  Lint --> MergePlan[merge candidates<br/>with confidence]
   Maintain --> IndexLog[index.md + log.md]
 ```
 
 ## Notes
 
 - Top-level synced copies in `skills/` are regenerated via `npm run sync`.
-- See [AGENTS.md](/Users/markphelps/workspace/claude-plugins/vault/AGENTS.md)
-  for the canonical workflow and migration mapping.
+- See [AGENTS.md](AGENTS.md) for repository-local vault plugin instructions.
 
 ## Subagents
 
@@ -96,10 +104,18 @@ flowchart TD
 - Known owned ideas should go directly to `ideas/fleeting/`,
   `ideas/incubating/`, `ideas/someday/`, or `ideas/rejected/` instead of
   lingering in `raw/sources/`.
-- `raw/processed/` is an immutable archive for processed sources that did not
-  have a better durable home.
+- Notes clipped from external sources should be tagged `external`; that tag
+  tells agents they may summarize during processing.
+- `raw/processed/` is an immutable source archive organized by processing date.
+  It stores complete sources used for synthesis, plus processed sources that did
+  not have a better durable home.
+- Any source used for synthesis is copied complete into
+  `raw/processed/YYYY-MM-DD/`; summaries and briefs link back to those archived
+  source records.
 - `archive/` is for archived curated material and is excluded from active
   navigation by default.
 - Repeated patterns should graduate into canonical concept pages instead of
   remaining only in reports.
+- Duplicate or continuation notes should merge into one durable item when
+  provenance and links can be preserved.
 - Keep user note content intact unless explicit deletion is requested.

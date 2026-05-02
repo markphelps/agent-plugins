@@ -63,7 +63,11 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
    - Filesystem state vs tracker state
    - Orphan tracker entries (no matching directory)
    - Untracked projects (directory exists, not in tracker)
-4. **Propose transitions**: Smallest valid state change per mismatch
+   - Duplicate idea or project directories that should be one lifecycle item
+4. **Propose transitions and merges**:
+   - Smallest valid state change per mismatch
+   - Canonical merge target for duplicate ideas/projects
+   - Link rewrites and tracker row consolidation required by the merge
 5. **Handle idea promotion paths**:
    - `ideas/incubating/` → `projects/active/` (promote to project)
    - `ideas/fleeting/` → `ideas/incubating/` (promote idea)
@@ -71,9 +75,25 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
    - `ideas/incubating/` → `ideas/rejected/` (decline idea)
 6. **Apply by mode**:
    - `report`: return proposals with evidence and confidence
-   - `apply-safe`: update tracker rows/links when unambiguous
-   - `apply`: perform file moves + inbound link rewrites
+   - `apply-safe`: update tracker rows/links when unambiguous, no merges
+   - `apply`: perform confirmed file moves, high-confidence merges, and inbound
+     link rewrites
 7. **Log operation**: Append concise entry to `log.md`
+
+## Merge Rules
+
+Merge idea or project directories only when they represent the same underlying
+thing, not just similar domains. Prefer the more advanced lifecycle state as the
+canonical destination (`active` over `incubating`, `incubating` over `fleeting`)
+unless the user says otherwise.
+
+- Preserve all files by moving them into the canonical directory or appending
+  sections into the canonical note.
+- Consolidate tracker rows into one entry and keep former names as aliases or
+  backlinks when useful.
+- Rewrite inbound links to the canonical path.
+- In `report` mode, show both the canonical destination and what would be moved.
+- In `apply` mode, require clear evidence or explicit user instruction.
 
 ## Example Operations
 
@@ -94,6 +114,7 @@ vault-tracker --mode apply --project my-project archive now
 ## Safety
 
 - **Never delete project files** — archive moves only
+- **Never discard duplicate project or idea material** — merge or move it
 - **Confirmation required** for destructive moves (archive transitions)
 - **Link integrity**: Check/rewrite inbound links before archival
 - **Tracker ≠ sole history**: Keep project docs as source of truth
@@ -119,6 +140,7 @@ Return:
 - Transitions applied/proposed with evidence and confidence
 - Mismatches detected (filesystem vs tracker)
 - Files moved/renamed and link rewrites applied
+- Merges applied/proposed with canonical target and retained aliases
 - Idea promotions (incubating→project, fleeting→incubating)
 - Tracker sections changed
 - Touched files

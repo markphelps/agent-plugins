@@ -55,3 +55,6 @@ vault-concepts --mode apply   # create/update concepts
 - **Safety first:** All skills are non-destructive by default
 - **Manual lifecycle:** Explicit directory structure replaces automation
 - **Raw protection:** Never delete from `raw/sources/` or `raw/processed/`
+- **README maintenance:** Keep `vault/README.md` current for every vault plugin
+  change, including prose and the Mermaid diagram; never keep references to
+  deprecated skills or workflows.
