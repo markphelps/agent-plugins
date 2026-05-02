@@ -6,213 +6,214 @@ import {
   rm,
   stat,
   writeFile,
-} from "node:fs/promises";
-import path from "node:path";
-import { Client } from "@xdevplatform/xdk";
+} from 'node:fs/promises'
+import path from 'node:path'
+import { Client } from '@xdevplatform/xdk'
+import 'dotenv/config'
 
 export interface CliOptions {
-  limit: number;
-  maxPages: number;
-  headPages: number;
-  vaultRoot: string;
+  limit: number
+  maxPages: number
+  headPages: number
+  vaultRoot: string
 }
 
 export interface BookmarkPost {
-  id: string;
-  text: string;
-  authorId?: string;
-  authorName?: string;
-  authorHandle?: string;
-  createdAt?: string;
+  id: string
+  text: string
+  authorId?: string
+  authorName?: string
+  authorHandle?: string
+  createdAt?: string
   publicMetrics?: {
-    like_count?: number;
-    retweet_count?: number;
-    reply_count?: number;
-    quote_count?: number;
-  };
-  links: string[];
+    like_count?: number
+    retweet_count?: number
+    reply_count?: number
+    quote_count?: number
+  }
+  links: string[]
 }
 
 export interface ReviewedEntry {
-  post_id: string;
-  reviewed_at: string;
-  run_id: string;
-  decision: "captured";
-  source_record_path: string;
-  source: "main";
+  post_id: string
+  reviewed_at: string
+  run_id: string
+  decision: 'captured'
+  source_record_path: string
+  source: 'main'
 }
 
 export interface RunEntry {
-  run_id: string;
-  started_at: string;
-  finished_at: string;
-  limit: number;
-  max_pages: number;
-  pages_fetched: number;
-  evaluated_count: number;
-  captured_count: number;
-  errors: string[];
+  run_id: string
+  started_at: string
+  finished_at: string
+  limit: number
+  max_pages: number
+  pages_fetched: number
+  evaluated_count: number
+  captured_count: number
+  errors: string[]
 }
 
 export interface Checkpoint {
-  last_successful_run_at?: string;
-  last_pages_fetched?: number;
-  head_pages?: number;
-  backlog_token?: string | null;
-  backlog_exhausted?: boolean;
+  last_successful_run_at?: string
+  last_pages_fetched?: number
+  head_pages?: number
+  backlog_token?: string | null
+  backlog_exhausted?: boolean
 }
 
 export interface BookmarkPage {
-  posts: BookmarkPost[];
-  requestToken: string | null;
-  nextToken: string | null;
+  posts: BookmarkPost[]
+  requestToken: string | null
+  nextToken: string | null
 }
 
 export interface CollectionResult {
-  selected: BookmarkPost[];
-  pagesFetched: number;
-  nextBacklogToken: string | null;
-  backlogExhausted: boolean;
-  cursorReset: boolean;
-  errors: string[];
+  selected: BookmarkPost[]
+  pagesFetched: number
+  nextBacklogToken: string | null
+  backlogExhausted: boolean
+  cursorReset: boolean
+  errors: string[]
 }
 
-type JsonRecord = Record<string, unknown>;
+type JsonRecord = Record<string, unknown>
 
 const DEFAULT_OPTIONS: CliOptions = {
   limit: 15,
   maxPages: 10,
   headPages: 2,
   vaultRoot: process.cwd(),
-};
+}
 
 const TOKEN_ERROR =
-  "Missing X API user token. Set X_USER_ACCESS_TOKEN from an OAuth 2.0 user-context authorization.";
+  'Missing X API user token. Set X_USER_ACCESS_TOKEN from an OAuth 2.0 user-context authorization.'
 
 const SAVED_CURSOR_REJECTED =
-  "Saved backlog cursor was rejected; reset catch-up cursor to current head scan.";
+  'Saved backlog cursor was rejected; reset catch-up cursor to current head scan.'
 
 export function parseArgs(argv: string[]): CliOptions {
-  const options = { ...DEFAULT_OPTIONS };
+  const options = { ...DEFAULT_OPTIONS }
 
   for (let index = 0; index < argv.length; index += 1) {
-    const arg = argv[index];
+    const arg = argv[index]
 
-    if (arg === "--limit") {
-      options.limit = parseIntegerFlag(arg, argv[index + 1]);
-      index += 1;
-      continue;
+    if (arg === '--limit') {
+      options.limit = parseIntegerFlag(arg, argv[index + 1])
+      index += 1
+      continue
     }
 
-    if (arg === "--max-pages") {
-      options.maxPages = parseIntegerFlag(arg, argv[index + 1]);
-      index += 1;
-      continue;
+    if (arg === '--max-pages') {
+      options.maxPages = parseIntegerFlag(arg, argv[index + 1])
+      index += 1
+      continue
     }
 
-    if (arg === "--head-pages") {
-      options.headPages = parseIntegerFlag(arg, argv[index + 1]);
-      index += 1;
-      continue;
+    if (arg === '--head-pages') {
+      options.headPages = parseIntegerFlag(arg, argv[index + 1])
+      index += 1
+      continue
     }
 
-    if (arg === "--path") {
-      const next = argv[index + 1];
-      if (next === undefined || next.startsWith("--")) {
-        throw new Error(`${arg} requires a value`);
+    if (arg === '--path') {
+      const next = argv[index + 1]
+      if (next === undefined || next.startsWith('--')) {
+        throw new Error(`${arg} requires a value`)
       }
-      options.vaultRoot = path.resolve(next);
-      index += 1;
-      continue;
+      options.vaultRoot = path.resolve(next)
+      index += 1
+      continue
     }
 
-    throw new Error(`Unknown argument: ${arg}`);
+    throw new Error(`Unknown argument: ${arg}`)
   }
 
-  return options;
+  return options
 }
 
 export function selectOldestReachableUnreviewed(
   pagesNewestFirst: BookmarkPost[][],
   reviewedIds: Set<string>,
-  limit: number
+  limit: number,
 ): BookmarkPost[] {
-  const seen = new Set<string>();
+  const seen = new Set<string>()
 
   return pagesNewestFirst
     .flat()
     .filter((post) => {
       if (reviewedIds.has(post.id) || seen.has(post.id)) {
-        return false;
+        return false
       }
-      seen.add(post.id);
-      return true;
+      seen.add(post.id)
+      return true
     })
     .slice(-limit)
-    .reverse();
+    .reverse()
 }
 
 export function mergePagesWithoutDuplicatePosts(
-  pageGroups: BookmarkPost[][][]
+  pageGroups: BookmarkPost[][][],
 ): BookmarkPost[][] {
-  const seen = new Set<string>();
-  const merged: BookmarkPost[][] = [];
+  const seen = new Set<string>()
+  const merged: BookmarkPost[][] = []
 
   for (const group of pageGroups) {
     for (const page of group) {
       const uniquePage = page.filter((post) => {
         if (seen.has(post.id)) {
-          return false;
+          return false
         }
-        seen.add(post.id);
-        return true;
-      });
-      merged.push(uniquePage);
+        seen.add(post.id)
+        return true
+      })
+      merged.push(uniquePage)
     }
   }
 
-  return merged;
+  return merged
 }
 
 function recordNewestFirstOrder(
   posts: BookmarkPost[],
   postOrder: Map<string, number>,
-  startOrdinal: number
+  startOrdinal: number,
 ): number {
-  let ordinal = startOrdinal;
+  let ordinal = startOrdinal
   for (const post of posts) {
     if (!postOrder.has(post.id)) {
-      postOrder.set(post.id, ordinal);
+      postOrder.set(post.id, ordinal)
     }
-    ordinal += 1;
+    ordinal += 1
   }
-  return ordinal;
+  return ordinal
 }
 
 function orderSelectedOldestToNewest(
   selected: BookmarkPost[],
-  postOrder: Map<string, number>
+  postOrder: Map<string, number>,
 ): BookmarkPost[] {
   return [...selected].sort((left, right) => {
-    const leftOrder = postOrder.get(left.id) ?? -1;
-    const rightOrder = postOrder.get(right.id) ?? -1;
-    return rightOrder - leftOrder;
-  });
+    const leftOrder = postOrder.get(left.id) ?? -1
+    const rightOrder = postOrder.get(right.id) ?? -1
+    return rightOrder - leftOrder
+  })
 }
 
 export function buildSourceMarkdown(
   post: BookmarkPost,
-  capturedAt: string
+  capturedAt: string,
 ): string {
-  const handle = normalizeHandle(post.authorHandle) ?? "unknown";
-  const author = post.authorName?.trim() || "Unknown author";
-  const postedAt = post.createdAt?.trim() || "unknown";
-  const sourceUrl = `https://x.com/${handle}/status/${post.id}`;
-  const title = markdownTitle(post.text);
+  const handle = normalizeHandle(post.authorHandle) ?? 'unknown'
+  const author = post.authorName?.trim() || 'Unknown author'
+  const postedAt = post.createdAt?.trim() || 'unknown'
+  const sourceUrl = `https://x.com/${handle}/status/${post.id}`
+  const title = markdownTitle(post.text)
   const links = post.links.length
-    ? post.links.map((link) => `- ${link}`).join("\n")
-    : "- unknown";
-  const metrics = post.publicMetrics ?? {};
+    ? post.links.map((link) => `- ${link}`).join('\n')
+    : '- unknown'
+  const metrics = post.publicMetrics ?? {}
 
   return `---
 tags:
@@ -234,19 +235,11 @@ Posted: ${postedAt}
 
 ## Post
 
-${post.text.trim() || "unknown"}
+${post.text.trim() || 'unknown'}
 
 ## Links
 
 ${links}
-
-## Why This Might Matter
-
-Captured from saved X bookmarks for later vault review.
-
-## Suggested Vault Connections
-
-TBD during ingest.
 
 ## Metadata
 
@@ -254,63 +247,60 @@ TBD during ingest.
 - Reposts: ${metricValue(metrics.retweet_count)}
 - Replies: ${metricValue(metrics.reply_count)}
 - Quotes: ${metricValue(metrics.quote_count)}
-`;
+`
 }
 
-export function sourceFilename(
-  post: BookmarkPost,
-  capturedAt: string
-): string {
-  const day = dateDay(post.createdAt) ?? dateDay(capturedAt) ?? "unknown-date";
+export function sourceFilename(post: BookmarkPost, capturedAt: string): string {
+  const day = dateDay(post.createdAt) ?? dateDay(capturedAt) ?? 'unknown-date'
   const identity = slugify(
-    normalizeHandle(post.authorHandle) ?? post.authorName ?? "unknown"
-  );
-  return `${day}-x-bookmark-${identity}-${post.id}.md`;
+    normalizeHandle(post.authorHandle) ?? post.authorName ?? 'unknown',
+  )
+  return `${day}-x-bookmark-${identity}-${post.id}.md`
 }
 
 export async function readReviewedIds(
-  reviewedPath: string
+  reviewedPath: string,
 ): Promise<Set<string>> {
   if (!(await exists(reviewedPath))) {
-    return new Set();
+    return new Set()
   }
 
-  const reviewedIds = new Set<string>();
-  const content = await readFile(reviewedPath, "utf8");
+  const reviewedIds = new Set<string>()
+  const content = await readFile(reviewedPath, 'utf8')
   for (const line of content.split(/\r?\n/)) {
     if (!line.trim()) {
-      continue;
+      continue
     }
-    const entry = JSON.parse(line) as { post_id?: unknown };
-    if (typeof entry.post_id === "string") {
-      reviewedIds.add(entry.post_id);
+    const entry = JSON.parse(line) as { post_id?: unknown }
+    if (typeof entry.post_id === 'string') {
+      reviewedIds.add(entry.post_id)
     }
   }
-  return reviewedIds;
+  return reviewedIds
 }
 
 export async function readCheckpoint(
-  checkpointPath: string
+  checkpointPath: string,
 ): Promise<Checkpoint> {
   if (!(await exists(checkpointPath))) {
-    return {};
+    return {}
   }
-  return JSON.parse(await readFile(checkpointPath, "utf8")) as Checkpoint;
+  return JSON.parse(await readFile(checkpointPath, 'utf8')) as Checkpoint
 }
 
 export async function uniquePath(filePath: string): Promise<string> {
   if (!(await exists(filePath))) {
-    return filePath;
+    return filePath
   }
 
-  const parsed = path.parse(filePath);
+  const parsed = path.parse(filePath)
   for (let copy = 2; ; copy += 1) {
     const candidate = path.join(
       parsed.dir,
-      `${parsed.name}-${copy}${parsed.ext}`
-    );
+      `${parsed.name}-${copy}${parsed.ext}`,
+    )
     if (!(await exists(candidate))) {
-      return candidate;
+      return candidate
     }
   }
 }
@@ -320,48 +310,48 @@ export async function collectSelectedBookmarks(
   userId: string,
   options: CliOptions,
   checkpoint: Checkpoint,
-  reviewedIds: Set<string>
+  reviewedIds: Set<string>,
 ): Promise<CollectionResult> {
-  const errors: string[] = [];
-  const selected: BookmarkPost[] = [];
-  const selectedIds = new Set(reviewedIds);
-  const postOrder = new Map<string, number>();
-  let pagesFetched = 0;
-  let cursorReset = false;
-  let backlogExhausted = false;
-  let nextBacklogToken: string | null = checkpoint.backlog_token ?? null;
-  let headCursor: string | null = null;
-  let newestFirstOrdinal = 0;
+  const errors: string[] = []
+  const selected: BookmarkPost[] = []
+  const selectedIds = new Set(reviewedIds)
+  const postOrder = new Map<string, number>()
+  let pagesFetched = 0
+  let cursorReset = false
+  let backlogExhausted = false
+  let nextBacklogToken: string | null = checkpoint.backlog_token ?? null
+  let headCursor: string | null = null
+  let newestFirstOrdinal = 0
 
-  const headPages: BookmarkPost[][] = [];
-  const headPageLimit = Math.min(options.headPages, options.maxPages);
-  let token: string | null = null;
+  const headPages: BookmarkPost[][] = []
+  const headPageLimit = Math.min(options.headPages, options.maxPages)
+  let token: string | null = null
 
   for (let pageIndex = 0; pageIndex < headPageLimit; pageIndex += 1) {
-    const page = await fetchBookmarkPage(client, userId, token);
-    pagesFetched += 1;
-    errors.push(...page.errors);
-    headPages.push(page.bookmarkPage.posts);
+    const page = await fetchBookmarkPage(client, userId, token)
+    pagesFetched += 1
+    errors.push(...page.errors)
+    headPages.push(page.bookmarkPage.posts)
     newestFirstOrdinal = recordNewestFirstOrder(
       page.bookmarkPage.posts,
       postOrder,
-      newestFirstOrdinal
-    );
-    headCursor = page.bookmarkPage.nextToken;
-    token = page.bookmarkPage.nextToken;
+      newestFirstOrdinal,
+    )
+    headCursor = page.bookmarkPage.nextToken
+    token = page.bookmarkPage.nextToken
 
     if (!token) {
-      break;
+      break
     }
   }
 
   for (const post of selectOldestReachableUnreviewed(
     headPages,
     reviewedIds,
-    options.limit
+    options.limit,
   )) {
-    selected.push(post);
-    selectedIds.add(post.id);
+    selected.push(post)
+    selectedIds.add(post.id)
   }
 
   if (selected.length >= options.limit) {
@@ -372,7 +362,7 @@ export async function collectSelectedBookmarks(
       backlogExhausted: checkpoint.backlog_exhausted ?? false,
       cursorReset,
       errors,
-    };
+    }
   }
 
   if (checkpoint.backlog_exhausted) {
@@ -383,22 +373,22 @@ export async function collectSelectedBookmarks(
       backlogExhausted: true,
       cursorReset,
       errors,
-    };
+    }
   }
 
-  token = checkpoint.backlog_token ?? headCursor;
-  nextBacklogToken = token;
+  token = checkpoint.backlog_token ?? headCursor
+  nextBacklogToken = token
 
   while (selected.length < options.limit && pagesFetched < options.maxPages) {
     if (!token) {
-      backlogExhausted = true;
-      nextBacklogToken = null;
-      break;
+      backlogExhausted = true
+      nextBacklogToken = null
+      break
     }
 
-    let page: NormalizedPage;
+    let page: NormalizedPage
     try {
-      page = await fetchBookmarkPage(client, userId, token);
+      page = await fetchBookmarkPage(client, userId, token)
     } catch (error) {
       if (
         checkpoint.backlog_token &&
@@ -406,55 +396,55 @@ export async function collectSelectedBookmarks(
         !cursorReset &&
         isRejectedCursorError(error)
       ) {
-        errors.push(SAVED_CURSOR_REJECTED);
-        cursorReset = true;
-        token = headCursor;
-        nextBacklogToken = token;
+        errors.push(SAVED_CURSOR_REJECTED)
+        cursorReset = true
+        token = headCursor
+        nextBacklogToken = token
         if (!token) {
-          backlogExhausted = true;
-          nextBacklogToken = null;
-          break;
+          backlogExhausted = true
+          nextBacklogToken = null
+          break
         }
-        continue;
+        continue
       }
-      throw error;
+      throw error
     }
 
-    pagesFetched += 1;
-    errors.push(...page.errors);
+    pagesFetched += 1
+    errors.push(...page.errors)
     newestFirstOrdinal = recordNewestFirstOrder(
       page.bookmarkPage.posts,
       postOrder,
-      newestFirstOrdinal
-    );
+      newestFirstOrdinal,
+    )
 
-    const oldestToNewest = [...page.bookmarkPage.posts].reverse();
+    const oldestToNewest = [...page.bookmarkPage.posts].reverse()
     for (let index = 0; index < oldestToNewest.length; index += 1) {
-      const post = oldestToNewest[index];
+      const post = oldestToNewest[index]
       if (selectedIds.has(post.id)) {
-        continue;
+        continue
       }
-      selected.push(post);
-      selectedIds.add(post.id);
+      selected.push(post)
+      selectedIds.add(post.id)
       if (selected.length >= options.limit) {
         nextBacklogToken =
           index < oldestToNewest.length - 1
             ? page.bookmarkPage.requestToken
-            : page.bookmarkPage.nextToken;
-        break;
+            : page.bookmarkPage.nextToken
+        break
       }
     }
 
     if (selected.length >= options.limit) {
-      break;
+      break
     }
 
-    token = page.bookmarkPage.nextToken;
-    nextBacklogToken = token;
+    token = page.bookmarkPage.nextToken
+    nextBacklogToken = token
     if (!token) {
-      backlogExhausted = true;
-      nextBacklogToken = null;
-      break;
+      backlogExhausted = true
+      nextBacklogToken = null
+      break
     }
   }
 
@@ -465,35 +455,35 @@ export async function collectSelectedBookmarks(
     backlogExhausted,
     cursorReset,
     errors,
-  };
+  }
 }
 
 export async function run(options: CliOptions): Promise<void> {
-  const token = process.env.X_USER_ACCESS_TOKEN;
+  const token = process.env.X_USER_ACCESS_TOKEN
   if (!token) {
-    throw new Error(TOKEN_ERROR);
+    throw new Error(TOKEN_ERROR)
   }
 
-  const runId = new Date().toISOString().replace(/[-:.TZ]/g, "");
-  const startedAt = new Date().toISOString();
-  const stateDir = path.join(options.vaultRoot, "raw", "state", "x-bookmarks");
-  const sourcesDir = path.join(options.vaultRoot, "raw", "sources");
-  const reviewedPath = path.join(stateDir, "reviewed.jsonl");
-  const runsPath = path.join(stateDir, "runs.jsonl");
-  const checkpointPath = path.join(stateDir, "checkpoint.json");
-  const sourceRecords: string[] = [];
-  const writeErrors: string[] = [];
+  const runId = new Date().toISOString().replace(/[-:.TZ]/g, '')
+  const startedAt = new Date().toISOString()
+  const stateDir = path.join(options.vaultRoot, 'raw', 'state', 'x-bookmarks')
+  const sourcesDir = path.join(options.vaultRoot, 'raw', 'sources')
+  const reviewedPath = path.join(stateDir, 'reviewed.jsonl')
+  const runsPath = path.join(stateDir, 'runs.jsonl')
+  const checkpointPath = path.join(stateDir, 'checkpoint.json')
+  const sourceRecords: string[] = []
+  const writeErrors: string[] = []
 
-  await mkdir(stateDir, { recursive: true });
-  await mkdir(sourcesDir, { recursive: true });
+  await mkdir(stateDir, { recursive: true })
+  await mkdir(sourcesDir, { recursive: true })
 
-  const reviewedIds = await readReviewedIds(reviewedPath);
-  const checkpoint = await readCheckpoint(checkpointPath);
-  const client = new Client({ accessToken: token });
-  const me = await client.users.getMe();
-  const userId = getNestedString(asRecord(me), ["data", "id"]);
+  const reviewedIds = await readReviewedIds(reviewedPath)
+  const checkpoint = await readCheckpoint(checkpointPath)
+  const client = new Client({ accessToken: token })
+  const me = await client.users.getMe()
+  const userId = getNestedString(asRecord(me), ['data', 'id'])
   if (!userId) {
-    throw new Error("Failed to resolve authenticated user through /2/users/me.");
+    throw new Error('Failed to resolve authenticated user through /2/users/me.')
   }
 
   const collection = await collectSelectedBookmarks(
@@ -501,47 +491,47 @@ export async function run(options: CliOptions): Promise<void> {
     userId,
     options,
     checkpoint,
-    reviewedIds
-  );
+    reviewedIds,
+  )
 
   for (const post of collection.selected) {
-    const capturedAt = new Date().toISOString();
-    const desiredPath = path.join(sourcesDir, sourceFilename(post, capturedAt));
+    const capturedAt = new Date().toISOString()
+    const desiredPath = path.join(sourcesDir, sourceFilename(post, capturedAt))
 
     try {
-      const sourcePath = await uniquePath(desiredPath);
+      const sourcePath = await uniquePath(desiredPath)
       await writeFile(sourcePath, buildSourceMarkdown(post, capturedAt), {
-        encoding: "utf8",
-        flag: "wx",
-      });
+        encoding: 'utf8',
+        flag: 'wx',
+      })
       const reviewedEntry: ReviewedEntry = {
         post_id: post.id,
         reviewed_at: capturedAt,
         run_id: runId,
-        decision: "captured",
+        decision: 'captured',
         source_record_path: path.relative(options.vaultRoot, sourcePath),
-        source: "main",
-      };
+        source: 'main',
+      }
       try {
-        await appendJsonLine(reviewedPath, reviewedEntry);
+        await appendJsonLine(reviewedPath, reviewedEntry)
       } catch (error) {
         try {
-          await rm(sourcePath, { force: true });
+          await rm(sourcePath, { force: true })
         } catch (cleanupError) {
           throw new Error(
-            `${errorMessage(error)}; failed to remove orphaned source record ${sourcePath}: ${errorMessage(cleanupError)}`
-          );
+            `${errorMessage(error)}; failed to remove orphaned source record ${sourcePath}: ${errorMessage(cleanupError)}`,
+          )
         }
-        throw error;
+        throw error
       }
-      sourceRecords.push(reviewedEntry.source_record_path);
+      sourceRecords.push(reviewedEntry.source_record_path)
     } catch (error) {
-      writeErrors.push(errorMessage(error));
+      writeErrors.push(errorMessage(error))
     }
   }
 
-  const allErrors = [...collection.errors, ...writeErrors];
-  const finishedAt = new Date().toISOString();
+  const allErrors = [...collection.errors, ...writeErrors]
+  const finishedAt = new Date().toISOString()
   const runEntry: RunEntry = {
     run_id: runId,
     started_at: startedAt,
@@ -552,9 +542,9 @@ export async function run(options: CliOptions): Promise<void> {
     evaluated_count: collection.selected.length,
     captured_count: sourceRecords.length,
     errors: allErrors,
-  };
+  }
 
-  await appendJsonLine(runsPath, runEntry);
+  await appendJsonLine(runsPath, runEntry)
 
   if (writeErrors.length === 0) {
     const nextCheckpoint: Checkpoint = {
@@ -563,8 +553,8 @@ export async function run(options: CliOptions): Promise<void> {
       head_pages: options.headPages,
       backlog_token: collection.nextBacklogToken,
       backlog_exhausted: collection.backlogExhausted,
-    };
-    await writeCheckpointAtomically(checkpointPath, nextCheckpoint);
+    }
+    await writeCheckpointAtomically(checkpointPath, nextCheckpoint)
   }
 
   const summary = {
@@ -574,62 +564,62 @@ export async function run(options: CliOptions): Promise<void> {
     next_backlog_token: collection.nextBacklogToken,
     backlog_exhausted: collection.backlogExhausted,
     cursor_reset: collection.cursorReset,
-  };
-  console.log(JSON.stringify(summary, null, 2));
+  }
+  console.log(JSON.stringify(summary, null, 2))
 
   if (writeErrors.length > 0) {
     throw new Error(
-      "Run completed with source/state write errors; checkpoint was not advanced."
-    );
+      'Run completed with source/state write errors; checkpoint was not advanced.',
+    )
   }
 }
 
 interface NormalizedPage {
-  bookmarkPage: BookmarkPage;
-  errors: string[];
+  bookmarkPage: BookmarkPage
+  errors: string[]
 }
 
 async function fetchBookmarkPage(
   client: Client,
   userId: string,
-  paginationToken: string | null
+  paginationToken: string | null,
 ): Promise<NormalizedPage> {
   const response = await client.users.getBookmarks(userId, {
     maxResults: 100,
     paginationToken: paginationToken ?? undefined,
-    tweetFields: ["author_id", "created_at", "entities", "public_metrics"],
-    expansions: ["author_id", "attachments.media_keys"],
-    userFields: ["id", "name", "username"],
-    mediaFields: ["url", "preview_image_url", "type"],
-  });
+    tweetFields: ['author_id', 'created_at', 'entities', 'public_metrics'],
+    expansions: ['author_id', 'attachments.media_keys'],
+    userFields: ['id', 'name', 'username'],
+    mediaFields: ['url', 'preview_image_url', 'type'],
+  })
 
-  return normalizeBookmarkPage(response, paginationToken);
+  return normalizeBookmarkPage(response, paginationToken)
 }
 
 function normalizeBookmarkPage(
   response: unknown,
-  requestToken: string | null
+  requestToken: string | null,
 ): NormalizedPage {
-  const record = asRecord(response);
-  const data = asArray(record.data);
-  const includes = asRecord(record.includes);
-  const users = new Map<string, JsonRecord>();
+  const record = asRecord(response)
+  const data = asArray(record.data)
+  const includes = asRecord(record.includes)
+  const users = new Map<string, JsonRecord>()
 
   for (const user of asArray(includes.users)) {
-    const userRecord = asRecord(user);
-    const id = stringValue(userRecord.id);
+    const userRecord = asRecord(user)
+    const id = stringValue(userRecord.id)
     if (id) {
-      users.set(id, userRecord);
+      users.set(id, userRecord)
     }
   }
 
   const posts = data
     .map((item) => normalizePost(asRecord(item), users))
-    .filter((post): post is BookmarkPost => post !== null);
-  const meta = asRecord(record.meta);
+    .filter((post): post is BookmarkPost => post !== null)
+  const meta = asRecord(record.meta)
   const nextToken =
-    stringValue(meta.next_token) ?? stringValue(meta.nextToken) ?? null;
-  const errors = asArray(record.errors).map((error) => errorMessage(error));
+    stringValue(meta.next_token) ?? stringValue(meta.nextToken) ?? null
+  const errors = asArray(record.errors).map((error) => errorMessage(error))
 
   return {
     bookmarkPage: {
@@ -638,258 +628,260 @@ function normalizeBookmarkPage(
       nextToken,
     },
     errors,
-  };
+  }
 }
 
 function normalizePost(
   tweet: JsonRecord,
-  users: Map<string, JsonRecord>
+  users: Map<string, JsonRecord>,
 ): BookmarkPost | null {
-  const id = stringValue(tweet.id);
+  const id = stringValue(tweet.id)
   if (!id) {
-    return null;
+    return null
   }
 
   const authorId =
-    stringValue(tweet.author_id) ?? stringValue(tweet.authorId) ?? undefined;
-  const author = authorId ? users.get(authorId) : undefined;
+    stringValue(tweet.author_id) ?? stringValue(tweet.authorId) ?? undefined
+  const author = authorId ? users.get(authorId) : undefined
   const publicMetrics =
-    optionalRecord(tweet.public_metrics) ?? optionalRecord(tweet.publicMetrics);
+    optionalRecord(tweet.public_metrics) ?? optionalRecord(tweet.publicMetrics)
 
   return {
     id,
-    text: stringValue(tweet.text) ?? "",
+    text: stringValue(tweet.text) ?? '',
     authorId,
-    authorName: author ? stringValue(author.name) ?? undefined : undefined,
+    authorName: author ? (stringValue(author.name) ?? undefined) : undefined,
     authorHandle: author
-      ? stringValue(author.username) ?? undefined
-      : stringValue(tweet.username) ?? undefined,
+      ? (stringValue(author.username) ?? undefined)
+      : (stringValue(tweet.username) ?? undefined),
     createdAt:
-      stringValue(tweet.created_at) ?? stringValue(tweet.createdAt) ?? undefined,
+      stringValue(tweet.created_at) ??
+      stringValue(tweet.createdAt) ??
+      undefined,
     publicMetrics: {
       like_count: numberValue(
-        publicMetrics?.like_count ?? publicMetrics?.likeCount
+        publicMetrics?.like_count ?? publicMetrics?.likeCount,
       ),
       retweet_count: numberValue(
-        publicMetrics?.retweet_count ?? publicMetrics?.retweetCount
+        publicMetrics?.retweet_count ?? publicMetrics?.retweetCount,
       ),
       reply_count: numberValue(
-        publicMetrics?.reply_count ?? publicMetrics?.replyCount
+        publicMetrics?.reply_count ?? publicMetrics?.replyCount,
       ),
       quote_count: numberValue(
-        publicMetrics?.quote_count ?? publicMetrics?.quoteCount
+        publicMetrics?.quote_count ?? publicMetrics?.quoteCount,
       ),
     },
     links: extractLinks(tweet),
-  };
+  }
 }
 
 function extractLinks(tweet: JsonRecord): string[] {
-  const entities = asRecord(tweet.entities);
-  const seen = new Set<string>();
-  const links: string[] = [];
+  const entities = asRecord(tweet.entities)
+  const seen = new Set<string>()
+  const links: string[] = []
 
   for (const url of asArray(entities?.urls)) {
-    const urlRecord = asRecord(url);
+    const urlRecord = asRecord(url)
     const link =
       stringValue(urlRecord.expanded_url) ??
       stringValue(urlRecord.expandedUrl) ??
       stringValue(urlRecord.unwound_url) ??
       stringValue(urlRecord.unwoundUrl) ??
-      stringValue(urlRecord.url);
+      stringValue(urlRecord.url)
     if (link && !seen.has(link)) {
-      seen.add(link);
-      links.push(link);
+      seen.add(link)
+      links.push(link)
     }
   }
 
-  return links;
+  return links
 }
 
 async function appendJsonLine(filePath: string, entry: unknown): Promise<void> {
-  const prefix = (await needsJsonLineSeparator(filePath)) ? "\n" : "";
-  await writeFile(
-    filePath,
-    `${prefix}${JSON.stringify(entry)}\n`,
-    { encoding: "utf8", flag: "a" }
-  );
+  const prefix = (await needsJsonLineSeparator(filePath)) ? '\n' : ''
+  await writeFile(filePath, `${prefix}${JSON.stringify(entry)}\n`, {
+    encoding: 'utf8',
+    flag: 'a',
+  })
 }
 
 async function needsJsonLineSeparator(filePath: string): Promise<boolean> {
-  let fileInfo: Awaited<ReturnType<typeof stat>>;
+  let fileInfo: Awaited<ReturnType<typeof stat>>
   try {
-    fileInfo = await stat(filePath);
+    fileInfo = await stat(filePath)
   } catch (error) {
-    if (isNodeError(error) && error.code === "ENOENT") {
-      return false;
+    if (isNodeError(error) && error.code === 'ENOENT') {
+      return false
     }
-    throw error;
+    throw error
   }
 
   if (fileInfo.size === 0) {
-    return false;
+    return false
   }
 
-  const handle = await open(filePath, "r");
+  const handle = await open(filePath, 'r')
   try {
-    const buffer = Buffer.alloc(1);
-    await handle.read(buffer, 0, 1, fileInfo.size - 1);
-    return buffer[0] !== 10;
+    const buffer = Buffer.alloc(1)
+    await handle.read(buffer, 0, 1, fileInfo.size - 1)
+    return buffer[0] !== 10
   } finally {
-    await handle.close();
+    await handle.close()
   }
 }
 
 async function writeCheckpointAtomically(
   checkpointPath: string,
-  checkpoint: Checkpoint
+  checkpoint: Checkpoint,
 ): Promise<void> {
   const tempPath = path.join(
     path.dirname(checkpointPath),
-    `.${path.basename(checkpointPath)}.${process.pid}.${Date.now()}.tmp`
-  );
+    `.${path.basename(checkpointPath)}.${process.pid}.${Date.now()}.tmp`,
+  )
 
   try {
-    await writeFile(tempPath, `${JSON.stringify(checkpoint, null, 2)}\n`, "utf8");
-    await rename(tempPath, checkpointPath);
+    await writeFile(
+      tempPath,
+      `${JSON.stringify(checkpoint, null, 2)}\n`,
+      'utf8',
+    )
+    await rename(tempPath, checkpointPath)
   } catch (error) {
-    await rm(tempPath, { force: true }).catch(() => undefined);
-    throw error;
+    await rm(tempPath, { force: true }).catch(() => undefined)
+    throw error
   }
 }
 
 async function exists(filePath: string): Promise<boolean> {
   try {
-    await stat(filePath);
-    return true;
+    await stat(filePath)
+    return true
   } catch (error) {
-    if (isNodeError(error) && error.code === "ENOENT") {
-      return false;
+    if (isNodeError(error) && error.code === 'ENOENT') {
+      return false
     }
-    throw error;
+    throw error
   }
 }
 
 function parseIntegerFlag(flag: string, value: string | undefined): number {
-  if (value === undefined || value.startsWith("--")) {
-    throw new Error(`${flag} requires a value`);
+  if (value === undefined || value.startsWith('--')) {
+    throw new Error(`${flag} requires a value`)
   }
   if (!/^(?:[1-9][0-9]?)$|^100$/.test(value)) {
-    throw new Error(`${flag} must be an integer from 1 to 100`);
+    throw new Error(`${flag} must be an integer from 1 to 100`)
   }
-  return Number(value);
+  return Number(value)
 }
 
 function markdownTitle(text: string): string {
-  const title = text
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 80);
-  return title || "Untitled";
+  const title = text.replace(/\s+/g, ' ').trim().slice(0, 80)
+  return title || 'Untitled'
 }
 
 function yamlEscape(value: string): string {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+  return value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')
 }
 
 function normalizeHandle(handle: string | undefined): string | undefined {
-  const normalized = handle?.trim().replace(/^@+/, "");
-  return normalized || undefined;
+  const normalized = handle?.trim().replace(/^@+/, '')
+  return normalized || undefined
 }
 
 function metricValue(value: number | undefined): string {
-  return typeof value === "number" ? String(value) : "unknown";
+  return typeof value === 'number' ? String(value) : 'unknown'
 }
 
 function dateDay(value: string | undefined): string | undefined {
   if (!value) {
-    return undefined;
+    return undefined
   }
-  const date = new Date(value);
+  const date = new Date(value)
   if (Number.isNaN(date.getTime())) {
-    return undefined;
+    return undefined
   }
-  return date.toISOString().slice(0, 10);
+  return date.toISOString().slice(0, 10)
 }
 
 function slugify(value: string): string {
   const slug = value
     .trim()
     .toLowerCase()
-    .replace(/^@+/, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-  return slug || "unknown";
+    .replace(/^@+/, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  return slug || 'unknown'
 }
 
 function getNestedString(
   record: JsonRecord,
-  pathParts: string[]
+  pathParts: string[],
 ): string | undefined {
-  let current: unknown = record;
+  let current: unknown = record
   for (const part of pathParts) {
-    current = asRecord(current)?.[part];
+    current = asRecord(current)?.[part]
   }
-  return stringValue(current) ?? undefined;
+  return stringValue(current) ?? undefined
 }
 
 function asRecord(value: unknown): JsonRecord {
-  if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-    return value as JsonRecord;
+  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    return value as JsonRecord
   }
-  return {};
+  return {}
 }
 
 function optionalRecord(value: unknown): JsonRecord | undefined {
-  if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-    return value as JsonRecord;
+  if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+    return value as JsonRecord
   }
-  return undefined;
+  return undefined
 }
 
 function asArray(value: unknown): unknown[] {
-  return Array.isArray(value) ? value : [];
+  return Array.isArray(value) ? value : []
 }
 
 function stringValue(value: unknown): string | undefined {
-  return typeof value === "string" && value.length > 0 ? value : undefined;
+  return typeof value === 'string' && value.length > 0 ? value : undefined
 }
 
 function numberValue(value: unknown): number | undefined {
-  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined
 }
 
 function errorMessage(error: unknown): string {
   if (error instanceof Error) {
-    return error.message;
+    return error.message
   }
-  if (typeof error === "string") {
-    return error;
+  if (typeof error === 'string') {
+    return error
   }
   try {
-    return JSON.stringify(error);
+    return JSON.stringify(error)
   } catch {
-    return String(error);
+    return String(error)
   }
 }
 
 function isRejectedCursorError(error: unknown): boolean {
-  const message = errorMessage(error).toLowerCase();
+  const message = errorMessage(error).toLowerCase()
   return (
-    message.includes("pagination") ||
-    message.includes("token") ||
-    message.includes("cursor") ||
-    message.includes("invalid")
-  );
+    message.includes('pagination') ||
+    message.includes('token') ||
+    message.includes('cursor') ||
+    message.includes('invalid')
+  )
 }
 
 function isNodeError(error: unknown): error is NodeJS.ErrnoException {
-  return error instanceof Error && "code" in error;
+  return error instanceof Error && 'code' in error
 }
 
-if (typeof require !== "undefined" && require.main === module) {
+if (typeof require !== 'undefined' && require.main === module) {
   run(parseArgs(process.argv.slice(2))).catch((error) => {
-    console.error(errorMessage(error));
-    process.exit(1);
-  });
+    console.error(errorMessage(error))
+    process.exit(1)
+  })
 }

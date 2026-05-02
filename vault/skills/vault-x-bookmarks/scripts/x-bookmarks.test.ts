@@ -172,7 +172,7 @@ test("buildSourceMarkdown creates an external source record", () => {
   assert.match(markdown, /source_url: https:\/\/x\.com\/jane_doe\/status\/123/);
   assert.match(markdown, /posted_at: "2026-02-03T04:05:06Z"/);
   assert.doesNotMatch(markdown, /vault_candidate_reason/);
-  assert.match(markdown, /## Why This Might Matter/);
+  assert.match(markdown, /## Metadata/);
 });
 
 test("sourceFilename includes date, source, identity, and post ID", () => {
