@@ -158,6 +158,32 @@ export function mergePagesWithoutDuplicatePosts(
   return merged;
 }
 
+function recordNewestFirstOrder(
+  posts: BookmarkPost[],
+  postOrder: Map<string, number>,
+  startOrdinal: number
+): number {
+  let ordinal = startOrdinal;
+  for (const post of posts) {
+    if (!postOrder.has(post.id)) {
+      postOrder.set(post.id, ordinal);
+    }
+    ordinal += 1;
+  }
+  return ordinal;
+}
+
+function orderSelectedOldestToNewest(
+  selected: BookmarkPost[],
+  postOrder: Map<string, number>
+): BookmarkPost[] {
+  return [...selected].sort((left, right) => {
+    const leftOrder = postOrder.get(left.id) ?? -1;
+    const rightOrder = postOrder.get(right.id) ?? -1;
+    return rightOrder - leftOrder;
+  });
+}
+
 export function buildSourceMarkdown(
   post: BookmarkPost,
   capturedAt: string
@@ -283,11 +309,13 @@ export async function collectSelectedBookmarks(
   const errors: string[] = [];
   const selected: BookmarkPost[] = [];
   const selectedIds = new Set(reviewedIds);
+  const postOrder = new Map<string, number>();
   let pagesFetched = 0;
   let cursorReset = false;
   let backlogExhausted = false;
   let nextBacklogToken: string | null = checkpoint.backlog_token ?? null;
   let headCursor: string | null = null;
+  let newestFirstOrdinal = 0;
 
   const headPages: BookmarkPost[][] = [];
   const headPageLimit = Math.min(options.headPages, options.maxPages);
@@ -298,6 +326,11 @@ export async function collectSelectedBookmarks(
     pagesFetched += 1;
     errors.push(...page.errors);
     headPages.push(page.bookmarkPage.posts);
+    newestFirstOrdinal = recordNewestFirstOrder(
+      page.bookmarkPage.posts,
+      postOrder,
+      newestFirstOrdinal
+    );
     headCursor = page.bookmarkPage.nextToken;
     token = page.bookmarkPage.nextToken;
 
@@ -317,7 +350,7 @@ export async function collectSelectedBookmarks(
 
   if (selected.length >= options.limit) {
     return {
-      selected,
+      selected: orderSelectedOldestToNewest(selected, postOrder),
       pagesFetched,
       nextBacklogToken: checkpoint.backlog_token ?? headCursor,
       backlogExhausted: checkpoint.backlog_exhausted ?? false,
@@ -328,7 +361,7 @@ export async function collectSelectedBookmarks(
 
   if (checkpoint.backlog_exhausted) {
     return {
-      selected,
+      selected: orderSelectedOldestToNewest(selected, postOrder),
       pagesFetched,
       nextBacklogToken: null,
       backlogExhausted: true,
@@ -373,6 +406,11 @@ export async function collectSelectedBookmarks(
 
     pagesFetched += 1;
     errors.push(...page.errors);
+    newestFirstOrdinal = recordNewestFirstOrder(
+      page.bookmarkPage.posts,
+      postOrder,
+      newestFirstOrdinal
+    );
 
     const oldestToNewest = [...page.bookmarkPage.posts].reverse();
     for (let index = 0; index < oldestToNewest.length; index += 1) {
@@ -405,7 +443,7 @@ export async function collectSelectedBookmarks(
   }
 
   return {
-    selected,
+    selected: orderSelectedOldestToNewest(selected, postOrder),
     pagesFetched,
     nextBacklogToken,
     backlogExhausted,
