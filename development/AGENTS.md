@@ -15,7 +15,6 @@ This plugin contains development workflow skills.
 
 ## Current Skill Surface
 
-- `handoff`: create end-of-session handoff docs
 - `ship-pr`: branch, smart commit scope, push, and PR creation
 - `declaudify`: migrate Claude-specific repo artifacts to neutral standards
 - `wt`: manage branch-per-task Git worktrees with the `wt` CLI

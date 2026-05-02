@@ -9,10 +9,10 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 
 ## Plugins
 
-| Plugin                        | Description                                                     |
-| ----------------------------- | --------------------------------------------------------------- |
-| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes           |
-| [development](./development/) | Session handoff, PR shipping workflow, and declaudify migration |
+| Plugin                        | Description                                                      |
+| ----------------------------- | ---------------------------------------------------------------- |
+| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes            |
+| [development](./development/) | PR shipping workflow, worktree helpers, and declaudify migration |
 
 ## Layout
 
