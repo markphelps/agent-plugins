@@ -1,0 +1,15 @@
+{
+  "name": "vault-x-bookmarks",
+  "private": true,
+  "scripts": {
+    "test:x-bookmarks": "node --import tsx --test scripts/x-bookmarks.test.ts"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}

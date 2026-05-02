@@ -16,12 +16,13 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 | `vault-tracker`  | Project lifecycle + tracker maintenance                |
 | `vault-maintain` | Weekly orchestrator running all checks                 |
 
-## Optional Skills (2)
+## Optional Skills (3)
 
-| Skill            | Purpose                                                |
-| ---------------- | ------------------------------------------------------ |
-| `vault-concepts` | Promote themes → canonical concept pages               |
-| `vault-research` | External research → source records and optional synthesis |
+| Skill               | Purpose                                                  |
+| ------------------- | -------------------------------------------------------- |
+| `vault-concepts`    | Promote themes → canonical concept pages                 |
+| `vault-research`    | External research → source records and optional synthesis |
+| `vault-x-bookmarks` | Capture bounded X bookmark slices into `raw/sources/`    |
 
 ## Usage Patterns
 
@@ -31,10 +32,17 @@ vault-ingest --mode report    # see pending
 vault-ingest --mode apply     # categorize and move sources
 ```
 
+**X bookmark capture:**
+```bash
+vault-x-bookmarks --limit 15
+vault-x-bookmarks --limit 75 --max-pages 25 --head-pages 2
+vault-ingest --mode report
+```
+
 **Weekly maintenance:**
 ```
 vault-maintain --mode report  # full audit
-vault-maintain --mode apply   # apply safe fixes
+vault-maintain --mode apply-safe  # apply safe fixes
 ```
 
 **Project transitions:**
@@ -51,8 +59,12 @@ vault-concepts --mode apply   # create/update concepts
 
 ## Conventions
 
-- **Mode convention:** `--mode report|apply-safe|apply` (default `report`)
-- **Safety first:** All skills are non-destructive by default
+- **Mode convention:** Mode-based skills use
+  `--mode report|apply-safe|apply` (default `report`).
+- **Apply-only exception:** `vault-x-bookmarks` has no report mode; it only runs
+  when explicitly invoked and captures bounded bookmark slices into
+  `raw/sources/`.
+- **Safety first:** Mode-based skills are non-destructive by default.
 - **Manual lifecycle:** Explicit directory structure replaces automation
 - **Raw protection:** Never delete from `raw/sources/` or `raw/processed/`
 - **README maintenance:** Keep `vault/README.md` current for every vault plugin

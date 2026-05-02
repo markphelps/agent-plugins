@@ -1,7 +1,7 @@
 {
   "name": "vault",
   "version": "0.0.7",
-  "description": "Raw-first Obsidian vault manager. Classify captures, route sources, manage ideas/projects, and maintain index/log.",
+  "description": "Raw-first Obsidian vault manager. Classify captures, route sources, import X bookmarks, manage ideas/projects, and maintain index/log.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -14,18 +14,21 @@
     "research",
     "linking",
     "ai",
-    "knowledge-base"
+    "knowledge-base",
+    "x-bookmarks",
+    "bookmarks"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vault",
     "shortDescription": "Raw-first Obsidian workflows",
-    "longDescription": "Operate an Obsidian vault with source-first capture routing, idea/project lifecycle management, optional research synthesis, and index/log maintenance.",
+    "longDescription": "Operate an Obsidian vault with source-first capture routing, bounded X bookmark capture, idea/project lifecycle management, optional research synthesis, and index/log maintenance.",
     "developerName": "Mark Phelps",
     "category": "Productivity",
     "capabilities": ["Read", "Write", "Web Search"],
     "defaultPrompt": [
       "Initialize a raw-first vault structure in this folder.",
+      "Capture a bounded slice of X bookmarks into raw/sources.",
       "Categorize source captures from raw/sources and move them to the right vault locations.",
       "Refresh index and append a structured operation log entry."
     ]
