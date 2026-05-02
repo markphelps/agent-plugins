@@ -79,7 +79,7 @@ for i in "${!SKILL_NAMES[@]}"; do
   src="${SKILL_PATHS[$i]}"
   dst="$DEST/$name"
   mkdir -p "$dst"
-  rsync -a --delete "$src/" "$dst/"
+  rsync -a --delete --exclude node_modules/ --exclude .env "$src/" "$dst/"
   echo "[sync-skills] synced: $name"
 done
 
