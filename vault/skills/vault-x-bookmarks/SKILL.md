@@ -14,6 +14,14 @@ This is source-first: the helper writes `external` source records, records
 captured bookmark IDs in `raw/state/x-bookmarks/`, and leaves organization to a
 follow-up `vault-ingest` run.
 
+## Requirements
+
+- Node.js 18+ for `tsx` and `dotenv`.
+- An X Developer account and app. See
+  [X API docs](https://developer.twitter.com/en/docs/twitter-api) for details.
+- [`xurl`](https://github.com/xdevplatform/xurl/) CLI tool installed and
+  authenticated with OAuth 2.0.
+
 ## Command
 
 Run from this skill directory:
@@ -43,6 +51,9 @@ Install `xurl`, authenticate it with OAuth 2.0 for the X account whose bookmarks
 should be captured, and verify it before running the helper:
 
 ```sh
+xurl auth apps add vault-x-bookmarks --client-id <YOUR_CLIENT_ID> --client-secret <YOUR_CLIENT_SECRET>
+xurl auth oauth2 --app vault-x-bookmarks
+xurl default # to set the default authenticated app for later `xurl` commands
 xurl auth status
 xurl whoami
 ```
