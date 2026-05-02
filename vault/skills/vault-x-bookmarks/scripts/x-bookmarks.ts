@@ -129,9 +129,17 @@ export function selectOldestReachableUnreviewed(
   reviewedIds: Set<string>,
   limit: number
 ): BookmarkPost[] {
+  const seen = new Set<string>();
+
   return pagesNewestFirst
     .flat()
-    .filter((post) => !reviewedIds.has(post.id))
+    .filter((post) => {
+      if (reviewedIds.has(post.id) || seen.has(post.id)) {
+        return false;
+      }
+      seen.add(post.id);
+      return true;
+    })
     .slice(-limit)
     .reverse();
 }
