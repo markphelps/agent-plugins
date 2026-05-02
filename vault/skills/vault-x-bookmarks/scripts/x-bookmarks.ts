@@ -1,4 +1,11 @@
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  readFile,
+  rename,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import path from "node:path";
 import { Client } from "@xdevplatform/xdk";
 
@@ -502,7 +509,10 @@ export async function run(options: CliOptions): Promise<void> {
 
     try {
       const sourcePath = await uniquePath(desiredPath);
-      await writeFile(sourcePath, buildSourceMarkdown(post, capturedAt), "utf8");
+      await writeFile(sourcePath, buildSourceMarkdown(post, capturedAt), {
+        encoding: "utf8",
+        flag: "wx",
+      });
       const reviewedEntry: ReviewedEntry = {
         post_id: post.id,
         reviewed_at: capturedAt,
@@ -511,7 +521,18 @@ export async function run(options: CliOptions): Promise<void> {
         source_record_path: path.relative(options.vaultRoot, sourcePath),
         source: "main",
       };
-      await appendJsonLine(reviewedPath, reviewedEntry);
+      try {
+        await appendJsonLine(reviewedPath, reviewedEntry);
+      } catch (error) {
+        try {
+          await rm(sourcePath, { force: true });
+        } catch (cleanupError) {
+          throw new Error(
+            `${errorMessage(error)}; failed to remove orphaned source record ${sourcePath}: ${errorMessage(cleanupError)}`
+          );
+        }
+        throw error;
+      }
       sourceRecords.push(reviewedEntry.source_record_path);
     } catch (error) {
       writeErrors.push(errorMessage(error));
@@ -542,11 +563,7 @@ export async function run(options: CliOptions): Promise<void> {
       backlog_token: collection.nextBacklogToken,
       backlog_exhausted: collection.backlogExhausted,
     };
-    await writeFile(
-      checkpointPath,
-      `${JSON.stringify(nextCheckpoint, null, 2)}\n`,
-      "utf8"
-    );
+    await writeCheckpointAtomically(checkpointPath, nextCheckpoint);
   }
 
   const summary = {
@@ -689,15 +706,29 @@ function extractLinks(tweet: JsonRecord): string[] {
 }
 
 async function appendJsonLine(filePath: string, entry: unknown): Promise<void> {
-  const existing = (await exists(filePath))
-    ? await readFile(filePath, "utf8")
-    : "";
-  const prefix = existing.length > 0 && !existing.endsWith("\n") ? "\n" : "";
   await writeFile(
     filePath,
-    `${existing}${prefix}${JSON.stringify(entry)}\n`,
-    "utf8"
+    `${JSON.stringify(entry)}\n`,
+    { encoding: "utf8", flag: "a" }
   );
+}
+
+async function writeCheckpointAtomically(
+  checkpointPath: string,
+  checkpoint: Checkpoint
+): Promise<void> {
+  const tempPath = path.join(
+    path.dirname(checkpointPath),
+    `.${path.basename(checkpointPath)}.${process.pid}.${Date.now()}.tmp`
+  );
+
+  try {
+    await writeFile(tempPath, `${JSON.stringify(checkpoint, null, 2)}\n`, "utf8");
+    await rename(tempPath, checkpointPath);
+  } catch (error) {
+    await rm(tempPath, { force: true }).catch(() => undefined);
+    throw error;
+  }
 }
 
 async function exists(filePath: string): Promise<boolean> {
