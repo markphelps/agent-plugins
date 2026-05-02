@@ -9,8 +9,8 @@ Core skills:
 - `vault-ingest`: Categorize `raw/sources/` and move original source files to
   the correct vault locations.
 - `vault-lint`: Audit active notes, ideas, projects, and resources for
-  contradictions, stale content, weak links, merge candidates, and missing
-  concepts.
+  contradictions, stale content, weak links, knowledge graph connections, merge
+  candidates, and missing concepts.
 - `vault-tracker`: Manage project lifecycle state and reconcile tracker entries
   with filesystem reality.
 - `vault-maintain`: Run the bounded weekly maintenance loop across ingest,
@@ -75,6 +75,7 @@ flowchart TD
   Fleeting --> Maintain
   Incubating --> Maintain
   Maintain --> Lint[vault-lint]
+  Lint --> GraphLinks[connection candidates<br/>and contextual wikilinks]
   Lint --> MergePlan[merge candidates<br/>with confidence]
   Maintain --> IndexLog[index.md + log.md]
 ```
@@ -116,6 +117,9 @@ flowchart TD
   navigation by default.
 - Repeated patterns should graduate into canonical concept pages instead of
   remaining only in reports.
+- Knowledge graph links should be added when relationships are concrete:
+  explicit mentions, shared sources, parent/child relationships, project
+  membership, or concept evidence.
 - Duplicate or continuation notes should merge into one durable item when
   provenance and links can be preserved.
 - Keep user note content intact unless explicit deletion is requested.

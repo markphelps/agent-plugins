@@ -43,6 +43,7 @@ Run `vault-lint --mode report` to:
 
 - Detect contradictions across related notes
 - Find orphan pages and stale content
+- Find connection candidates for knowledge graph growth
 - Find duplicate or overlapping notes, ideas, projects, and resources
 - Identify missing concept pages
 - Flag broken or ambiguous wikilinks
@@ -75,6 +76,7 @@ Compile findings into a weekly summary including:
 - Pending ingestions (count, source types, routing decisions)
 - Source routing proposals (category, destination, confidence)
 - Hygiene issues by severity (contradictions, orphans, stale)
+- Connection candidates (source, target, confidence, relationship)
 - Merge candidates (target, sources, confidence, required link rewrites)
 - Synthesis archive checks (summaries link to complete sources in
   `raw/processed/YYYY-MM-DD/`)
@@ -107,6 +109,8 @@ Append the maintenance entry to `log.md` manually when the vault uses one:
 Apply only high-confidence, low-risk changes:
 
 - **Link normalization**: Fix broken or ambiguous wikilinks
+- **Graph links**: Add high-confidence contextual wikilinks discovered by
+  `vault-lint`
 - **Tracker updates**: Unambiguous state changes, formatting fixes
 - **Merge prep**: Add backlinks or aliases for high-confidence merge candidates
   without moving content
@@ -142,6 +146,8 @@ Additionally allow medium-confidence actions:
 - **Preserve hand-written content**: Favor additive updates over rewrites
 - **Merge conservatively**: When two items are related but distinct, link them
   instead of merging
+- **Graph links need evidence**: Add only links with a clear relationship and
+  natural context
 - **Synthesis requires sources**: Summaries and briefs must cite complete
   archived source records
 - **Exclude `archive/`** from active maintenance unless explicitly scoped
@@ -168,6 +174,7 @@ Return:
 - **Deferred/proposed changes**: Pending items for future cycles
 - **Merge report**: Merges applied/proposed, canonical targets, retained
   provenance
+- **Graph report**: Links added/proposed and relationship evidence
 - **Confidence notes**: High/medium/low confidence per category
 - **Unresolved decisions**: Items requiring explicit user input
 - **Touched files**: List of all modified files with relative paths
