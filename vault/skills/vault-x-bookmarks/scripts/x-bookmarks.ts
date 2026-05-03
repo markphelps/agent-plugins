@@ -277,9 +277,9 @@ ${linkedContent}
 }
 
 export function sourceFilename(post: BookmarkPost, capturedAt: string): string {
-  const day = dateDay(post.createdAt) ?? dateDay(capturedAt) ?? 'unknown-date'
+  void capturedAt
   const contentTitle = filenameTitle(post)
-  return `${day}-x-bookmark-${slugify(contentTitle)}.md`
+  return `${slugify(contentTitle)}.md`
 }
 
 function filenameTitle(post: BookmarkPost): string {

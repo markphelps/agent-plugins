@@ -314,7 +314,7 @@ test("sourceFilename names files after article title when present", () => {
       },
       "2026-02-04T00:00:00Z"
     ),
-    "2026-02-03-x-bookmark-how-to-build-your-ai-second-brain-using-obsidian-claude-code.md"
+    "how-to-build-your-ai-second-brain-using-obsidian-claude-code.md"
   );
 });
 
@@ -334,7 +334,7 @@ test("sourceFilename falls back to linked content title and post text", () => {
       },
       "2026-02-04T00:00:00Z"
     ),
-    "2026-02-03-x-bookmark-durable-notes-deep-dive.md"
+    "durable-notes-deep-dive.md"
   );
 
   assert.equal(
@@ -345,7 +345,7 @@ test("sourceFilename falls back to linked content title and post text", () => {
       },
       "2026-02-04T00:00:00Z"
     ),
-    "2026-02-03-x-bookmark-these-6-principles-will-make-your-coding-agent-write-better-code.md"
+    "these-6-principles-will-make-your-coding-agent-write-better-code.md"
   );
 });
 
