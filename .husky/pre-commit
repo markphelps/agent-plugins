@@ -1,1 +1,6 @@
+#!/usr/bin/env sh
+set -e
+
+npm run sync
+git add -A skills
 npx lint-staged
