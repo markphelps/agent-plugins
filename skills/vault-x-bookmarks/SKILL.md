@@ -37,6 +37,8 @@ follow or recursively crawl links found inside fetched pages.
 ## Requirements
 
 - Node.js 18+ for `tsx` and `dotenv`.
+- Run `npm i` from this skill directory before running capture mode so the
+  bundled TypeScript helper's dependencies are installed.
 - An X Developer account and app. See
   [X API docs](https://developer.twitter.com/en/docs/twitter-api) for details.
 - [`xurl`](https://github.com/xdevplatform/xurl/) CLI tool installed and
@@ -47,6 +49,7 @@ follow or recursively crawl links found inside fetched pages.
 Run from this skill directory:
 
 ```sh
+npm i
 npx tsx scripts/x-bookmarks.ts [--limit N] [--max-pages N] [--head-pages N] [--path PATH]
 ```
 
