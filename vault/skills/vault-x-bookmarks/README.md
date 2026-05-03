@@ -15,6 +15,8 @@ This skill has two modes:
 
 Capture mode is apply-only and intentionally conservative about routing. It
 captures source records and state, then leaves classification to `vault-ingest`.
+Run prune mode after capture and before ingest when working through bookmark
+batches, so low-value pointers are removed before they become routed notes.
 
 ## Flow
 
@@ -100,6 +102,12 @@ Prune mode only inspects captured bookmark source records referenced by
 under `raw/sources/`. It does not query X, mutate X bookmarks, or edit the state
 files.
 
+Prune mode is intentionally LLM-judged. Before reviewing a batch, read the
+calibration examples in:
+
+- [resources/good-quality-bookmarks.md](resources/good-quality-bookmarks.md)
+- [resources/low-quality-bookmarks.md](resources/low-quality-bookmarks.md)
+
 Default to report mode unless the user explicitly asks to apply deletion. In
 apply mode, delete only records that are clearly low-value, such as bare links,
 thin reactions, login-gated captures, boilerplate pages, or topics plainly
@@ -125,5 +133,7 @@ and test commands.
 - Never mutate X bookmarks.
 - Never use an app-only bearer token; bookmarks require OAuth 2.0 user context.
 - Never route capture output directly into permanent vault folders.
+- Run prune mode before `vault-ingest` for bookmark batches unless the user
+  explicitly wants to keep every captured bookmark source.
 - Run `vault-ingest` after capture to classify and route source records.
 - Preserve `raw/state/x-bookmarks/` during pruning.

@@ -109,13 +109,16 @@ flowchart TD
   TypeScript helper, writes selected external bookmark records into
   `raw/sources/`, captures X Article title/body/link text when present, fetches
   direct non-X text/html links at most one level deep, and records reviewed IDs
-  under `raw/state/x-bookmarks/`; `vault-ingest` handles later routing.
+  under `raw/state/x-bookmarks/`; `vault-x-bookmarks` prune should run before
+  `vault-ingest` for bookmark batches so low-value pointers are removed before
+  later routing.
 - `vault-x-bookmarks` prune mode is the only workflow allowed to delete files
   from `raw/sources/`. It may delete only clearly low-value captured bookmark
   source records still present in `raw/sources/`, as identified from
-  `raw/state/x-bookmarks/reviewed.jsonl`; it must rely on LLM judgment instead
-  of regex or scoring, and must not edit `raw/state/x-bookmarks/` so discarded
-  bookmarks are not refetched.
+  `raw/state/x-bookmarks/reviewed.jsonl`; it must read the good/low-quality
+  examples bundled with the skill, rely on LLM judgment instead of regex or
+  scoring, and must not edit `raw/state/x-bookmarks/` so discarded bookmarks are
+  not refetched.
 - Known owned ideas should go directly to `ideas/fleeting/`,
   `ideas/incubating/`, `ideas/someday/`, or `ideas/rejected/` instead of
   lingering in `raw/sources/`.

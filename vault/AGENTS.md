@@ -36,6 +36,7 @@ vault-ingest --mode apply     # categorize and move sources
 ```bash
 vault-x-bookmarks --limit 15
 vault-x-bookmarks --limit 75 --max-pages 25 --head-pages 2
+vault-x-bookmarks prune --mode report
 vault-ingest --mode report
 ```
 

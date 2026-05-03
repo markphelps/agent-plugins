@@ -89,7 +89,9 @@ Captured bookmarks are selected newest-to-oldest from X's bookmark pages, so the
 first source records in a run match the current bookmark order returned by X.
 
 The script never mutates X bookmarks and does not route files into permanent
-vault folders. Run `vault-ingest` afterward to classify captured source records.
+vault folders. Run `vault-x-bookmarks` prune mode before `vault-ingest` when
+working through bookmark batches, so low-value pointers are removed before
+classification.
 
 ## Test
 

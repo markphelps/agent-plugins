@@ -20,6 +20,11 @@ This is source-first: the helper writes `external` source records, records
 captured bookmark IDs in `raw/state/x-bookmarks/`, and leaves organization to a
 follow-up `vault-ingest` run.
 
+Run prune mode after capture and before `vault-ingest` whenever a batch contains
+X bookmarks. Capture mode intentionally does not decide source value; prune mode
+is the LLM judgment step that keeps thin bookmark pointers from entering the
+curated vault.
+
 When a bookmarked post contains an X Article, the helper requests the `article`
 post field and includes the article title, preview, body text, and article
 entity links in the source record.
@@ -120,6 +125,11 @@ Use prune mode when `raw/sources/` contains captured X bookmark records that may
 not be worth keeping. This is an LLM judgment workflow, not a regex or scoring
 workflow.
 
+Before judging records, read the calibration examples:
+
+- `resources/good-quality-bookmarks.md`
+- `resources/low-quality-bookmarks.md`
+
 Default to **report mode** unless the user explicitly asks to apply deletion. In
 report mode, list each candidate and the keep/delete decision with concise
 reasoning. In apply mode, delete only the source files that are clearly
@@ -145,6 +155,11 @@ future capture runs do not refetch unhelpful bookmarks.
 Do not use regex, string scoring, keyword scoring, or mechanical thresholds to
 decide deletion. Read the source record and judge whether it contains durable
 value for the vault.
+
+Treat article/link sections as evidence, not automatic keep/delete switches. A
+short post with a useful captured article can be high value. A long post can be
+low value when it only points to missing media, a missing thread, or a stronger
+canonical source already in the vault.
 
 Delete only when the bookmark is clearly low-value, such as:
 
