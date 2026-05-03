@@ -8,8 +8,10 @@ This skill has two modes:
 - **Capture:** Review a bounded slice of the authenticated user's X bookmarks
   and write each selected bookmark as an `external` source record under
   `raw/sources/`.
-- **Prune:** Review existing `raw/sources/*x-bookmark*.md` files and delete only
-  records that are clearly too thin or irrelevant to keep.
+- **Prune:** Review captured bookmark source records still present in
+  `raw/sources/`, using `raw/state/x-bookmarks/reviewed.jsonl` as the source of
+  truth, and delete only records that are clearly too thin or irrelevant to
+  keep.
 
 Capture mode is apply-only and intentionally conservative about routing. It
 captures source records and state, then leaves classification to `vault-ingest`.
@@ -42,7 +44,7 @@ flowchart TD
   Runs --> Checkpoint[Update checkpoint.json]
   Checkpoint --> Ingest[Run vault-ingest<br/>to classify and route]
 
-  Mode -->|prune| Existing[Inspect existing<br/>raw/sources/*x-bookmark*.md]
+  Mode -->|prune| Existing[Inspect reviewed source paths<br/>still in raw/sources/]
   Existing --> Judge[LLM value judgment<br/>no regex or scoring]
   Judge --> Decision{Clearly low value?}
   Decision -->|no or ambiguous| Keep[Keep source record]
@@ -93,8 +95,10 @@ bookmarks are not refetched later.
 
 ## Prune Behavior
 
-Prune mode only inspects `raw/sources/*x-bookmark*.md`. It does not query X,
-mutate X bookmarks, or edit the state files.
+Prune mode only inspects captured bookmark source records referenced by
+`raw/state/x-bookmarks/reviewed.jsonl` whose `source_record_path` still exists
+under `raw/sources/`. It does not query X, mutate X bookmarks, or edit the state
+files.
 
 Default to report mode unless the user explicitly asks to apply deletion. In
 apply mode, delete only records that are clearly low-value, such as bare links,

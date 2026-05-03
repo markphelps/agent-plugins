@@ -74,7 +74,8 @@ vault-concepts --mode apply   # create/update concepts
 - **Manual lifecycle:** Explicit directory structure replaces automation
 - **Raw protection:** Never delete from `raw/sources/` or `raw/processed/`,
   except `vault-x-bookmarks` prune apply mode may delete clearly low-value
-  `raw/sources/*x-bookmark*.md` files while preserving all
+  captured bookmark source records still present in `raw/sources/`, as
+  identified from `raw/state/x-bookmarks/reviewed.jsonl`, while preserving all
   `raw/state/x-bookmarks/` entries so they are not refetched.
 - **README maintenance:** Keep `vault/README.md` current for every vault plugin
   change, including prose and the Mermaid diagram; never keep references to

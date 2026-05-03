@@ -279,7 +279,7 @@ ${linkedContent}
 export function sourceFilename(post: BookmarkPost, capturedAt: string): string {
   void capturedAt
   const contentTitle = filenameTitle(post)
-  return `${slugify(contentTitle)}.md`
+  return `${truncateFilenameSlug(slugify(contentTitle))}.md`
 }
 
 function filenameTitle(post: BookmarkPost): string {
@@ -1218,6 +1218,14 @@ function slugify(value: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
   return slug || 'unknown'
+}
+
+function truncateFilenameSlug(slug: string): string {
+  const maxLength = 140
+  if (slug.length <= maxLength) {
+    return slug
+  }
+  return slug.slice(0, maxLength).replace(/-+$/g, '') || 'unknown'
 }
 
 function getNestedString(

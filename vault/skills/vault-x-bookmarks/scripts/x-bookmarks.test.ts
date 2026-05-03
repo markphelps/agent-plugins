@@ -349,6 +349,20 @@ test("sourceFilename falls back to linked content title and post text", () => {
   );
 });
 
+test("sourceFilename truncates long slugs for filesystem compatibility", () => {
+  const filename = sourceFilename(
+    {
+      ...post("999", "2026-02-03T04:05:06Z"),
+      text: "GitHub Eronred ASO Skills AI agent skills for App Store Optimization ASO and app marketing built for indie developers app marketers and growth teams who want Cursor Claude Code or any agent skills compatible AI assistant to help with keyword research metadata optimization competitor analysis and app growth",
+    },
+    "2026-02-04T00:00:00Z"
+  );
+
+  assert.ok(filename.endsWith(".md"));
+  assert.ok(filename.length <= 143);
+  assert.equal(filename.includes("--"), false);
+});
+
 test("readReviewedIds tolerates missing files and parses JSONL", async () => {
   await withTempDir(async (dir) => {
     const reviewedPath = path.join(dir, "reviewed.jsonl");

@@ -127,7 +127,10 @@ discardable and append one `log.md` entry.
 
 ### Prune Scope
 
-- Only inspect `raw/sources/*x-bookmark*.md`.
+- Inspect only captured bookmark source records still present in `raw/sources/`.
+  Use `raw/state/x-bookmarks/reviewed.jsonl` as the source of truth: read each
+  `source_record_path`, keep paths that still exist under `raw/sources/`, and
+  ignore records that have already been routed, archived, or deleted.
 - Do not inspect or delete non-bookmark captures.
 - Do not query X.
 - Do not mutate X bookmarks.
