@@ -300,16 +300,52 @@ test("hydrateLinkedContent does not fetch links that only came from an X article
   assert.equal(hydrated.linkedContent, undefined);
 });
 
-test("sourceFilename includes date, source, identity, and post ID", () => {
+test("sourceFilename names files after article title when present", () => {
   assert.equal(
     sourceFilename(
       {
         ...post("123", "2026-02-03T04:05:06Z"),
         authorHandle: "@Jane Doe",
+        article: {
+          title: "How to Build Your AI Second Brain Using Obsidian + Claude Code",
+          text: "Article body",
+          links: [],
+        },
       },
       "2026-02-04T00:00:00Z"
     ),
-    "2026-02-03-x-bookmark-jane-doe-123.md"
+    "2026-02-03-x-bookmark-how-to-build-your-ai-second-brain-using-obsidian-claude-code.md"
+  );
+});
+
+test("sourceFilename falls back to linked content title and post text", () => {
+  assert.equal(
+    sourceFilename(
+      {
+        ...post("456", "2026-02-03T04:05:06Z"),
+        text: "Useful external article https://example.com/deep-dive",
+        linkedContent: [
+          {
+            url: "https://example.com/deep-dive",
+            title: "Durable Notes Deep Dive",
+            text: "Article body",
+          },
+        ],
+      },
+      "2026-02-04T00:00:00Z"
+    ),
+    "2026-02-03-x-bookmark-durable-notes-deep-dive.md"
+  );
+
+  assert.equal(
+    sourceFilename(
+      {
+        ...post("789", "2026-02-03T04:05:06Z"),
+        text: "These 6 principles will make your coding agent write better code.",
+      },
+      "2026-02-04T00:00:00Z"
+    ),
+    "2026-02-03-x-bookmark-these-6-principles-will-make-your-coding-agent-write-better-code.md"
   );
 });
 

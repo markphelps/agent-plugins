@@ -278,10 +278,20 @@ ${linkedContent}
 
 export function sourceFilename(post: BookmarkPost, capturedAt: string): string {
   const day = dateDay(post.createdAt) ?? dateDay(capturedAt) ?? 'unknown-date'
-  const identity = slugify(
-    normalizeHandle(post.authorHandle) ?? post.authorName ?? 'unknown',
+  const contentTitle = filenameTitle(post)
+  return `${day}-x-bookmark-${slugify(contentTitle)}.md`
+}
+
+function filenameTitle(post: BookmarkPost): string {
+  return (
+    post.article?.title?.trim() ||
+    post.linkedContent?.find((content) => content.title?.trim())?.title?.trim() ||
+    markdownTitle(post.text) ||
+    post.authorName?.trim() ||
+    normalizeHandle(post.authorHandle) ||
+    post.id ||
+    'untitled'
   )
-  return `${day}-x-bookmark-${identity}-${post.id}.md`
 }
 
 export async function readReviewedIds(
