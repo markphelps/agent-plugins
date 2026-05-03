@@ -24,7 +24,8 @@ Optional skills:
 - `vault-x-bookmarks`: Review a bounded slice of X bookmarks through the X API
   and capture selected items, including X Article text when exposed by the API,
   plus readable one-hop external link content, as `external` source records in
-  `raw/sources/`.
+  `raw/sources/`; optionally prune low-value X bookmark source records using LLM
+  judgment while preserving bookmark state.
 
 ## Flow
 
@@ -112,6 +113,11 @@ flowchart TD
   `raw/sources/`, captures X Article title/body/link text when present, fetches
   direct non-X text/html links at most one level deep, and records reviewed IDs
   under `raw/state/x-bookmarks/`; `vault-ingest` handles later routing.
+- `vault-x-bookmarks` prune mode is the only workflow allowed to delete files
+  from `raw/sources/`. It may delete only clearly low-value
+  `raw/sources/*x-bookmark*.md` files, must rely on LLM judgment instead of
+  regex or scoring, and must not edit `raw/state/x-bookmarks/` so discarded
+  bookmarks are not refetched.
 - Known owned ideas should go directly to `ideas/fleeting/`,
   `ideas/incubating/`, `ideas/someday/`, or `ideas/rejected/` instead of
   lingering in `raw/sources/`.

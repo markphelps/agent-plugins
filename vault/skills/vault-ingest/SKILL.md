@@ -97,6 +97,11 @@ Obsidian Note Clipper should carry an `external` tag. That tag tells ingestion
 the note came from an outside source and may be summarized while preserving the
 complete clipped note.
 
+X bookmark source records are captured by `vault-x-bookmarks`. If the task is to
+delete irrelevant, minimal, or low-value bookmark captures from `raw/sources/`,
+use `vault-x-bookmarks` prune mode instead of ingest. Ingest routes sources
+worth keeping; it does not judge bookmark source value for deletion.
+
 Recognize `external` in either common Obsidian form:
 
 - frontmatter list or scalar: `tags: [external]`, `tags: external`

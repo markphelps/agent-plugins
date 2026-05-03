@@ -1,14 +1,20 @@
 ---
 name: vault-x-bookmarks
 description:
-  Review a bounded slice of X bookmarks via the X API and capture selected
-  bookmarks as external source records in raw/sources
+  Use when X bookmarks need to be captured into raw/sources or existing X
+  bookmark source records need relevance triage
 ---
 
 # Vault X Bookmarks
 
-Use the bundled TypeScript helper to review a bounded slice of the authenticated
-user's X bookmarks and capture selected items into `raw/sources/`.
+Use this skill in one of two modes:
+
+- **Capture mode:** Use the bundled TypeScript helper to review a bounded slice
+  of the authenticated user's X bookmarks and capture selected items into
+  `raw/sources/`.
+- **Prune mode:** Triage existing X bookmark source records in `raw/sources/`
+  using LLM judgment, deleting only records that are clearly irrelevant or too
+  thin to be useful.
 
 This is source-first: the helper writes `external` source records, records
 captured bookmark IDs in `raw/state/x-bookmarks/`, and leaves organization to a
@@ -31,7 +37,7 @@ follow or recursively crawl links found inside fetched pages.
 - [`xurl`](https://github.com/xdevplatform/xurl/) CLI tool installed and
   authenticated with OAuth 2.0.
 
-## Command
+## Capture Command
 
 Run from this skill directory:
 
@@ -50,9 +56,9 @@ npx tsx scripts/x-bookmarks.ts [--limit N] [--max-pages N] [--head-pages N] [--p
 - `--path PATH` (default: current working directory): vault root containing
   `raw/sources/` and `raw/state/x-bookmarks/`.
 
-There is no report mode. This helper is apply-only and bounded by `--limit`. It
-writes source records, appends reviewed/run state, and updates the catch-up
-checkpoint after successful runs.
+Capture mode has no report mode. The helper is apply-only and bounded by
+`--limit`. It writes source records, appends reviewed/run state, and updates the
+catch-up checkpoint after successful runs.
 
 ## Authentication
 
@@ -77,7 +83,7 @@ Required scopes:
 Do not use an app-only bearer token. The helper resolves the authenticated user
 through `xurl whoami`; do not pass a manual user ID.
 
-## Behavior
+## Capture Behavior
 
 1. Load reviewed IDs from `raw/state/x-bookmarks/reviewed.jsonl`.
 2. Fetch bookmark pages by shelling out to `xurl --auth oauth2`.
@@ -107,6 +113,65 @@ vault folders.
 Capture every selected bookmark. Do not apply regex scoring, string scoring, or
 filtering; the user's bookmark action is the relevance signal. Manually delete
 unwanted source records after a run.
+
+## Prune Mode
+
+Use prune mode when `raw/sources/` contains captured X bookmark records that may
+not be worth keeping. This is an LLM judgment workflow, not a regex or scoring
+workflow.
+
+Default to **report mode** unless the user explicitly asks to apply deletion. In
+report mode, list each candidate and the keep/delete decision with concise
+reasoning. In apply mode, delete only the source files that are clearly
+discardable and append one `log.md` entry.
+
+### Prune Scope
+
+- Only inspect `raw/sources/*x-bookmark*.md`.
+- Do not inspect or delete non-bookmark captures.
+- Do not query X.
+- Do not mutate X bookmarks.
+- Do not edit, prune, compact, or remove entries from
+  `raw/state/x-bookmarks/reviewed.jsonl`, `runs.jsonl`, or `checkpoint.json`.
+
+The state files intentionally continue to mark deleted bookmarks as reviewed so
+future capture runs do not refetch unhelpful bookmarks.
+
+### Prune Judgment
+
+Do not use regex, string scoring, keyword scoring, or mechanical thresholds to
+decide deletion. Read the source record and judge whether it contains durable
+value for the vault.
+
+Delete only when the bookmark is clearly low-value, such as:
+
+- the post is mostly a bare link, reaction, teaser, or media pointer
+- no `## Article` or `## Linked Content` section provides meaningful substance
+- fetched link content is absent, boilerplate, login-gated, or too thin to
+  support later synthesis
+- the topic is plainly unrelated to the vault's interests, projects, products,
+  research, or recurring concepts
+- keeping it would create inbox noise rather than usable evidence
+
+Keep when there is plausible future value, such as:
+
+- concrete app, product, marketing, design, AI, engineering, or business insight
+- useful X Article or fetched linked-page text
+- evidence relevant to existing ideas, active projects, resources, or concepts
+- a source that is thin but points to a clearly important person, project, tool,
+  market, or competitor
+- any ambiguous case where deletion would be a judgment call rather than an
+  obvious cleanup
+
+### Prune Output
+
+Return:
+
+- files reviewed
+- files kept with short reasons
+- files proposed for deletion or deleted with short reasons
+- confirmation that X bookmark state files were not modified
+- `log.md` entry appended when apply mode deletes files
 
 ## Output
 

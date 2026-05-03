@@ -22,7 +22,7 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 | ------------------- | -------------------------------------------------------- |
 | `vault-concepts`    | Promote themes → canonical concept pages                 |
 | `vault-research`    | External research → source records and optional synthesis |
-| `vault-x-bookmarks` | Capture bounded X bookmark slices into `raw/sources/`    |
+| `vault-x-bookmarks` | Capture and prune X bookmark source records              |
 
 ## Usage Patterns
 
@@ -37,6 +37,12 @@ vault-ingest --mode apply     # categorize and move sources
 vault-x-bookmarks --limit 15
 vault-x-bookmarks --limit 75 --max-pages 25 --head-pages 2
 vault-ingest --mode report
+```
+
+**X bookmark prune:**
+```
+vault-x-bookmarks prune --mode report  # LLM-judge bookmark source value
+vault-x-bookmarks prune --mode apply   # delete only clearly low-value records
 ```
 
 **Weekly maintenance:**
@@ -61,12 +67,15 @@ vault-concepts --mode apply   # create/update concepts
 
 - **Mode convention:** Mode-based skills use
   `--mode report|apply-safe|apply` (default `report`).
-- **Apply-only exception:** `vault-x-bookmarks` has no report mode; it only runs
-  when explicitly invoked and captures bounded bookmark slices into
+- **Capture exception:** `vault-x-bookmarks` capture mode has no report mode; it
+  only runs when explicitly invoked and captures bounded bookmark slices into
   `raw/sources/`.
 - **Safety first:** Mode-based skills are non-destructive by default.
 - **Manual lifecycle:** Explicit directory structure replaces automation
-- **Raw protection:** Never delete from `raw/sources/` or `raw/processed/`
+- **Raw protection:** Never delete from `raw/sources/` or `raw/processed/`,
+  except `vault-x-bookmarks` prune apply mode may delete clearly low-value
+  `raw/sources/*x-bookmark*.md` files while preserving all
+  `raw/state/x-bookmarks/` entries so they are not refetched.
 - **README maintenance:** Keep `vault/README.md` current for every vault plugin
   change, including prose and the Mermaid diagram; never keep references to
   deprecated skills or workflows.
