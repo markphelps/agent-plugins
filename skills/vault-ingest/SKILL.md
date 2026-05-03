@@ -54,14 +54,14 @@ folders when an existing one fits.
 | Active project material | `projects/active/<project>/`                         |
 | Durable conceptual note | `notes/concepts/` only when it is itself canonical   |
 | General durable note    | `notes/<topic>/` or the closest existing note area   |
-| `external` reference    | `resources/<topic>/`                                 |
+| `external` reference    | `notes/<topic>/`                                     |
 | Asset or binary support | `raw/assets/` or an existing asset folder            |
 | No clear durable home   | Leave in `raw/sources/` and report the ambiguity     |
 
-When a source clearly belongs with an existing project, idea, note, or resource,
-move it there even if the file is messy. Preserve the original content and
-filename unless a minimal rename is needed to avoid collision or clarify the
-source identity.
+When a source clearly belongs with an existing project, idea, or note, move it
+there even if the file is messy. Preserve the original content and filename
+unless a minimal rename is needed to avoid collision or clarify the source
+identity.
 
 ## Merge Rules
 
@@ -132,7 +132,7 @@ Synthesis is correct when:
 When synthesis happens, first archive the complete source under
 `raw/processed/YYYY-MM-DD/`, then write the synthesis with links to those
 archived source records. A working source record may also live under
-`resources/`, `projects/.../research/`, or `ideas/.../research/`, but the
+`notes/<topic>/`, `projects/.../research/`, or `ideas/.../research/`, but the
 complete archived copy is the immutable citation target.
 
 ## Workflow
@@ -140,7 +140,7 @@ complete archived copy is the immutable citation target.
 1. **Scan** `raw/sources/` for unprocessed captures (skip hidden files)
 2. **Classify** each capture:
    - Identify source type, topic, related entities, and lifecycle state
-   - Match against existing `projects/`, `ideas/`, `notes/`, and `resources/`
+   - Match against existing `projects/`, `ideas/`, and `notes/`
    - Mark confidence as high, medium, or low
 3. **Plan moves**:
    - Choose the most specific destination path

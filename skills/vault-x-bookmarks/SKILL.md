@@ -157,7 +157,7 @@ Keep when there is plausible future value, such as:
 
 - concrete app, product, marketing, design, AI, engineering, or business insight
 - useful X Article or fetched linked-page text
-- evidence relevant to existing ideas, active projects, resources, or concepts
+- evidence relevant to existing ideas, active projects, topic notes, or concepts
 - a source that is thin but points to a clearly important person, project, tool,
   market, or competitor
 - any ambiguous case where deletion would be a judgment call rather than an

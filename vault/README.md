@@ -8,9 +8,9 @@ Core skills:
 
 - `vault-ingest`: Categorize `raw/sources/` and move original source files to
   the correct vault locations.
-- `vault-lint`: Audit active notes, ideas, projects, and resources for
-  contradictions, stale content, weak links, knowledge graph connections, merge
-  candidates, and missing concepts.
+- `vault-lint`: Audit active notes, ideas, and projects for contradictions,
+  stale content, weak links, knowledge graph connections, merge candidates, and
+  missing concepts.
 - `vault-tracker`: Manage project lifecycle state and reconcile tracker entries
   with filesystem reality.
 - `vault-maintain`: Run the bounded weekly maintenance loop across ingest,
@@ -45,14 +45,13 @@ flowchart TD
 
   Ingest --> IdeaState
   Ingest --> Notes[notes/]
-  Ingest --> Resources[resources/]
   Ingest --> Assets[raw/assets/]
   Ingest --> Ambiguous[leave in raw/sources/<br/>with decision needed]
   Ingest --> Merge{Duplicate or continuation?}
-  Merge -->|yes| Existing[merge into existing<br/>note/idea/project/resource]
+  Merge -->|yes| Existing[merge into existing<br/>note/idea/project]
   Merge -->|no| Notes
 
-  Resources --> ExternalTag{external tag?}
+  Notes --> ExternalTag{external tag?}
   ExternalTag -->|no| SourceRecords[keep source records]
   ExternalTag -->|yes| Research{Summarize?}
   Research -->|no| SourceRecords
@@ -71,12 +70,10 @@ flowchart TD
   Shipped --> Archive[archive/]
 
   Notes --> Concepts[vault-concepts]
-  Resources --> Concepts
   Active --> Concepts
   Concepts --> ConceptPages[notes/concepts/]
 
   Notes --> Maintain[vault-maintain]
-  Resources --> Maintain
   Active --> Maintain
   Fleeting --> Maintain
   Incubating --> Maintain
@@ -121,6 +118,9 @@ flowchart TD
 - Known owned ideas should go directly to `ideas/fleeting/`,
   `ideas/incubating/`, `ideas/someday/`, or `ideas/rejected/` instead of
   lingering in `raw/sources/`.
+- Curated references, research briefs, external-source syntheses, tool lists,
+  and topic notes all belong under `notes/`; do not recreate a top-level
+  `resources/` directory.
 - Notes clipped from external sources should be tagged `external`; that tag
   tells agents they may summarize during processing.
 - `raw/processed/` is an immutable source archive organized by processing date.

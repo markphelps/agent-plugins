@@ -54,7 +54,7 @@ Resolve target in this order:
 7. Place working source records in the closest durable location:
    - `projects/active/<project>/research/`
    - `ideas/<state>/<idea>/research/`
-   - `resources/<topic>/`
+   - `notes/<topic>/`
 8. Merge source records into an existing research/source note when they cover
    the same external source or same research thread.
 9. Assign confidence (`high|medium|low`) for key claims.

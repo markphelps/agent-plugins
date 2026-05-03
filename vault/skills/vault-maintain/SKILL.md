@@ -44,7 +44,7 @@ Run `vault-lint --mode report` to:
 - Detect contradictions across related notes
 - Find orphan pages and stale content
 - Find connection candidates for knowledge graph growth
-- Find duplicate or overlapping notes, ideas, projects, and resources
+- Find duplicate or overlapping notes, ideas, and projects
 - Identify missing concept pages
 - Flag broken or ambiguous wikilinks
 - Surface promotion candidates from drift reports
@@ -130,8 +130,8 @@ Excluded from `apply-safe`:
 Additionally allow medium-confidence actions:
 
 - **Source moves**: Deterministic file moves with automatic link rewrites
-- **Content merges**: High-confidence duplicate notes, ideas, projects,
-  resources, or concepts when provenance and links can be preserved
+- **Content merges**: High-confidence duplicate notes, ideas, projects, or
+  concepts when provenance and links can be preserved
 - **Synthesis archive repair**: Move complete external source records into
   `raw/processed/YYYY-MM-DD/` when a summary exists without an immutable source
   archive

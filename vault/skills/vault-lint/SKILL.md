@@ -1,6 +1,6 @@
 ---
 name: vault-lint
-description: Hygiene pass over active notes, ideas, projects, and resources
+description: Hygiene pass over active notes, ideas, and projects
 ---
 
 # Lint Vault
@@ -22,8 +22,8 @@ Run a focused hygiene pass over active vault surface and propose fixes.
   knowledge graph over time
 - **Missing concepts**: Repeated themes without canonical page
 - **Mismatched states**: Project directory location vs tracker status
-- **Merge candidates**: Duplicate or overlapping notes, ideas, projects, or
-  resources that should probably be one durable item
+- **Merge candidates**: Duplicate or overlapping notes, ideas, or projects that
+  should probably be one durable item
 - **Unbacked synthesis**: Summaries or briefs without links to complete archived
   source records
 - **External tag drift**: Clipped source notes missing `external`, or owned
@@ -31,8 +31,8 @@ Run a focused hygiene pass over active vault surface and propose fixes.
 
 ## Scope
 
-- **notes/**, **ideas/**, **projects/**, and **resources/** by default (exclude
-  archive/ unless explicitly requested)
+- **notes/**, **ideas/**, and **projects/** by default (exclude archive/ unless
+  explicitly requested)
 - Does NOT move files (use `vault-tracker` for lifecycle changes)
 - Does NOT delete content
 - Does NOT merge files automatically; proposes merge plans for review

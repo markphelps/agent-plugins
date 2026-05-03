@@ -29,8 +29,8 @@ Only create new concept pages when ALL are true:
 
 ## Workflow
 
-1. **Scan**: Read active surface (`notes/`, `projects/`, `resources/`) for
-   recurring themes
+1. **Scan**: Read active surface (`notes/`, `ideas/`, `projects/`) for recurring
+   themes
 2. **Detect**: Extract patterns across unrelated notes:
    - Phrases/metaphors that recur
    - Principles or mental models
