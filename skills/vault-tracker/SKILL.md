@@ -78,7 +78,13 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
    - `apply-safe`: update tracker rows/links when unambiguous, no merges
    - `apply`: perform confirmed file moves, high-confidence merges, and inbound
      link rewrites
-7. **Log operation**: Append concise entry to `log.md`
+7. **Shipped compaction**: When a project transitions to `shipped`, immediately
+   run or propose
+   `vault-compact --scope projects --project <name> --mode apply --aggression aggressive`
+   to merge launch artifacts, drafts, research, and stale execution notes into
+   one canonical shipped project record. Absorbed curated files may be deleted
+   after unique content is preserved. Never delete `raw/`.
+8. **Log operation**: Append concise entry to `log.md`
 
 ## Merge Rules
 
@@ -130,6 +136,7 @@ transition.
 ## Compose Existing Skills
 
 - `vault-lint` for stale/orphan detection and wikilink issues
+- `vault-compact` for post-shipping project document consolidation
 - `vault-concepts` for recurring theme promotion
 - `vault-maintain` for periodic full-vault upkeep
 

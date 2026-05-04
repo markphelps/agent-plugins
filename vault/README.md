@@ -11,10 +11,16 @@ Core skills:
 - `vault-lint`: Audit active notes, ideas, and projects for contradictions,
   stale content, weak links, knowledge graph connections, merge candidates, and
   missing concepts.
+- `vault-compact`: Collapse semantically overlapping notes, ideas, and project
+  docs into clearer canonical surfaces while preserving distinct claims,
+  decisions, examples, and provenance.
 - `vault-tracker`: Manage project lifecycle state and reconcile tracker entries
   with filesystem reality.
 - `vault-maintain`: Run the bounded weekly maintenance loop across ingest,
-  hygiene, tracking, and concepts.
+  hygiene, semantic compaction, tracking, and concepts. It is intentionally
+  aggressive about idea queue pressure in `ideas/fleeting/` and
+  `ideas/incubating/`, prompting keep/promote/move/compact/reject/delete
+  decisions.
 
 Optional skills:
 
@@ -72,6 +78,12 @@ flowchart TD
   Notes --> Concepts[vault-concepts]
   Active --> Concepts
   Concepts --> ConceptPages[notes/concepts/]
+
+  Notes --> Compact[vault-compact]
+  Incubating --> Compact
+  Active --> Compact
+  Compact --> Canonical[canonical notes<br/>less repeated thinking]
+  Canonical --> Lint
 
   Notes --> Maintain[vault-maintain]
   Active --> Maintain
@@ -137,6 +149,12 @@ flowchart TD
   navigation by default.
 - Repeated patterns should graduate into canonical concept pages instead of
   remaining only in reports.
+- Semantic overlap should be compacted only when passages do the same job;
+  preserve distinct claims, examples, decisions, caveats, and source provenance.
+- Shipped projects should receive a heavier `vault-compact` pass: merge
+  launch-era notes, drafts, research, and stale execution material into one
+  canonical project record, then delete absorbed curated files when the merged
+  record preserves their unique content. Never delete from `raw/`.
 - Knowledge graph links should be added when relationships are concrete:
   explicit mentions, shared sources, parent/child relationships, project
   membership, or concept evidence.

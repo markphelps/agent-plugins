@@ -1,15 +1,16 @@
 ---
 name: vault-maintain
 description:
-  Weekly bounded maintenance loop across ingestion, hygiene, tracking, and
-  concepts
+  Weekly bounded maintenance loop across ingestion, hygiene, compaction,
+  tracking, and concepts
 ---
 
 # Vault Maintain
 
 Run a comprehensive weekly maintenance sweep across the active vault surface.
 This is the unified entry point for periodic vault care, coordinating ingestion,
-hygiene, project tracking, and concept promotion into a single bounded workflow.
+hygiene, semantic compaction, project tracking, and concept promotion into a
+single bounded workflow.
 
 ## Command
 
@@ -59,7 +60,45 @@ Run `vault-tracker --mode report` to:
 - Propose lifecycle transitions
 - Identify untracked projects
 
-### 4. Concept Audit
+### 4. Idea Pressure Audit
+
+Run an aggressive report-mode review of `ideas/fleeting/` and
+`ideas/incubating/`:
+
+- List every fleeting idea and ask whether it should be promoted, rejected,
+  compacted into an existing idea/concept, or deleted.
+- List every incubating idea with its age, last update, next action, and linked
+  research.
+- Flag incubating files that are not actually ideas, such as tech research,
+  source records, orphan research folders, or implementation specs.
+- Flag missing idea entry points, such as research folders without a root idea
+  note or index links pointing to absent files.
+- Flag idea folders whose research has already been synthesized and can be
+  compacted or deleted from the active idea surface.
+- Prompt the user with concrete decisions:
+  - `keep incubating`
+  - `promote to project`
+  - `move to notes`
+  - `compact into <canonical>`
+  - `reject`
+  - `delete absorbed curated files`
+
+Default recommendation should be opinionated. Do not leave stale ideas as
+"maybe" when the evidence supports a clear cleanup action.
+
+### 5. Compaction Audit
+
+Run `vault-compact --mode report` to:
+
+- Review merge candidates found by `vault-lint`
+- Detect semantic overlap where multiple passages do the same job
+- Propose canonical destinations for duplicated claims, project materials, and
+  shipped-project launch artifacts
+- Identify curated files that could be deleted after absorption
+- Distinguish collapse/route/link-only actions from true file merges
+- Include idea-pressure candidates from step 4 as compact/reject/delete inputs
+
+### 6. Concept Audit
 
 Run `vault-concepts --mode report` to:
 
@@ -69,7 +108,7 @@ Run `vault-concepts --mode report` to:
 - Propose updates to existing concepts
 - Surface new concept creation candidates
 
-### 5. Weekly Summary Production
+### 7. Weekly Summary Production
 
 Compile findings into a weekly summary including:
 
@@ -78,6 +117,9 @@ Compile findings into a weekly summary including:
 - Hygiene issues by severity (contradictions, orphans, stale)
 - Connection candidates (source, target, confidence, relationship)
 - Merge candidates (target, sources, confidence, required link rewrites)
+- Idea queue decisions needed (keep/promote/move/compact/reject/delete)
+- Compact candidates (canonical destination, absorbed files, preserved unique
+  content, delete eligibility)
 - Synthesis archive checks (summaries link to complete sources in
   `raw/processed/YYYY-MM-DD/`)
 - External tag checks (clipped notes tagged `external`, owned notes not tagged
@@ -86,7 +128,7 @@ Compile findings into a weekly summary including:
 - Concept candidates (updates, creations deferred)
 - Unresolved decisions requiring user input
 
-### 6. Maintenance Record
+### 8. Maintenance Record
 
 Append the maintenance entry to `log.md` manually when the vault uses one:
 
@@ -112,8 +154,12 @@ Apply only high-confidence, low-risk changes:
 - **Graph links**: Add high-confidence contextual wikilinks discovered by
   `vault-lint`
 - **Tracker updates**: Unambiguous state changes, formatting fixes
+- **Idea queue cleanup prep**: Fix broken idea links, add canonical links, and
+  mark obvious decision prompts without moving or deleting idea content
 - **Merge prep**: Add backlinks or aliases for high-confidence merge candidates
   without moving content
+- **Compact prep**: Add canonical links or aliases for high-confidence compact
+  candidates without deleting or rewriting substantial content
 - **Synthesis link repair**: Add missing links from summaries to archived source
   records when the archive path is unambiguous
 - **Maintenance record**: Append a concise manual entry to `log.md` if present
@@ -122,6 +168,7 @@ Excluded from `apply-safe`:
 
 - Source moves requiring link rewrites
 - Content merges
+- Idea rejection/deletion
 - New concept page creation
 - Ingestion pipeline execution (stays in `report`)
 
@@ -131,7 +178,14 @@ Additionally allow medium-confidence actions:
 
 - **Source moves**: Deterministic file moves with automatic link rewrites
 - **Content merges**: High-confidence duplicate notes, ideas, projects, or
-  concepts when provenance and links can be preserved
+  concepts through `vault-compact` when provenance, unique content, and links
+  can be preserved
+- **Absorbed curated file deletion**: Delete non-raw files after `vault-compact`
+  merges their unique content into a canonical destination and rewrites inbound
+  links
+- **Idea queue pruning**: Reject, move, compact, or delete fleeting/incubating
+  idea files when the user confirms the specific action and unique content is
+  preserved where needed
 - **Synthesis archive repair**: Move complete external source records into
   `raw/processed/YYYY-MM-DD/` when a summary exists without an immutable source
   archive
@@ -140,7 +194,13 @@ Additionally allow medium-confidence actions:
 
 ## Safety
 
-- **Never delete vault content** — move or archive only
+- **Never delete raw content** — `raw/` is immutable
+- **Curated deletion only through compaction**: `vault-compact` may delete
+  curated files after absorption into a canonical destination; list every
+  deleted file and its canonical replacement
+- **Idea deletion requires explicit decision**: deleting a fleeting/incubating
+  idea is allowed only after the user chooses delete or confirms that the idea
+  was absorbed into another canonical note/project
 - **Do not archive ambiguous live projects** without explicit instruction
 - **Keep changes reviewable**: List all touched files with relative paths
 - **Preserve hand-written content**: Favor additive updates over rewrites
@@ -164,7 +224,8 @@ This skill orchestrates the following specialized skills:
 | 1    | `vault-ingest`   | Source classification and routing   |
 | 2    | `vault-lint`     | Hygiene and contradiction detection |
 | 3    | `vault-tracker`  | Project lifecycle management        |
-| 4    | `vault-concepts` | Concept promotion and creation      |
+| 4    | `vault-compact`  | Semantic merge and absorption       |
+| 5    | `vault-concepts` | Concept promotion and creation      |
 
 ## Output
 
@@ -174,6 +235,11 @@ Return:
 - **Deferred/proposed changes**: Pending items for future cycles
 - **Merge report**: Merges applied/proposed, canonical targets, retained
   provenance
+- **Compact report**: Collapses applied/proposed, absorbed files, deleted
+  curated files, and canonical replacements
+- **Idea pressure report**: Fleeting/incubating decisions requested, stale
+  ideas, broken idea entry points, non-idea files in `ideas/`, and recommended
+  action
 - **Graph report**: Links added/proposed and relationship evidence
 - **Confidence notes**: High/medium/low confidence per category
 - **Unresolved decisions**: Items requiring explicit user input

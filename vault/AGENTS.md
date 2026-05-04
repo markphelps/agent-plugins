@@ -7,12 +7,13 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 - `.codex-plugin/plugin.json`: plugin manifest
 - `skills/*/SKILL.md`: vault workflows and task-specific skills
 
-## Core Skills (4)
+## Core Skills (5)
 
 | Skill            | Purpose                                                |
 | ---------------- | ------------------------------------------------------ |
 | `vault-ingest`   | Categorize `raw/sources/` → correct vault locations    |
 | `vault-lint`     | Hygiene: orphans, stale, contradictions, weak links    |
+| `vault-compact`  | Collapse semantic overlap into canonical notes         |
 | `vault-tracker`  | Project lifecycle + tracker maintenance                |
 | `vault-maintain` | Weekly orchestrator running all checks                 |
 
@@ -52,11 +53,30 @@ vault-maintain --mode report  # full audit
 vault-maintain --mode apply-safe  # apply safe fixes
 ```
 
+`vault-maintain` includes `vault-compact` in report mode. In apply mode, compact
+handles high-confidence semantic merges and deletion of absorbed curated files.
+`apply-safe` should prepare links/aliases only, not delete or rewrite large
+content.
+It should be especially opinionated about `ideas/fleeting/` and
+`ideas/incubating/`: prompt for keep/promote/move/compact/reject/delete
+decisions instead of letting weak or stale ideas linger.
+
+**Semantic compaction:**
+```
+vault-compact --mode report  # find overlap and merge plans
+vault-compact --mode apply-safe  # apply only high-confidence local compaction
+```
+
 **Project transitions:**
 ```
 vault-tracker --project stay --mode report   # see status
 vault-tracker --project stay shipped         # ship project
 ```
+
+When a project is moved to `shipped`, run heavy `vault-compact` against that
+project. Merge launch artifacts, drafts, research, and stale execution notes
+into one canonical shipped project record, then delete absorbed curated files
+when their unique content has been preserved. Never delete from `raw/`.
 
 **Concept work (when needed):**
 ```
