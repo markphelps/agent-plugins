@@ -1,6 +1,7 @@
 # AGENTS.md
 
-This plugin contains development workflow skills.
+This plugin contains development workflow skills for maintaining repo-facing
+agent context.
 
 ## Structure
 
@@ -15,12 +16,15 @@ This plugin contains development workflow skills.
 
 ## Current Skill Surface
 
-- `ship-pr`: branch, smart commit scope, push, and PR creation
-- `declaudify`: migrate Claude-specific repo artifacts to neutral standards
-- `wt`: manage branch-per-task Git worktrees with the `wt` CLI
+- `context-file-tuneup`: audit and rewrite `CLAUDE.md` / `AGENTS.md` files so
+  they stay short, specific, and grounded in the repo
 
 ## Workflow Policy
 
-- Prefer narrow, reviewable commits over large mixed commits.
-- `ship-pr` must ask whether the PR should be draft before opening.
-- Avoid destructive git/history operations unless explicitly requested.
+- Keep context-file changes evidence-backed: inspect manifests, CI, docs, and
+  repo structure before recommending edits.
+- For user-facing context rewrites, preserve the skill's
+  inspect -> audit -> propose -> confirm -> apply loop unless the user has
+  explicitly asked for direct repo-doc edits here.
+- Do not manually restore removed development skills in top-level `skills/`.
+  Run `npm run sync` so the generated mirror matches `development/skills/`.

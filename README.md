@@ -9,10 +9,10 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 
 ## Plugins
 
-| Plugin                        | Description                                                      |
-| ----------------------------- | ---------------------------------------------------------------- |
-| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes            |
-| [development](./development/) | PR shipping workflow, worktree helpers, and declaudify migration |
+| Plugin                        | Description                                           |
+| ----------------------------- | ----------------------------------------------------- |
+| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes |
+| [development](./development/) | Context-file tune-up workflow for AGENTS/CLAUDE docs  |
 
 ## Layout
 
@@ -34,7 +34,7 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 This repo also provides top-level installable skills under `skills/`.
 
 ```bash
-npx skills add markphelps/agent-plugins --skill declaudify
+npx skills add markphelps/agent-plugins --skill context-file-tuneup
 ```
 
 ## Development

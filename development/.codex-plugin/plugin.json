@@ -1,25 +1,25 @@
 {
   "name": "development",
   "version": "0.0.2",
-  "description": "Developer workflow tools for publishing, worktrees, and repo migration utilities.",
+  "description": "Developer workflow tools for maintaining repo-facing agent context.",
   "author": {
     "name": "Mark Phelps"
   },
   "repository": "https://github.com/markphelps/agent-plugins",
   "license": "MIT",
-  "keywords": ["development", "workflow", "productivity", "worktree", "wt"],
+  "keywords": ["development", "workflow", "agents", "context", "AGENTS.md"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Workflow, worktree, and migration tools",
-    "longDescription": "Git worktree, pull request publishing, and repository migration workflows for modern agent standards.",
+    "shortDescription": "Agent context file tune-up workflow",
+    "longDescription": "Workflow for auditing, rewriting, and tightening CLAUDE.md and AGENTS.md files so they stay short, specific, and grounded in the target repository.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
     "defaultPrompt": [
-      "Migrate this repo from Claude-specific config to AGENTS/skills standards.",
-      "Create a branch, commit smartly scoped changes, push, and open a PR (ask whether draft).",
-      "Create or check out a task branch using wt and work from its worktree path."
+      "Audit this repo's AGENTS.md and propose a tighter rewrite.",
+      "Review this CLAUDE.md for stale, vague, or bloated agent instructions.",
+      "Create a concise AGENTS.md for this repo based on its actual tooling and structure."
     ]
   }
 }

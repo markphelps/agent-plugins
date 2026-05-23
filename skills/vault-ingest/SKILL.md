@@ -48,18 +48,18 @@ For each ingestion cycle:
 Prefer the vault's existing directory taxonomy. Do not invent new top-level
 folders when an existing one fits.
 
-| Source category         | Destination pattern                                  |
-| ----------------------- | ---------------------------------------------------- |
-| Rough owned idea        | `ideas/fleeting/<idea>/`                             |
-| Promising project idea  | `ideas/incubating/<idea>/`                           |
-| Later/someday idea      | `ideas/someday/<idea>/` or the closest existing idea |
-| Rejected/closed idea    | `ideas/rejected/<idea>/`                             |
-| Active project material | `projects/active/<project>/`                         |
-| Durable conceptual note | `notes/concepts/` only when it is itself canonical   |
-| General durable note    | `notes/<topic>/` or the closest existing note area   |
+| Source category         | Destination pattern                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| Rough owned idea        | `ideas/fleeting/<idea>/`                                                           |
+| Promising project idea  | `ideas/incubating/<idea>/`                                                         |
+| Later/someday idea      | `ideas/someday/<idea>/` or the closest existing idea                               |
+| Rejected/closed idea    | `ideas/rejected/<idea>/`                                                           |
+| Active project material | `projects/active/<project>/`                                                       |
+| Durable conceptual note | `notes/concepts/` only when it is itself canonical                                 |
+| General durable note    | `notes/<topic>/` or the closest existing note area                                 |
 | `external` reference    | Archive source in `raw/processed/YYYY-MM-DD/`; write synthesis to `notes/<topic>/` |
-| Asset or binary support | `raw/assets/` or an existing asset folder            |
-| No clear durable home   | Leave in `raw/sources/` and report the ambiguity     |
+| Asset or binary support | `raw/assets/` or an existing asset folder                                          |
+| No clear durable home   | Leave in `raw/sources/` and report the ambiguity                                   |
 
 When an owned/user-authored source clearly belongs with an existing project,
 idea, or note, move it there even if the file is messy. Preserve the original
