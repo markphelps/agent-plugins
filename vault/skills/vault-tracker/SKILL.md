@@ -1,14 +1,19 @@
 ---
 name: vault-tracker
 description:
-  Manage project lifecycle and project-tracker.md—track state changes, propose
-  transitions, and coordinate archival
+  Manage PORT object lifecycle and project-tracker.md—track state changes,
+  propose transitions, and coordinate archival
 ---
 
 # Vault Tracker
 
-Unified project lifecycle management: track projects, detect mismatches between
-filesystem and tracker, propose transitions, and coordinate archival.
+Unified PORT object lifecycle management: track Projects, Operations,
+Responsibilities, and externally tracked Task references; detect mismatches
+between filesystem, metadata, and tracker; propose transitions; and coordinate
+archival.
+
+Manage lifecycle and navigation for PORT objects: `Project`, `Operation`,
+`Responsibility`, and externally tracked `Task` references.
 
 ## Command
 
@@ -35,6 +40,14 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
 - `someday` — intentionally parked idea (in `ideas/someday/`)
 - `rejected` — explicitly declined idea (in `ideas/rejected/`)
 
+Portent frontmatter is authoritative for object meaning:
+
+- Project transitions update `stage` and `status` before file moves.
+- Operations should usually `belongs_to` a Responsibility or Project.
+- Responsibilities should collect related Projects and Operations.
+- Ideas promoted to active work become `type: Project`, `status: organized`, and
+  `stage: active` before or during any folder movement.
+
 ## Valid Transitions
 
 | From                                    | To            | Conditions         |
@@ -59,32 +72,42 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
 
 1. **Read tracker**: Load `projects/project-tracker.md`
 2. **Scan projects/**: Discover project directories and their state
-3. **Detect mismatches**:
+3. **Scan PORT metadata**:
+   - Projects in `projects/`, shaped project candidates in `ideas/`
+   - Operations under `notes/operations/` or equivalent local convention
+   - Responsibilities under `notes/responsibilities/` or equivalent local
+     convention
+   - Task references that live outside the vault but relate back to Portent
+     objects
+4. **Detect mismatches**:
    - Filesystem state vs tracker state
+   - Portent `type`, `status`, and `stage` vs folder location
+   - Operations without a Responsibility or Project parent
+   - Responsibilities without related Projects or Operations when obvious
    - Orphan tracker entries (no matching directory)
    - Untracked projects (directory exists, not in tracker)
    - Duplicate idea or project directories that should be one lifecycle item
-4. **Propose transitions and merges**:
+5. **Propose transitions and merges**:
    - Smallest valid state change per mismatch
    - Canonical merge target for duplicate ideas/projects
    - Link rewrites and tracker row consolidation required by the merge
-5. **Handle idea promotion paths**:
+6. **Handle idea promotion paths**:
    - `ideas/incubating/` → `projects/active/` (promote to project)
    - `ideas/fleeting/` → `ideas/incubating/` (promote idea)
    - `ideas/incubating/` → `ideas/someday/` (park idea)
    - `ideas/incubating/` → `ideas/rejected/` (decline idea)
-6. **Apply by mode**:
+7. **Apply by mode**:
    - `report`: return proposals with evidence and confidence
    - `apply-safe`: update tracker rows/links when unambiguous, no merges
    - `apply`: perform confirmed file moves, high-confidence merges, and inbound
      link rewrites
-7. **Shipped compaction**: When a project transitions to `shipped`, immediately
+8. **Shipped compaction**: When a project transitions to `shipped`, immediately
    run or propose
    `vault-compact --scope projects --project <name> --mode apply --aggression aggressive`
    to merge launch artifacts, drafts, research, and stale execution notes into
    one canonical shipped project record. Absorbed curated files may be deleted
    after unique content is preserved. Never delete `raw/`.
-8. **Log operation**: Append concise entry to `log.md`
+9. **Log operation**: Append concise entry to `log.md`
 
 ## Merge Rules
 
@@ -149,6 +172,8 @@ Return:
 - Files moved/renamed and link rewrites applied
 - Merges applied/proposed with canonical target and retained aliases
 - Idea promotions (incubating→project, fleeting→incubating)
+- PORT metadata updates for Project, Operation, Responsibility, and Task
+  references
 - Tracker sections changed
 - Touched files
 - Skipped items and rationale

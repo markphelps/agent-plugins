@@ -12,6 +12,10 @@ Reduce repeated thinking across the active vault. This skill is for semantic
 overlap, not just exact duplicate text: compact passages when they do the same
 job in the knowledge system.
 
+Prefer compaction when files represent the same Portent object or repeat the
+same claim for the same object. Do not merge merely because objects share a
+Topic. Preserve `belongs_to` and `related_to` metadata when absorbing files.
+
 ## Command
 
 ```
@@ -83,7 +87,8 @@ detail.
    - `qmd search` for exact phrases, titles, URLs, and aliases
    - `rg` for migration residue, raw strings, and link rewrites
 5. Build candidate groups by canonical topic, project, idea, source, or claim.
-6. Classify each group by confidence and compaction action.
+6. Classify each group by Portent object identity, confidence, and compaction
+   action.
 7. In `report` mode, stop after a compact report.
 8. In `apply-safe` mode, apply only local, high-confidence edits inside one file
    or obvious link substitutions to canonical concept notes.
@@ -116,6 +121,7 @@ detail.
 
 - Same source URL or same clipped source identity.
 - Same title, slug, project, or idea identity.
+- Same Portent object identity or same claim serving the same object.
 - One note explicitly continues, replaces, or supersedes another.
 - Passages make the same claim with compatible meaning.
 - Differences are examples, wording, or ordering, not substance.
@@ -152,6 +158,8 @@ Low-confidence items should remain separate; propose links only when useful.
   identity and do not absorb complete external text into owned notes.
 - Repeated source summaries should cite complete source records under
   `raw/processed/YYYY-MM-DD/` when used for synthesis.
+- Preserve `belongs_to` and `related_to` metadata when compacting or absorbing
+  notes.
 
 ### Ideas
 
