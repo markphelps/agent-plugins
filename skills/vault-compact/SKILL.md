@@ -12,6 +12,8 @@ Reduce repeated thinking across the active vault. This skill is for semantic
 overlap, not just exact duplicate text: compact passages when they do the same
 job in the knowledge system.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 Prefer compaction when files represent the same Portent object or repeat the
 same claim for the same object. Do not merge merely because objects share a
 Topic. Preserve `belongs_to` and `related_to` metadata when absorbing files.

@@ -12,6 +12,8 @@ This is the unified entry point for periodic vault care, coordinating ingestion,
 hygiene, semantic compaction, project tracking, and concept promotion into a
 single bounded workflow.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Command
 
 ```

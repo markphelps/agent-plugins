@@ -15,6 +15,8 @@ archival.
 Manage lifecycle and navigation for PORT objects: `Project`, `Operation`,
 `Responsibility`, and externally tracked `Task` references.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Command
 
 ```

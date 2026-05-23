@@ -10,12 +10,38 @@ IGNORE_RE='^(\.git|node_modules|\.agents|\.github|scripts|docs|skills|\.husky)$'
 # Bash 3.2 (default on macOS) does not support associative arrays.
 declare -a SKILL_NAMES=()
 declare -a SKILL_PATHS=()
+declare -a SHARED_NAMES=()
+declare -a SHARED_PATHS=()
 
 echo "[sync-skills] scanning plugin skill directories..."
 
 while IFS= read -r plugin_dir; do
   skills_root="$plugin_dir/skills"
   [[ -d "$skills_root" ]] || continue
+
+  references_dir="$skills_root/references"
+  if [[ -d "$references_dir" ]]; then
+    existing_src=""
+    for i in "${!SHARED_NAMES[@]}"; do
+      if [[ "${SHARED_NAMES[$i]}" == "references" ]]; then
+        existing_src="${SHARED_PATHS[$i]}"
+        break
+      fi
+    done
+
+    if [[ -n "$existing_src" && "$existing_src" != "$references_dir" ]]; then
+      echo "[sync-skills] duplicate shared references directory found:" >&2
+      echo "  - $existing_src" >&2
+      echo "  - $references_dir" >&2
+      echo "Merge or rename one of them before syncing." >&2
+      exit 1
+    fi
+
+    if [[ -z "$existing_src" ]]; then
+      SHARED_NAMES+=("references")
+      SHARED_PATHS+=("$references_dir")
+    fi
+  fi
 
   while IFS= read -r skill_dir; do
     [[ -f "$skill_dir/SKILL.md" ]] || continue
@@ -67,6 +93,12 @@ while IFS= read -r existing; do
       break
     fi
   done
+  for i in "${!SHARED_NAMES[@]}"; do
+    if [[ "${SHARED_NAMES[$i]}" == "$name" ]]; then
+      found=1
+      break
+    fi
+  done
   if [[ "$found" -eq 0 ]]; then
     echo "[sync-skills] removing stale skill: $name"
     rm -rf "$existing"
@@ -81,6 +113,16 @@ for i in "${!SKILL_NAMES[@]}"; do
   mkdir -p "$dst"
   rsync -a --delete --exclude node_modules/ --exclude .env "$src/" "$dst/"
   echo "[sync-skills] synced: $name"
+done
+
+# Sync shared skill asset directories such as references/.
+for i in "${!SHARED_NAMES[@]}"; do
+  name="${SHARED_NAMES[$i]}"
+  src="${SHARED_PATHS[$i]}"
+  dst="$DEST/$name"
+  mkdir -p "$dst"
+  rsync -a --delete --exclude node_modules/ --exclude .env "$src/" "$dst/"
+  echo "[sync-skills] synced shared: $name"
 done
 
 echo "[sync-skills] done"

@@ -8,6 +8,8 @@ description: Maintain canonical concept pages and surface recurring themes
 Promote recurring themes into canonical concept pages and keep concept
 navigation coherent.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Purpose
 
 Maintain `notes/concepts/` as the durable vocabulary of your vault. Surface

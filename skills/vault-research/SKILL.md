@@ -15,6 +15,8 @@ keeps a complete immutable copy in `raw/processed/YYYY-MM-DD/`.
 Notes tagged `external` are treated as clipped/imported external sources and are
 eligible for synthesis while preserving the complete source record.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 Research briefs are `type: Note` by default. External changes, meetings,
 incidents, product launches, or decisions that happened are `type: Event`. Every
 synthesized Note or Event should set `belongs_to` to its primary Project,

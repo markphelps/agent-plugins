@@ -7,6 +7,8 @@ description: Hygiene pass over active notes, ideas, and projects
 
 Run a focused hygiene pass over active vault surface and propose fixes.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Parameters
 
 - `--scope notes|projects|all` (default: `all`)

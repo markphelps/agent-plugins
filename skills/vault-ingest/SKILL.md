@@ -11,6 +11,8 @@ Categorize captures in `raw/sources/`, route owned/user-authored material to the
 right vault directories, and synthesize tagged external sources into curated
 notes while preserving complete source evidence.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Parameters
 
 - `--mode report|apply` (default: `report`)
