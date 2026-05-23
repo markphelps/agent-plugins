@@ -2,20 +2,22 @@
 name: context-file-tuneup
 description:
   Audit, rewrite, and tighten a CLAUDE.md / AGENTS.md file so it actually helps
-  a coding agent instead of bloating its context. Use this skill whenever the
-  user wants to review, clean up, fix, shrink, restructure, or improve a
-  CLAUDE.md / AGENTS.md file
+  a coding agent instead of bloating its context. Handles repos that use either
+  file name, both names, nested AGENTS.md files, or one file symlinked/aliased
+  to the other. Use this skill whenever the user wants to review, clean up, fix,
+  shrink, restructure, or improve a CLAUDE.md / AGENTS.md file
 ---
 
 # Context File Tune-up
 
-A `CLAUDE.md` or `AGENTS.md` file is loaded into the agent's context on every
-task. That makes it the highest-leverage and most-abused file in a repo: a good
-one silently prevents whole classes of mistakes; a bloated or vague one wastes
-the context budget and gets ignored. This skill audits an existing CLAUDE.md /
-AGENTS.md against a known-good structure, derives what it _should_ contain by
-inspecting the repo, proposes a full rewrite, and applies it only after the user
-confirms.
+A `CLAUDE.md` or `AGENTS.md` file is loaded into an agent's context on every
+task. Different agents and repos use different filenames, and some repos keep
+one as a symlink or compatibility alias to the other. Treat them as the same
+class of file: high-leverage repo instructions for coding agents. A good one
+silently prevents whole classes of mistakes; a bloated or vague one wastes the
+context budget and gets ignored. This skill audits the target context file
+against a known-good structure, derives what it _should_ contain by inspecting
+the repo, proposes a full rewrite, and applies it only after the user confirms.
 
 The core loop is **inspect → audit → propose → confirm → apply**. Never skip the
 confirm step — this file encodes human judgment about a codebase, so the user
@@ -64,14 +66,35 @@ line would not cause a single mistake, it is probably noise.
 
 ## Workflow
 
-### Step 1 — Locate and read the file
+### Step 1 — Locate, classify, and read the target
 
-Find the target. Check the repo root and common locations: `CLAUDE.md`,
-`.claude/CLAUDE.md`. If the user named a path, use it. If none exists and the
-user wants one, jump to "Creating from scratch".
+Find the target context file before auditing. If the user named a path, use that
+path. Otherwise check the repo root and common locations:
 
-Read the full file. Count its lines — you will reference the number in the
-audit.
+- `AGENTS.md`
+- `CLAUDE.md`
+- `.claude/CLAUDE.md`
+- nested `AGENTS.md` files when the user is asking about a subproject or
+  directory-specific context
+
+When more than one candidate exists, identify the relationship instead of
+guessing:
+
+- Run a symlink-aware check such as `ls -l <path>` or `test -L <path>` for each
+  candidate.
+- If one file is a symlink to the other, treat the real target as the source of
+  truth. Say so in the audit and avoid editing both paths separately.
+- If both files are regular files, compare their purpose. `AGENTS.md` is often
+  repo-agent routing while `CLAUDE.md` may be Claude-specific compatibility, but
+  do not assume that without reading them.
+- If a nested `AGENTS.md` applies to the user's requested subdirectory, audit it
+  together with the nearest parent/root context file so the rewrite preserves
+  the routing relationship.
+
+Read the full target file after resolving symlinks and hierarchy. Count its
+lines — you will reference the number in the audit. Also note the target type in
+your audit: `AGENTS.md`, `CLAUDE.md`, nested `AGENTS.md`, symlinked alias, or
+multiple independent context files.
 
 ### Step 2 — Inspect the repo for ground truth
 
@@ -112,9 +135,11 @@ Present a structured audit before proposing any change. Lead with the headline
 numbers, then go section by section. Use this shape:
 
 ```
-## Audit: CLAUDE.md (<N> lines)
+## Audit: <context-file-path> (<N> lines)
 
 **Verdict:** <one line — e.g. "Solid bones, ~40% is generic filler, missing the gotchas section.">
+
+**Target:** <AGENTS.md / CLAUDE.md / nested AGENTS.md / symlink relationship / multiple files reviewed.>
 
 **Length:** <N> lines vs ~300 target. <If over: what to cut or extract.>
 
@@ -153,11 +178,12 @@ don't interrogate them for it.)
 
 ### Step 5 — Propose the full rewrite
 
-Show the complete rewritten CLAUDE.md in a code block — the whole file, ready to
-drop in, not a diff or a partial. Precede it with a short summary (a few lines)
-of the major moves you made so the user can orient quickly: what you cut, what
-you added, the new line count. The rewrite is the thing they're approving; the
-summary is just a map of it.
+Show the complete rewritten target file in a code block — the whole file, ready
+to drop in, not a diff or a partial. Use the actual filename in the heading and
+summary (`AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md`, or the nested path).
+Precede it with a short summary (a few lines) of the major moves you made so the
+user can orient quickly: what you cut, what you added, the new line count, and
+whether symlink or multi-file behavior changes.
 
 ```
 Here's the rewrite. Major moves:
@@ -165,6 +191,7 @@ Here's the rewrite. Major moves:
 - Fixed the stale commands (npm → pnpm, build → build:prod)
 - Added an architectural map (api ↔ worker via Redis queue) and the enforced CI checks
 - Added a gotchas section from the "do not remove" notes in dispatch.ts
+- Preserved `CLAUDE.md` as a symlink to `AGENTS.md` instead of duplicating content
 - 142 → 96 lines
 
 <full rewritten file in a code block>
@@ -178,10 +205,15 @@ any pushback as input for another pass — re-propose, don't argue.
 
 ### Step 6 — Apply on confirmation
 
-Only after explicit approval, write the rewritten file to disk. If splitting
-into a `rules/` directory, create it and write the router into the main file.
-Confirm what was written and the final line count. If the user asked for
-feedback instead of approval, fold it in and re-present — back to Step 5.
+Only after explicit approval, write the rewritten file to disk. If the approved
+target is symlinked, write through the real target path and leave the symlink
+intact unless the user explicitly asks to change the relationship. If two
+independent files intentionally coexist, update only the approved file unless
+the user approves a coordinated rewrite for both. If splitting into a `rules/`
+directory, create it and write the router into the main file. Confirm what was
+written, whether any symlink was preserved, and the final line count. If the
+user asked for feedback instead of approval, fold it in and re-present — back to
+Step 5.
 
 ## The rules-router pattern
 
@@ -190,7 +222,8 @@ and leave a router. The main file stays a fast index; the agent reads a rule
 file only when the task calls for it.
 
 ```
-CLAUDE.md            ← stays lean; one-liner, tooling, map, hard constraints, + the router
+AGENTS.md or CLAUDE.md
+                     ← stays lean; one-liner, tooling, map, hard constraints, + the router
 rules/
   testing.md         ← detailed testing conventions
   database.md        ← schema rules, migration process, SQL conventions
