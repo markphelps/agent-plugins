@@ -12,6 +12,8 @@ This is the unified entry point for periodic vault care, coordinating ingestion,
 hygiene, semantic compaction, project tracking, and concept promotion into a
 single bounded workflow.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Command
 
 ```
@@ -38,7 +40,20 @@ Run `vault-ingest --mode report` to:
 - Show high-confidence source moves ready to apply
 - Identify ambiguous captures needing user direction
 
-### 2. Hygiene Audit
+### 2. Portent Object Audit
+
+Run a report-mode pass over active objects to find:
+
+- missing or invalid `type`
+- missing or invalid `status`
+- organized objects without useful relationships
+- captured objects that should be organized, deleted, or left in inbox
+- archived objects still shown in active views
+- Operations without a Responsibility or Project parent
+- Projects without a clear Responsibility or Topic relationship when one is
+  obvious
+
+### 3. Hygiene Audit
 
 Run `vault-lint --mode report` to:
 
@@ -50,7 +65,7 @@ Run `vault-lint --mode report` to:
 - Flag broken or ambiguous wikilinks
 - Surface promotion candidates from drift reports
 
-### 3. Tracker Audit
+### 4. Tracker Audit
 
 Run `vault-tracker --mode report` to:
 
@@ -60,7 +75,7 @@ Run `vault-tracker --mode report` to:
 - Propose lifecycle transitions
 - Identify untracked projects
 
-### 4. Idea Pressure Audit
+### 5. Idea Pressure Audit
 
 Run an aggressive report-mode review of `ideas/fleeting/` and
 `ideas/incubating/`:
@@ -86,7 +101,7 @@ Run an aggressive report-mode review of `ideas/fleeting/` and
 Default recommendation should be opinionated. Do not leave stale ideas as
 "maybe" when the evidence supports a clear cleanup action.
 
-### 5. Compaction Audit
+### 6. Compaction Audit
 
 Run `vault-compact --mode report` to:
 
@@ -96,9 +111,9 @@ Run `vault-compact --mode report` to:
   shipped-project launch artifacts
 - Identify curated files that could be deleted after absorption
 - Distinguish collapse/route/link-only actions from true file merges
-- Include idea-pressure candidates from step 4 as compact/reject/delete inputs
+- Include idea-pressure candidates from step 5 as compact/reject/delete inputs
 
-### 6. Concept Audit
+### 7. Concept Audit
 
 Run `vault-concepts --mode report` to:
 
@@ -108,12 +123,14 @@ Run `vault-concepts --mode report` to:
 - Propose updates to existing concepts
 - Surface new concept creation candidates
 
-### 7. Weekly Summary Production
+### 8. Weekly Summary Production
 
 Compile findings into a weekly summary including:
 
 - Pending ingestions (count, source types, routing decisions)
 - Source routing proposals (category, destination, confidence)
+- Portent object audit findings (type/status validity, relationship gaps,
+  captured/archived drift)
 - Hygiene issues by severity (contradictions, orphans, stale)
 - Connection candidates (source, target, confidence, relationship)
 - Merge candidates (target, sources, confidence, required link rewrites)
@@ -128,7 +145,7 @@ Compile findings into a weekly summary including:
 - Concept candidates (updates, creations deferred)
 - Unresolved decisions requiring user input
 
-### 8. Maintenance Record
+### 9. Maintenance Record
 
 Append the maintenance entry to `log.md` manually when the vault uses one:
 
@@ -219,13 +236,13 @@ Additionally allow medium-confidence actions:
 
 This skill orchestrates the following specialized skills:
 
-| Step | Skill            | Purpose                             |
-| ---- | ---------------- | ----------------------------------- |
-| 1    | `vault-ingest`   | Source classification and routing   |
-| 2    | `vault-lint`     | Hygiene and contradiction detection |
-| 3    | `vault-tracker`  | Project lifecycle management        |
-| 4    | `vault-compact`  | Semantic merge and absorption       |
-| 5    | `vault-concepts` | Concept promotion and creation      |
+| Step | Skill            | Purpose                           |
+| ---- | ---------------- | --------------------------------- |
+| 1    | `vault-ingest`   | Source classification and routing |
+| 2    | `vault-lint`     | Portent object and hygiene audit  |
+| 3    | `vault-tracker`  | PORT lifecycle management         |
+| 4    | `vault-compact`  | Semantic merge and absorption     |
+| 5    | `vault-concepts` | Topic promotion and creation      |
 
 ## Output
 
@@ -240,6 +257,8 @@ Return:
 - **Idea pressure report**: Fleeting/incubating decisions requested, stale
   ideas, broken idea entry points, non-idea files in `ideas/`, and recommended
   action
+- **Portent object report**: Missing/invalid types and statuses, relationship
+  gaps, captured-object decisions, and archived visibility drift
 - **Graph report**: Links added/proposed and relationship evidence
 - **Confidence notes**: High/medium/low confidence per category
 - **Unresolved decisions**: Items requiring explicit user input

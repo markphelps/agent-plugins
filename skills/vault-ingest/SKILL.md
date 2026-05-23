@@ -11,6 +11,8 @@ Categorize captures in `raw/sources/`, route owned/user-authored material to the
 right vault directories, and synthesize tagged external sources into curated
 notes while preserving complete source evidence.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Parameters
 
 - `--mode report|apply` (default: `report`)
@@ -25,6 +27,15 @@ For each ingestion cycle:
 - Source starts in `raw/sources/` (unprocessed inbox)
 - The source file itself remains the durable artifact
 - Each source is classified by intent, topic, and lifecycle state before moving
+- Every capture is classified into a Portent lifecycle state first: `captured`,
+  `organized`, or `archived`
+- Every organized durable object gets a Portent `type`
+- Every organized object should have enough relationship metadata to explain
+  future usefulness:
+  - `belongs_to` for primary context when one exists
+  - `related_to` for secondary associations
+- If a capture cannot attach to a Project, Responsibility, Operation, or Topic,
+  leave it in `raw/sources/` and report it as a delete/ignore candidate
 - Source files move to the most specific existing vault location when they are
   owned/user-authored material or working source records
 - Owned notes, project ideas, drafts, and planning captures are moved intact
@@ -144,8 +155,14 @@ target.
 
 1. **Scan** `raw/sources/` for unprocessed captures (skip hidden files)
 2. **Classify** each capture:
-   - Identify source type, topic, related entities, and lifecycle state
-   - Match against existing `projects/`, `ideas/`, and `notes/`
+   - Identify whether it is PORT (`Project`, `Operation`, `Responsibility`,
+     `Task`) or ENTP (`Event`, `Note`, `Topic`, `Person`)
+   - Assign `status: captured|organized|archived`
+   - Identify source origin: owned, external, asset, operational record
+   - Identify primary `belongs_to` candidate
+   - Identify useful `related_to` candidates
+   - Match against existing `projects/`, `ideas/`, `notes/`, and indexed Topic
+     objects
    - Mark confidence as high, medium, or low
 3. **Plan moves**:
    - Choose the most specific destination path
@@ -194,11 +211,14 @@ target.
 Return:
 
 - discovered captures and classification plan
+- Portent type, status, belongs_to, and related_to recommendations for each
+  capture
 - category, confidence, and destination path for each source
 - source files moved and final destination paths
 - files merged, merge target, and provenance retained
 - synthesized items, archived complete source paths, and links inserted
 - source files left in place with ambiguity reason
+- captures left unorganized because they lack a useful relationship target
 - `index.md` additions
 - `log.md` entry appended
 - audit findings (empty folders, anomalies)

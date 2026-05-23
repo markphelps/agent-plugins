@@ -8,10 +8,16 @@ description: Maintain canonical concept pages and surface recurring themes
 Promote recurring themes into canonical concept pages and keep concept
 navigation coherent.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Purpose
 
 Maintain `notes/concepts/` as the durable vocabulary of your vault. Surface
 cross-domain patterns and decide when transience deserves permanence.
+
+Concept pages are Portent `Topic` objects. New recurring-theme pages should use
+`type: Topic`, `status: organized`, and explicit `related_to` links to the
+Projects, Notes, Events, or Responsibilities they help explain.
 
 ## Parameters
 
@@ -25,6 +31,7 @@ Only create new concept pages when ALL are true:
 - Theme appears in 3+ unrelated notes
 - Evidence is concrete and linkable
 - Destination concept is clear
+- Destination Topic object is clear
 - Change is additive and low-risk
 
 ## Workflow
@@ -90,6 +97,7 @@ Return:
 
 - Concepts created/updated/proposed (with confidence)
 - Concepts merged/proposed for merge
+- Topic object metadata added or updated
 - Evidence links used
 - Reference normalization performed
 - Index/log update status

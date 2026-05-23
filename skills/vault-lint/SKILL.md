@@ -7,6 +7,8 @@ description: Hygiene pass over active notes, ideas, and projects
 
 Run a focused hygiene pass over active vault surface and propose fixes.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
 ## Parameters
 
 - `--scope notes|projects|all` (default: `all`)
@@ -28,6 +30,17 @@ Run a focused hygiene pass over active vault surface and propose fixes.
   source records
 - **External tag drift**: Clipped source notes missing `external`, or owned
   notes incorrectly tagged `external`
+- **Portent object validity**: missing `title`, invalid `type`, invalid
+  `status`, malformed `belongs_to`, malformed `related_to`
+- **Organized-without-usefulness**: `status: organized` objects without any
+  relationship when a Project, Responsibility, Operation, or Topic target is
+  obvious
+- **Archive visibility drift**: `status: archived` objects still shown in active
+  `index.md` views
+- **Folder/metadata mismatch**: folder location contradicts type, status, or
+  stage; treat as a navigation smell, not automatic truth
+- **Custom model drift**: custom types or custom relationships that duplicate
+  Portent defaults
 
 ## Scope
 
@@ -103,6 +116,19 @@ High-confidence candidates may be passed to `vault-ingest`, `vault-tracker`, or
 `vault-concepts` for apply-mode merging. Medium/low candidates should stay as
 separate notes with proposed links.
 
+## Portent Apply Constraints
+
+In apply mode, Portent fixes are limited to mechanical corrections:
+
+- normalize valid scalar/list YAML shapes
+- add missing `title` from H1 when exact
+- add `status: organized` only when type and relationships are already clear
+- add high-confidence `related_to` links where the object explicitly names the
+  target
+
+Do not infer broad relationships or change object type in apply mode unless the
+user explicitly requested that conversion.
+
 ## Safety
 
 - Report-first by default on all ambiguous issues.
@@ -126,3 +152,5 @@ Return:
 - Merge candidates with target, confidence, and rationale
 - Synthesis notes missing archived source links
 - External tag drift findings
+- Portent object validity, relationship, archive visibility, and custom model
+  drift findings

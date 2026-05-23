@@ -15,6 +15,13 @@ keeps a complete immutable copy in `raw/processed/YYYY-MM-DD/`.
 Notes tagged `external` are treated as clipped/imported external sources and are
 eligible for synthesis while preserving the complete source record.
 
+Portent reference: `../references/portent-knowledge-base-spec.md`.
+
+Research briefs are `type: Note` by default. External changes, meetings,
+incidents, product launches, or decisions that happened are `type: Event`. Every
+synthesized Note or Event should set `belongs_to` to its primary Project,
+Responsibility, Operation, or Topic when that context is clear.
+
 ## Parameters
 
 Target can be:
@@ -45,22 +52,24 @@ Resolve target in this order:
    - community discussions (Reddit/HN/forums)
    - market signals (funding/trends/news)
 4. Classify each external source by type, relevance, topic, and confidence.
-5. Choose output behavior:
+5. Classify the output as a Portent `Note` or `Event` and identify the primary
+   `belongs_to` relationship when clear.
+6. Choose output behavior:
    - `sources`: create or update source records only
    - `summary`: write a concise synthesized research block with citations
    - `both`: preserve source records and write a concise synthesis
-6. In `apply` mode, archive every external source used for synthesis to
+7. In `apply` mode, archive every external source used for synthesis to
    `raw/processed/YYYY-MM-DD/` before writing the synthesis.
-7. Place working source records in the closest durable location:
+8. Place working source records in the closest durable location:
    - `projects/active/<project>/research/`
    - `ideas/<state>/<idea>/research/`
    - `notes/<topic>/`
-8. Merge source records into an existing research/source note when they cover
+9. Merge source records into an existing research/source note when they cover
    the same external source or same research thread.
-9. Assign confidence (`high|medium|low`) for key claims.
-10. If writing a summary, keep it clearly separate from owned notes and link
+10. Assign confidence (`high|medium|low`) for key claims.
+11. If writing a summary, keep it clearly separate from owned notes and link
     back to archived complete source records.
-11. Return what was found, where sources were placed, and what was written.
+12. Return what was found, where sources were placed, and what was written.
 
 ## Copy vs Synthesize Decision
 
@@ -113,6 +122,7 @@ Return:
 - archived complete source paths under `raw/processed/YYYY-MM-DD/`
 - source records merged and canonical destinations
 - findings summary if requested
+- Portent output type and belongs_to relationship used or proposed
 - confidence highlights
 - whether source records or target notes were updated
 - suggested follow-up actions
