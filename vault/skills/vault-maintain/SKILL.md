@@ -2,15 +2,15 @@
 name: vault-maintain
 description:
   Weekly bounded maintenance loop across ingestion, hygiene, compaction,
-  tracking, and concepts
+  lifecycle management, and concepts
 ---
 
 # Vault Maintain
 
 Run a comprehensive weekly maintenance sweep across the active vault surface.
 This is the unified entry point for periodic vault care, coordinating ingestion,
-hygiene, semantic compaction, project tracking, and concept promotion into a
-single bounded workflow.
+hygiene, semantic compaction, project lifecycle management, and concept
+promotion into a single bounded workflow.
 
 Portent reference: `../references/portent-knowledge-base-spec.md`.
 
@@ -65,15 +65,15 @@ Run `vault-lint --mode report` to:
 - Flag broken or ambiguous wikilinks
 - Surface promotion candidates from drift reports
 
-### 4. Tracker Audit
+### 4. Lifecycle Audit
 
 Run `vault-tracker --mode report` to:
 
-- Audit tracker vs filesystem state
-- Detect mismatches and orphan entries
+- Audit Portent metadata vs filesystem and active navigation state
+- Detect mismatches and stale navigation entries
 - Detect duplicate ideas/projects that should be merged
 - Propose lifecycle transitions
-- Identify untracked projects
+- Identify active Projects missing from active navigation
 
 ### 5. Idea Pressure Audit
 
@@ -141,7 +141,7 @@ Compile findings into a weekly summary including:
   `raw/processed/YYYY-MM-DD/`)
 - External tag checks (clipped notes tagged `external`, owned notes not tagged
   `external`)
-- Tracker transitions proposed (state changes, promotions)
+- Lifecycle transitions proposed (state changes, promotions)
 - Concept candidates (updates, creations deferred)
 - Unresolved decisions requiring user input
 
@@ -152,7 +152,7 @@ Append the maintenance entry to `log.md` manually when the vault uses one:
 - Operation: `vault-maintain`
 - Summary: date range and completion status
 - Key actions: counts of items processed in each category
-- Touched files: moved sources plus tracker, link, or concept updates
+- Touched files: moved sources plus metadata, link, index, or concept updates
 
 ## Mode Behavior
 
@@ -170,7 +170,8 @@ Apply only high-confidence, low-risk changes:
 - **Link normalization**: Fix broken or ambiguous wikilinks
 - **Graph links**: Add high-confidence contextual wikilinks discovered by
   `vault-lint`
-- **Tracker updates**: Unambiguous state changes, formatting fixes
+- **Lifecycle updates**: Unambiguous Portent metadata and index/navigation
+  changes
 - **Idea queue cleanup prep**: Fix broken idea links, add canonical links, and
   mark obvious decision prompts without moving or deleting idea content
 - **Merge prep**: Add backlinks or aliases for high-confidence merge candidates

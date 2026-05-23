@@ -23,7 +23,8 @@ Portent reference: `../references/portent-knowledge-base-spec.md`.
 - **Connection candidates**: Notes that should be linked to strengthen the
   knowledge graph over time
 - **Missing concepts**: Repeated themes without canonical page
-- **Mismatched states**: Project directory location vs tracker status
+- **Mismatched states**: Project directory location vs Portent metadata and
+  active navigation
 - **Merge candidates**: Duplicate or overlapping notes, ideas, or projects that
   should probably be one durable item
 - **Unbacked synthesis**: Summaries or briefs without links to complete archived
@@ -68,7 +69,7 @@ Portent reference: `../references/portent-knowledge-base-spec.md`.
 8. Report idea lifecycle issues:
    - duplicate ideas across `fleeting/`, `incubating/`, `someday/`, `rejected/`
    - stale incubating ideas without next action
-   - project-like ideas that may need tracker promotion
+   - project-like ideas that may need lifecycle promotion
 9. Report merge candidates:
    - exact duplicates or near-duplicates
    - continuation notes that extend the same idea/project
@@ -80,7 +81,7 @@ Portent reference: `../references/portent-knowledge-base-spec.md`.
 - likely clipped/source notes missing `external`
 - owned ideas, project drafts, or plans incorrectly tagged `external`
 
-12. Report mismatched project states for `vault-tracker` handling.
+12. Report mismatched project states for lifecycle handling.
 13. Summarize outcomes.
 
 ## Connection Candidate Rubric
@@ -147,7 +148,7 @@ Return:
 - Decisions requiring manual review
 - Concept promotion candidates
 - Connection candidates and links added
-- Mismatched states flagged for vault-tracker
+- Mismatched project lifecycle states
 - Idea lifecycle issues and duplicate idea candidates
 - Merge candidates with target, confidence, and rationale
 - Synthesis notes missing archived source links

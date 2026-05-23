@@ -1,16 +1,16 @@
 ---
 name: vault-tracker
 description:
-  Manage PORT object lifecycle and project-tracker.md—track state changes,
-  propose transitions, and coordinate archival
+  Manage PORT object lifecycle through Portent metadata, folder state, and index
+  navigation
 ---
 
 # Vault Tracker
 
 Unified PORT object lifecycle management: track Projects, Operations,
 Responsibilities, and externally tracked Task references; detect mismatches
-between filesystem, metadata, and tracker; propose transitions; and coordinate
-archival.
+between filesystem location, Portent metadata, and active navigation; propose
+transitions; and coordinate archival.
 
 Manage lifecycle and navigation for PORT objects: `Project`, `Operation`,
 `Responsibility`, and externally tracked `Task` references.
@@ -66,14 +66,18 @@ Portent frontmatter is authoritative for object meaning:
 
 ## Mode Behavior
 
-- `report`: audit tracker vs filesystem, detect mismatches, propose transitions
-- `apply-safe`: apply unambiguous tracker updates only (no file moves)
+- `report`: audit Portent metadata vs filesystem/navigation state, detect
+  mismatches, propose transitions
+- `apply-safe`: apply unambiguous metadata and navigation updates only (no file
+  moves)
 - `apply`: apply confirmed transitions including file moves and link rewrites
 
 ## Workflow
 
-1. **Read tracker**: Load `projects/project-tracker.md`
-2. **Scan projects/**: Discover project directories and their state
+1. **Scan active navigation**: Read `index.md` when present to discover active
+   project and idea entry points.
+2. **Scan projects/**: Discover project directories and their lifecycle
+   location.
 3. **Scan PORT metadata**:
    - Projects in `projects/`, shaped project candidates in `ideas/`
    - Operations under `notes/operations/` or equivalent local convention
@@ -82,17 +86,17 @@ Portent frontmatter is authoritative for object meaning:
    - Task references that live outside the vault but relate back to Portent
      objects
 4. **Detect mismatches**:
-   - Filesystem state vs tracker state
    - Portent `type`, `status`, and `stage` vs folder location
+   - Active `index.md` entries vs archived or inactive object metadata
+   - Active Projects missing from `index.md` when local convention uses an
+     active catalog
    - Operations without a Responsibility or Project parent
    - Responsibilities without related Projects or Operations when obvious
-   - Orphan tracker entries (no matching directory)
-   - Untracked projects (directory exists, not in tracker)
    - Duplicate idea or project directories that should be one lifecycle item
 5. **Propose transitions and merges**:
    - Smallest valid state change per mismatch
    - Canonical merge target for duplicate ideas/projects
-   - Link rewrites and tracker row consolidation required by the merge
+   - Link rewrites and index/navigation updates required by the merge
 6. **Handle idea promotion paths**:
    - `ideas/incubating/` → `projects/active/` (promote to project)
    - `ideas/fleeting/` → `ideas/incubating/` (promote idea)
@@ -100,7 +104,8 @@ Portent frontmatter is authoritative for object meaning:
    - `ideas/incubating/` → `ideas/rejected/` (decline idea)
 7. **Apply by mode**:
    - `report`: return proposals with evidence and confidence
-   - `apply-safe`: update tracker rows/links when unambiguous, no merges
+   - `apply-safe`: update Portent frontmatter, index links, and obvious
+     backlinks when unambiguous, no merges
    - `apply`: perform confirmed file moves, high-confidence merges, and inbound
      link rewrites
 8. **Shipped compaction**: When a project transitions to `shipped`, immediately
@@ -120,8 +125,7 @@ unless the user says otherwise.
 
 - Preserve all files by moving them into the canonical directory or appending
   sections into the canonical note.
-- Consolidate tracker rows into one entry and keep former names as aliases or
-  backlinks when useful.
+- Preserve former names as aliases or backlinks when useful.
 - Rewrite inbound links to the canonical path.
 - In `report` mode, show both the canonical destination and what would be moved.
 - In `apply` mode, require clear evidence or explicit user instruction.
@@ -148,7 +152,8 @@ vault-tracker --mode apply --project my-project archive now
 - **Never discard duplicate project or idea material** — merge or move it
 - **Confirmation required** for destructive moves (archive transitions)
 - **Link integrity**: Check/rewrite inbound links before archival
-- **Tracker ≠ sole history**: Keep project docs as source of truth
+- **Metadata and docs are source of truth**: Keep Portent frontmatter and
+  project docs aligned
 - **Skip archive operations** for `active/exploring` without explicit evidence
 - **Never touch** `raw/processed/*` or hidden/system directories
 
@@ -170,12 +175,12 @@ transition.
 Return:
 
 - Transitions applied/proposed with evidence and confidence
-- Mismatches detected (filesystem vs tracker)
+- Mismatches detected (metadata vs filesystem/navigation)
 - Files moved/renamed and link rewrites applied
 - Merges applied/proposed with canonical target and retained aliases
 - Idea promotions (incubating→project, fleeting→incubating)
 - PORT metadata updates for Project, Operation, Responsibility, and Task
   references
-- Tracker sections changed
+- Index/navigation updates
 - Touched files
 - Skipped items and rationale

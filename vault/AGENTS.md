@@ -14,7 +14,7 @@ This plugin contains vault-focused skills for the Karpathy Wiki + Idea Lifecycle
 | `vault-ingest`   | Categorize `raw/sources/` → correct vault locations    |
 | `vault-lint`     | Hygiene: orphans, stale, contradictions, weak links    |
 | `vault-compact`  | Collapse semantic overlap into canonical notes         |
-| `vault-tracker`  | Project lifecycle + tracker maintenance                |
+| `vault-tracker`  | PORT lifecycle + index/navigation maintenance          |
 | `vault-maintain` | Weekly orchestrator running all checks                 |
 
 ## Optional Skills (3)

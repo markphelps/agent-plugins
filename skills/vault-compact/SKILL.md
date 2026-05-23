@@ -175,8 +175,8 @@ Low-confidence items should remain separate; propose links only when useful.
 
 - Keep project PRDs, plans, decisions, research, and postmortems separate unless
   one is clearly obsolete or duplicative.
-- Canonical project state should live in the main project PRD, README, or
-  tracker according to the local convention.
+- Canonical project state should live in Portent frontmatter, the main project
+  PRD, README, or active index navigation according to the local convention.
 - Do not merge active, paused, shipped, and rejected rationales into one generic
   project summary; lifecycle context matters.
 - For shipped projects, run heavier compaction after the shipping transition.

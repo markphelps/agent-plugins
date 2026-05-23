@@ -14,11 +14,11 @@ Core skills:
 - `vault-compact`: Collapse semantically overlapping notes, ideas, and project
   docs into clearer canonical surfaces while preserving distinct claims,
   decisions, examples, and provenance.
-- `vault-tracker`: Manage project lifecycle state and reconcile tracker entries
-  with filesystem reality.
+- `vault-tracker`: Manage PORT lifecycle state across Portent metadata, folder
+  state, and active index navigation.
 - `vault-maintain`: Run the bounded weekly maintenance loop across ingest,
-  hygiene, semantic compaction, tracking, and concepts. It is intentionally
-  aggressive about idea queue pressure in `ideas/fleeting/` and
+  hygiene, semantic compaction, lifecycle management, and concepts. It is
+  intentionally aggressive about idea queue pressure in `ideas/fleeting/` and
   `ideas/incubating/`, prompting keep/promote/move/compact/reject/delete
   decisions.
 
@@ -67,11 +67,11 @@ flowchart TD
   Processed --> Brief[linked research brief]
   SourceRecords --> Brief
 
-  Incubating --> Tracker[vault-tracker]
-  Fleeting --> Tracker
-  Someday --> Tracker
-  Rejected --> Tracker
-  Tracker --> Active[projects/active/]
+  Incubating --> Lifecycle[vault-tracker]
+  Fleeting --> Lifecycle
+  Someday --> Lifecycle
+  Rejected --> Lifecycle
+  Lifecycle --> Active[projects/active/]
   Active --> Shipped[projects shipped]
   Shipped --> Archive[archive/]
 
