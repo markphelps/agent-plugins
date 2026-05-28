@@ -18,6 +18,8 @@ agent context.
 
 - `context-file-tuneup`: audit and rewrite `CLAUDE.md` / `AGENTS.md` files so
   they stay short, specific, and grounded in the repo
+- `github-pr-fixup`: check out an existing GitHub PR branch, address active
+  unresolved review comments and failing CI, then push fixes back to that PR
 
 ## Workflow Policy
 
@@ -26,5 +28,8 @@ agent context.
 - For user-facing context rewrites, preserve the skill's
   inspect -> audit -> propose -> confirm -> apply loop unless the user has
   explicitly asked for direct repo-doc edits here.
+- For PR fixups, work on the existing PR branch. Do not open a replacement PR,
+  do not resolve review threads unless asked, and ignore resolved or outdated
+  review comments.
 - Do not manually restore removed development skills in top-level `skills/`.
   Run `npm run sync` so the generated mirror matches `development/skills/`.
