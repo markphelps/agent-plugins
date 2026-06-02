@@ -9,6 +9,19 @@ Run a focused hygiene pass over active vault surface and propose fixes.
 
 Portent reference: `../references/portent-knowledge-base-spec.md`.
 
+## Recency Priority
+
+Work the active surface newest-first, ranked by each object's `updated`
+frontmatter date (fall back to file modification time when `updated` is absent).
+Concentrate scrutiny on the freshest material — recently-touched objects are
+where active thinking lives and where new mismatches, overlaps, and gaps appear.
+Long-untouched objects are assumed settled and rank lower, but are never
+excluded: they remain valid link targets, merge destinations, and canonical
+homes, and still get a structural check (broken links, orphaning).
+
+For this pass, order the issue list newest-first: a fresh file's issue outranks
+an older file's equivalent issue when reporting and when choosing what to apply.
+
 ## Parameters
 
 - `--scope notes|projects|all` (default: `all`)

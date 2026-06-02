@@ -17,6 +17,19 @@ Manage lifecycle and navigation for PORT objects: `Project`, `Operation`,
 
 Portent reference: `../references/portent-knowledge-base-spec.md`.
 
+## Recency Priority
+
+Work the active surface newest-first, ranked by each object's `updated`
+frontmatter date (fall back to file modification time when `updated` is absent).
+Concentrate scrutiny on the freshest material — recently-touched objects are
+where active thinking lives and where new mismatches, overlaps, and gaps appear.
+Long-untouched objects are assumed settled and rank lower, but are never
+excluded: they remain valid link targets, merge destinations, and canonical
+homes, and still get a structural check (broken links, orphaning).
+
+Surface recently-touched objects' metadata and navigation mismatches first when
+reporting and proposing transitions.
+
 ## Command
 
 ```
