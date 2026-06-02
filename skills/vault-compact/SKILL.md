@@ -18,6 +18,20 @@ Prefer compaction when files represent the same Portent object or repeat the
 same claim for the same object. Do not merge merely because objects share a
 Topic. Preserve `belongs_to` and `related_to` metadata when absorbing files.
 
+## Recency Priority
+
+Work the active surface newest-first, ranked by each object's `updated`
+frontmatter date (fall back to file modification time when `updated` is absent).
+Concentrate scrutiny on the freshest material — recently-touched objects are
+where active thinking lives and where new mismatches, overlaps, and gaps appear.
+Long-untouched objects are assumed settled and rank lower, but are never
+excluded: they remain valid link targets, merge destinations, and canonical
+homes, and still get a structural check (broken links, orphaning).
+
+Seed overlap-candidate groups from recent files. When a recent note overlaps an
+older canonical one, keep the older established note as the canonical
+destination, consistent with the Canonical Destination Rules below.
+
 ## Command
 
 ```

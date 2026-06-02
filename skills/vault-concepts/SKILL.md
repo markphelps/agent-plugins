@@ -10,6 +10,20 @@ navigation coherent.
 
 Portent reference: `../references/portent-knowledge-base-spec.md`.
 
+## Recency Priority
+
+Work the active surface newest-first, ranked by each object's `updated`
+frontmatter date (fall back to file modification time when `updated` is absent).
+Concentrate scrutiny on the freshest material — recently-touched objects are
+where active thinking lives and where new mismatches, overlaps, and gaps appear.
+Long-untouched objects are assumed settled and rank lower, but are never
+excluded: they remain valid link targets, merge destinations, and canonical
+homes, and still get a structural check (broken links, orphaning).
+
+Weight theme detection toward recent notes so emerging themes surface early, but
+keep temporal spread as the high-confidence signal: a concept still needs
+occurrences across time, not just a recent burst.
+
 ## Purpose
 
 Maintain `notes/concepts/` as the durable vocabulary of your vault. Surface
