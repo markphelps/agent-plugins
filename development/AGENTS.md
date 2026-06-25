@@ -16,6 +16,8 @@ agent context.
 
 ## Current Skill Surface
 
+- `cli-design`: design, build, or review command-line interfaces using the
+  Command Line Interface Guidelines from clig.dev
 - `context-file-tuneup`: audit and rewrite `CLAUDE.md` / `AGENTS.md` files so
   they stay short, specific, and grounded in the repo
 - `github-pr-fixup`: check out an existing GitHub PR branch, address active

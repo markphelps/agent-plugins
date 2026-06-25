@@ -1,12 +1,13 @@
 # Development Plugin
 
-Developer workflow skills for maintaining repo-facing agent context and GitHub
-PR follow-up work.
+Developer workflow skills for maintaining repo-facing agent context, GitHub PR
+follow-up work, and command-line interface design.
 
 ## Skill Set
 
 | Skill                 | What It Does                                                                                 | When to Invoke                                                                                            |
 | --------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `cli-design`          | Designs and reviews command-line interfaces using clig.dev guidance.                         | When creating CLI commands, flags, help text, output contracts, error messages, or destructive workflows. |
 | `context-file-tuneup` | Audits, rewrites, and tightens `CLAUDE.md` / `AGENTS.md` context files.                      | When reviewing, shrinking, restructuring, or improving agent context.                                     |
 | `github-pr-fixup`     | Addresses unresolved GitHub PR review comments and failing CI on the existing source branch. | When a user gives you an existing PR URL and wants review feedback or CI failures fixed without a new PR. |
 
@@ -16,6 +17,9 @@ PR follow-up work.
 - Top-level mirror under `skills/` is maintained by `npm run sync`.
 - Removed skills should disappear from the mirror after sync; do not re-create
   them directly under top-level `skills/`.
+- CLI design work should stay grounded in clig.dev principles: human-first
+  defaults, scriptable I/O contracts, helpful errors, and safe destructive
+  actions.
 - Context-file tune-ups should be grounded in repo evidence and, for target
   projects, applied only after the user approves the proposed rewrite.
 - GitHub PR fixups should stay scoped to active unresolved review threads and

@@ -9,10 +9,10 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 
 ## Plugins
 
-| Plugin                        | Description                                           |
-| ----------------------------- | ----------------------------------------------------- |
-| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes |
-| [development](./development/) | Context-file tune-up workflow for AGENTS/CLAUDE docs  |
+| Plugin                        | Description                                                        |
+| ----------------------------- | ------------------------------------------------------------------ |
+| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes              |
+| [development](./development/) | Development workflows for agent context, PR fixups, and CLI design |
 
 ## Layout
 
@@ -34,7 +34,7 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 This repo also provides top-level installable skills under `skills/`.
 
 ```bash
-npx skills add markphelps/agent-plugins --skill context-file-tuneup
+npx skills add markphelps/agent-plugins --skill cli-design
 ```
 
 ## Development
