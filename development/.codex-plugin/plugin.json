@@ -1,7 +1,7 @@
 {
   "name": "development",
   "version": "0.0.2",
-  "description": "Developer workflow skills for agent context, PR fixups, and CLI design.",
+  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, and OSS marketing.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -14,13 +14,20 @@
     "context",
     "AGENTS.md",
     "cli",
-    "command-line"
+    "command-line",
+    "open-source",
+    "oss",
+    "readme",
+    "contributing",
+    "marketing",
+    "positioning",
+    "launch"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Agent context, PR fixup, and CLI design workflows",
-    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, and designing humane, scriptable command-line interfaces grounded in clig.dev guidance.",
+    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, and OSS marketing workflows",
+    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, and sharpening OSS README positioning.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
@@ -29,7 +36,11 @@
       "Review this CLAUDE.md for stale, vague, or bloated agent instructions.",
       "Create a concise AGENTS.md for this repo based on its actual tooling and structure.",
       "Review this CLI against clig.dev and suggest concrete improvements.",
-      "Design commands, flags, help text, and output behavior for a new command-line tool."
+      "Design commands, flags, help text, and output behavior for a new command-line tool.",
+      "Audit this repo for open source readiness and first-contributor friction.",
+      "Prepare README, CONTRIBUTING, issue templates, and PR templates for an OSS launch.",
+      "Run an OSS marketing pass on this README so first-time visitors understand why to try it.",
+      "Sharpen launch copy and positioning for an open source project."
     ]
   }
 }

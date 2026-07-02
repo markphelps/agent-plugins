@@ -22,6 +22,10 @@ agent context.
   they stay short, specific, and grounded in the repo
 - `github-pr-fixup`: check out an existing GitHub PR branch, address active
   unresolved review comments and failing CI, then push fixes back to that PR
+- `oss-repo-readiness`: audit and prepare a GitHub repo for open source
+  release, emphasizing first-run and first-contribution developer experience
+- `oss-marketing`: sharpen open source README/public-doc positioning for
+  first-visit clarity, launch copy, and visitor-to-user conversion
 
 ## Workflow Policy
 
