@@ -1,7 +1,7 @@
 {
   "name": "development",
-  "version": "0.0.2",
-  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, and OSS marketing.",
+  "version": "0.0.3",
+  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, OSS marketing, and session log audits.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -21,13 +21,17 @@
     "contributing",
     "marketing",
     "positioning",
-    "launch"
+    "launch",
+    "session-log-audit",
+    "audit",
+    "papercuts",
+    "devex"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, and OSS marketing workflows",
-    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, and sharpening OSS README positioning.",
+    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, OSS marketing, and session log audit workflows",
+    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, sharpening OSS README positioning, and mining local agent session logs for papercuts in your own tools.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
@@ -40,7 +44,9 @@
       "Audit this repo for open source readiness and first-contributor friction.",
       "Prepare README, CONTRIBUTING, issue templates, and PR templates for an OSS launch.",
       "Run an OSS marketing pass on this README so first-time visitors understand why to try it.",
-      "Sharpen launch copy and positioning for an open source project."
+      "Sharpen launch copy and positioning for an open source project.",
+      "Audit my agent session logs for papercuts in this project and rank the fixes.",
+      "Why do I keep working around my own tool? Check the last week of sessions."
     ]
   }
 }

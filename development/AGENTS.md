@@ -22,10 +22,12 @@ agent context.
   they stay short, specific, and grounded in the repo
 - `github-pr-fixup`: check out an existing GitHub PR branch, address active
   unresolved review comments and failing CI, then push fixes back to that PR
-- `oss-repo-readiness`: audit and prepare a GitHub repo for open source
-  release, emphasizing first-run and first-contribution developer experience
 - `oss-marketing`: sharpen open source README/public-doc positioning for
   first-visit clarity, launch copy, and visitor-to-user conversion
+- `oss-repo-readiness`: audit and prepare a GitHub repo for open source
+  release, emphasizing first-run and first-contribution developer experience
+- `session-log-audit`: mine local agent session logs (Claude Code, Pi, Codex)
+  for papercuts in a project the user builds with agents, then rank the fixes
 
 ## Workflow Policy
 
@@ -37,5 +39,8 @@ agent context.
 - For PR fixups, work on the existing PR branch. Do not open a replacement PR,
   do not resolve review threads unless asked, and ignore resolved or outdated
   review comments.
+- For session log audits, collect receipts before you diagnose. Work through
+  the numbered phases in order and meet each gate. Treat what the user suspects
+  as a hypothesis to test, not as a finding.
 - Do not manually restore removed development skills in top-level `skills/`.
   Run `npm run sync` so the generated mirror matches `development/skills/`.

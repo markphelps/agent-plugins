@@ -9,16 +9,17 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 
 ## Plugins
 
-| Plugin                        | Description                                                        |
-| ----------------------------- | ------------------------------------------------------------------ |
-| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes              |
-| [development](./development/) | Development workflows for agent context, PR fixups, and CLI design |
+| Plugin                        | Description                                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes                                     |
+| [development](./development/) | Agent context, PR fixups, CLI design, OSS readiness and marketing, and session log audits |
 
 ## Layout
 
 - `.agents/plugins/marketplace.json` - local plugin marketplace for Codex
 - `*/.codex-plugin/plugin.json` - plugin manifests
-- `*/skills/*/SKILL.md` - skill implementations
+- `*/skills/*/SKILL.md` - skill implementations, the source of truth
+- `skills/` - generated flat mirror for skills.sh, written by `npm run sync`
 - `.codex/agents/*.toml` - project-scoped Codex subagents
 - `AGENTS.md` - repository-level agent instructions
 
