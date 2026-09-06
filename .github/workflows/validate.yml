@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: node scripts/validate-plugins.js
+      - uses: jdx/mise-action@v2
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run validate
+      - run: actionlint

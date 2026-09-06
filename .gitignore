@@ -7,3 +7,4 @@ node_modules/
 .env*
 .claude
 .worktrees/
+mise.local.toml
