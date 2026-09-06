@@ -9,10 +9,10 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 
 ## Plugins
 
-| Plugin                        | Description                                                                               |
-| ----------------------------- | ----------------------------------------------------------------------------------------- |
-| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes                                     |
-| [development](./development/) | Agent context, PR fixups, CLI design, OSS readiness and marketing, and session log audits |
+| Plugin                        | Description                                                                                                    |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [vault](./vault/)             | Zettelkasten-style vault workflows for Obsidian notes                                                          |
+| [development](./development/) | Agent context, PR fixups, CLI design, OSS readiness and marketing, session log audits, and self-hosted runners |
 
 ## Layout
 

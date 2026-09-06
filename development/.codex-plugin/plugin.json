@@ -1,7 +1,7 @@
 {
   "name": "development",
-  "version": "0.0.3",
-  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, OSS marketing, and session log audits.",
+  "version": "0.0.4",
+  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, OSS marketing, session log audits, and GitHub Actions self-hosted runners.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -25,13 +25,17 @@
     "session-log-audit",
     "audit",
     "papercuts",
-    "devex"
+    "devex",
+    "github-actions",
+    "self-hosted-runner",
+    "ci",
+    "systemd"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, OSS marketing, and session log audit workflows",
-    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, sharpening OSS README positioning, and mining local agent session logs for papercuts in your own tools.",
+    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, OSS marketing, session log audit, and self-hosted runner workflows",
+    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, sharpening OSS README positioning, mining local agent session logs for papercuts in your own tools, and running GitHub Actions self-hosted runners on a Linux host.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
@@ -46,7 +50,9 @@
       "Run an OSS marketing pass on this README so first-time visitors understand why to try it.",
       "Sharpen launch copy and positioning for an open source project.",
       "Audit my agent session logs for papercuts in this project and rank the fixes.",
-      "Why do I keep working around my own tool? Check the last week of sessions."
+      "Why do I keep working around my own tool? Check the last week of sessions.",
+      "Install a GitHub Actions self-hosted runner for this repository on this Linux host.",
+      "Add a second repository runner to this machine and verify it is listening."
     ]
   }
 }
