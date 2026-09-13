@@ -1,7 +1,7 @@
 {
   "name": "development",
-  "version": "0.0.4",
-  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, OSS marketing, session log audits, and GitHub Actions self-hosted runners.",
+  "version": "0.0.5",
+  "description": "Developer workflow skills for agent context, PR fixups, CLI design, OSS readiness, OSS marketing, session log audits, decision records, and GitHub Actions self-hosted runners.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -29,13 +29,17 @@
     "github-actions",
     "self-hosted-runner",
     "ci",
-    "systemd"
+    "systemd",
+    "decision-records",
+    "adr",
+    "architecture-decision-record",
+    "design-docs"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, OSS marketing, session log audit, and self-hosted runner workflows",
-    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, sharpening OSS README positioning, mining local agent session logs for papercuts in your own tools, and running GitHub Actions self-hosted runners on a Linux host.",
+    "shortDescription": "Agent context, PR fixup, CLI design, OSS readiness, OSS marketing, session log audit, decision records, and self-hosted runner workflows",
+    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, preparing GitHub repos for open source release, sharpening OSS README positioning, mining local agent session logs for papercuts in your own tools, writing and maintaining decision and plan records (ADRs), and running GitHub Actions self-hosted runners on a Linux host.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
@@ -52,7 +56,10 @@
       "Audit my agent session logs for papercuts in this project and rank the fixes.",
       "Why do I keep working around my own tool? Check the last week of sessions.",
       "Install a GitHub Actions self-hosted runner for this repository on this Linux host.",
-      "Add a second repository runner to this machine and verify it is listening."
+      "Add a second repository runner to this machine and verify it is listening.",
+      "Write a decision record for switching our job queue to Postgres.",
+      "Supersede record 012 with a new plan and update the registry.",
+      "Set up a docs/records directory with a registry README for this repo."
     ]
   }
 }

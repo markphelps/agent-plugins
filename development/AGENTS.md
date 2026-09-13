@@ -20,6 +20,9 @@ agent context.
   Command Line Interface Guidelines from clig.dev
 - `context-file-tuneup`: audit and rewrite `CLAUDE.md` / `AGENTS.md` files so
   they stay short, specific, and grounded in the repo
+- `decision-records`: write or update decision and implementation-plan records
+  (ADRs) in a repo's records directory, keep the registry table in sync, and
+  preserve history through amendments and supersession
 - `github-pr-fixup`: check out an existing GitHub PR branch, address active
   unresolved review comments and failing CI, then push fixes back to that PR
 - `github-self-hosted-runner`: install, register, namespace, verify, or remove
@@ -48,5 +51,9 @@ agent context.
   user or home directory, keep one namespaced instance per target, treat tokens
   as secrets that never reach a file that persists, and confirm no job is
   running before you stop, replace, or delete an instance.
+- For decision records, the registry `README.md` is the contract. Read it and
+  the related records before writing. Never rewrite an existing record's
+  history; add a dated amendment or a superseding record instead. Ask before
+  bootstrapping a records directory in a repo that has none.
 - Do not manually restore removed development skills in top-level `skills/`.
   Run `npm run sync` so the generated mirror matches `development/skills/`.
