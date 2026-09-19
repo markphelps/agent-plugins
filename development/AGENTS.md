@@ -18,6 +18,8 @@ agent context.
 
 - `cli-design`: design, build, or review command-line interfaces using the
   Command Line Interface Guidelines from clig.dev
+- `codebase-landing-copy`: write product landing-page copy grounded in
+  capabilities that are proven by shipped code
 - `context-file-tuneup`: audit and rewrite `CLAUDE.md` / `AGENTS.md` files so
   they stay short, specific, and grounded in the repo
 - `decision-records`: write or update decision and implementation-plan records
