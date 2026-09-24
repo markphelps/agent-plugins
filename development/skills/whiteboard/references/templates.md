@@ -113,10 +113,14 @@ If a scenario looks unhandled, also log it as a `suspected-bug` below.
 
 - `<type>` <one line> (`<receipt>`)
 - `suspected-bug` <triggering scenario> (`<receipt>`) — verdict: unverified
+- `stale-doc` <doc path> says <claim>; code does <behavior> (`<receipt>`)
 
 A verification pass may later replace `unverified` with `confirmed: <evidence>`,
 `refuted: <why it isn't a bug>`, or `unclear: <what's missing>`. Preserve
 whatever verdict is there when refreshing.
+
+`/whiteboard docs` appends `proposed: <branch>` to entries it includes in a
+write-back branch; the entry is removed once the change reaches HEAD.
 
 ## Zoom candidates
 
@@ -132,7 +136,9 @@ directory.
 ```markdown
 # Scout notes
 
-Map location: docs/map/ (or the chosen alternative, and why)
+- Map location: docs/map/ (or the chosen alternative, and why)
+- Docs write-back: <map included in PRs | self-contained docs>, chosen
+  <YYYY-MM-DD>
 
 ## Evidence sources
 
