@@ -3,24 +3,25 @@
 Developer workflow skills for repo-facing agent context, GitHub PR follow-up,
 command-line interface design, codebase-grounded landing copy, architecture
 mapping and whiteboard defense, open source release preparation, audits of your
-own agent session logs, bug-claim verification, decision records, and GitHub
-Actions self-hosted runners.
+own agent session logs, agent feature maps, bug-claim verification, decision
+records, and GitHub Actions self-hosted runners.
 
 ## Skill Set
 
-| Skill                       | What It Does                                                                                             | When to Invoke                                                                                                                                                         |
-| --------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `cli-design`                | Designs and reviews command-line interfaces using clig.dev guidance.                                     | When creating CLI commands, flags, help text, output contracts, error messages, or destructive workflows.                                                              |
-| `codebase-landing-copy`     | Writes product landing-page copy grounded in shipped code and an evidence ledger.                        | When writing or fact-checking landing pages, homepages, product pitches, hero copy, or store listings for a repo-backed product.                                       |
-| `context-file-tuneup`       | Audits, rewrites, and tightens `CLAUDE.md` / `AGENTS.md` context files.                                  | When reviewing, shrinking, restructuring, or improving agent context.                                                                                                  |
-| `decision-records`          | Writes and maintains decision and plan records (ADRs) and their registry table, preserving history.      | When recording an architecture, product, design, or dependency decision, amending or superseding a record, or starting a records directory.                            |
-| `github-pr-fixup`           | Addresses unresolved GitHub PR review comments and failing CI on the existing source branch.             | When a user gives you an existing PR URL and wants review feedback or CI failures fixed without a new PR.                                                              |
-| `github-self-hosted-runner` | Installs, registers, verifies, or removes namespaced GitHub Actions self-hosted runners on a Linux host. | When a user gives a repository or organization URL and wants a persistent runner managed by systemd.                                                                   |
-| `whiteboard`                | Maps architecture and design rationale, then runs whiteboard-defense quizzes.                            | When the user explicitly invokes `/whiteboard` to map a codebase, explore a region, refresh a map, defend their understanding, or write fixes back to the repo's docs. |
-| `verify-bug`                | Rules on whether claimed bugs are real via an isolated Prover/Skeptic/Referee hearing.                   | When the user asks whether a bug is real, wants findings or review comments verified, or points at suspected bugs from a map.                                          |
-| `oss-marketing`             | Sharpens README and public-doc positioning for first-time visitors.                                      | When a repo needs launch copy, clearer positioning, or a README that explains what the project is.                                                                     |
-| `oss-repo-readiness`        | Audits and prepares a repo for open source release, focused on developer experience.                     | When making a repo public, writing CONTRIBUTING or issue templates, or running a pre-launch checklist.                                                                 |
-| `session-log-audit`         | Mines local agent session logs for papercuts and produces a ranked fix list.                             | When the user wants to know what is annoying about their own tool, or why they work around it.                                                                         |
+| Skill                       | What It Does                                                                                                     | When to Invoke                                                                                                                                                         |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cli-design`                | Designs and reviews command-line interfaces using clig.dev guidance.                                             | When creating CLI commands, flags, help text, output contracts, error messages, or destructive workflows.                                                              |
+| `codebase-landing-copy`     | Writes product landing-page copy grounded in shipped code and an evidence ledger.                                | When writing or fact-checking landing pages, homepages, product pitches, hero copy, or store listings for a repo-backed product.                                       |
+| `context-file-tuneup`       | Audits, rewrites, and tightens `CLAUDE.md` / `AGENTS.md` context files.                                          | When reviewing, shrinking, restructuring, or improving agent context.                                                                                                  |
+| `decision-records`          | Writes and maintains decision and plan records (ADRs) and their registry table, preserving history.              | When recording an architecture, product, design, or dependency decision, amending or superseding a record, or starting a records directory.                            |
+| `feature-map`               | Builds a repo-local verification skill mapping each feature's reach, drive steps, expected results, and gotchas. | When the user explicitly invokes `/feature-map` to build, refresh, or extend an app's feature map.                                                                     |
+| `github-pr-fixup`           | Addresses unresolved GitHub PR review comments and failing CI on the existing source branch.                     | When a user gives you an existing PR URL and wants review feedback or CI failures fixed without a new PR.                                                              |
+| `github-self-hosted-runner` | Installs, registers, verifies, or removes namespaced GitHub Actions self-hosted runners on a Linux host.         | When a user gives a repository or organization URL and wants a persistent runner managed by systemd.                                                                   |
+| `whiteboard`                | Maps architecture and design rationale, then runs whiteboard-defense quizzes.                                    | When the user explicitly invokes `/whiteboard` to map a codebase, explore a region, refresh a map, defend their understanding, or write fixes back to the repo's docs. |
+| `verify-bug`                | Rules on whether claimed bugs are real via an isolated Prover/Skeptic/Referee hearing.                           | When the user asks whether a bug is real, wants findings or review comments verified, or points at suspected bugs from a map.                                          |
+| `oss-marketing`             | Sharpens README and public-doc positioning for first-time visitors.                                              | When a repo needs launch copy, clearer positioning, or a README that explains what the project is.                                                                     |
+| `oss-repo-readiness`        | Audits and prepares a repo for open source release, focused on developer experience.                             | When making a repo public, writing CONTRIBUTING or issue templates, or running a pre-launch checklist.                                                                 |
+| `session-log-audit`         | Mines local agent session logs for papercuts and produces a ranked fix list.                                     | When the user wants to know what is annoying about their own tool, or why they work around it.                                                                         |
 
 ## Notes
 
@@ -43,6 +44,10 @@ Actions self-hosted runners.
   `docs/map/`. Its `docs` mode proposes doc and comment fixes on a separate
   branch; source files change only in a comments-only commit, and nothing is
   pushed without confirmation.
+- Feature map records only drive steps it observed working, drives local or
+  development environments only, and writes into the generated `verify-<app>`
+  skill directory. The generated skill keeps entries current as agents verify
+  their changes.
 - Whiteboard logs `suspected-bug` leads without investigating them; `verify-bug`
   rules on them. Neither skill depends on the other.
 - Bug verification never modifies the working tree. Repro tests run only in a
