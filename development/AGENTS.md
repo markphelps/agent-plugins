@@ -27,6 +27,8 @@ agent context.
   preserve history through amendments and supersession
 - `github-pr-fixup`: check out an existing GitHub PR branch, address active
   unresolved review comments and failing CI, then push fixes back to that PR
+- `whiteboard`: map a codebase's architecture and design rationale, then quiz
+  the user whiteboard-defense style on flows, trade-offs, and failure modes
 - `github-self-hosted-runner`: install, register, namespace, verify, or remove
   GitHub Actions self-hosted runners on a Linux host under systemd
 - `oss-marketing`: sharpen open source README/public-doc positioning for
@@ -49,6 +51,9 @@ agent context.
 - For session log audits, collect receipts before you diagnose. Work through
   the numbered phases in order and meet each gate. Treat what the user suspects
   as a hypothesis to test, not as a finding.
+- For whiteboard maps, never invent design rationale. Tag rationale claims with
+  evidence, keep defense records local under `.map/`, and never modify source
+  code while mapping or defending.
 - For self-hosted runners, resolve the runner account instead of assuming a
   user or home directory, keep one namespaced instance per target, treat tokens
   as secrets that never reach a file that persists, and confirm no job is

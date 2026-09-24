@@ -1,9 +1,10 @@
 # Development Plugin
 
 Developer workflow skills for repo-facing agent context, GitHub PR follow-up,
-command-line interface design, codebase-grounded landing copy, open source
-release preparation, audits of your own agent session logs, decision records,
-and GitHub Actions self-hosted runners.
+command-line interface design, codebase-grounded landing copy, architecture
+mapping and whiteboard defense, open source release preparation, audits of your
+own agent session logs, decision records, and GitHub Actions self-hosted
+runners.
 
 ## Skill Set
 
@@ -15,6 +16,7 @@ and GitHub Actions self-hosted runners.
 | `decision-records`          | Writes and maintains decision and plan records (ADRs) and their registry table, preserving history.      | When recording an architecture, product, design, or dependency decision, amending or superseding a record, or starting a records directory. |
 | `github-pr-fixup`           | Addresses unresolved GitHub PR review comments and failing CI on the existing source branch.             | When a user gives you an existing PR URL and wants review feedback or CI failures fixed without a new PR.                                   |
 | `github-self-hosted-runner` | Installs, registers, verifies, or removes namespaced GitHub Actions self-hosted runners on a Linux host. | When a user gives a repository or organization URL and wants a persistent runner managed by systemd.                                        |
+| `whiteboard`                | Maps architecture and design rationale, then runs whiteboard-defense quizzes.                            | When the user explicitly invokes `/whiteboard` to map a codebase, explore a region, refresh a map, or defend their understanding.           |
 | `oss-marketing`             | Sharpens README and public-doc positioning for first-time visitors.                                      | When a repo needs launch copy, clearer positioning, or a README that explains what the project is.                                          |
 | `oss-repo-readiness`        | Audits and prepares a repo for open source release, focused on developer experience.                     | When making a repo public, writing CONTRIBUTING or issue templates, or running a pre-launch checklist.                                      |
 | `session-log-audit`         | Mines local agent session logs for papercuts and produces a ranked fix list.                             | When the user wants to know what is annoying about their own tool, or why they work around it.                                              |
@@ -35,6 +37,9 @@ and GitHub Actions self-hosted runners.
   of opening a new PR.
 - OSS readiness and OSS marketing are separate concerns. Readiness covers
   contribution mechanics; marketing covers first-visit clarity and conversion.
+- Whiteboard is explicit-invocation only, never modifies source code, and keeps
+  personal defense records under `.map/` while committed maps live under
+  `docs/map/`.
 - Codebase landing copy is for a product's own landing page and must trace
   claims to shipped code; use OSS marketing for open-source README positioning.
 - Session log audits need a project the user built with agents and used
