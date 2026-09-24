@@ -54,8 +54,9 @@ agent context.
   the numbered phases in order and meet each gate. Treat what the user suspects
   as a hypothesis to test, not as a finding.
 - For whiteboard maps, never invent design rationale. Tag rationale claims with
-  evidence, keep defense records local under `.map/`, and never modify source
-  code while mapping or defending.
+  evidence, keep defense records local under `.map/`, and never modify the
+  working tree. `/whiteboard docs` writes only to a worktree branch, keeps
+  source edits to a comments-only commit, and pushes only on confirmation.
 - For bug verification, never touch the working tree (repros run only in a
   `git worktree` under `.verify/`), never fix code or open issues, and post
   verdicts to GitHub only after the user confirms each post.

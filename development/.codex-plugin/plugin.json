@@ -1,6 +1,6 @@
 {
   "name": "development",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Developer workflow skills for agent context, PR fixups, CLI design, codebase-grounded landing copy, architecture mapping and whiteboard defense, OSS readiness, OSS marketing, session log audits, bug verification, decision records, and GitHub Actions self-hosted runners.",
   "author": {
     "name": "Mark Phelps"
@@ -63,6 +63,7 @@
       "Design commands, flags, help text, and output behavior for a new command-line tool.",
       "Map this codebase into a layered architecture overview.",
       "Quiz me whiteboard-defense style on this system's flows, trade-offs, and failure modes.",
+      "Turn this codebase map into doc and comment fixes on a branch.",
       "Write landing-page copy for this product using only capabilities proven by its codebase.",
       "Fact-check this product pitch against the code that actually ships and provide an evidence table.",
       "Audit this repo for open source readiness and first-contributor friction.",

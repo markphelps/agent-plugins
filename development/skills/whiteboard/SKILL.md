@@ -27,10 +27,13 @@ The skill has two halves that feed each other:
 
 ## Hard rules
 
-- **Never modify source code.** The only files this skill writes are under
-  `docs/map/` (or the repo's existing docs location, see below) and `.map/`.
-  Cleanup ideas go in the friction log, not in edits. Understanding comes first;
-  changing code mid-map corrupts the thing being mapped.
+- **Never modify the working tree.** While mapping, refreshing, or defending,
+  the only files this skill writes are under `docs/map/` (or the repo's existing
+  docs location, see below) and `.map/`. Cleanup ideas go in the friction log,
+  not in edits; changing code mid-map corrupts the thing being mapped. The one
+  exception is `/whiteboard docs`, which writes to a separate branch in a
+  `git worktree`, and changes source files only in a comments-only commit that
+  passes the comment check (see `references/docs.md`).
 - **Never invent rationale.** Every claim about why something is the way it is
   carries an evidence tag. If there is no evidence, say so and log it as an open
   question. A fabricated "why" is worse than a missing one, because the defense
@@ -49,6 +52,7 @@ Parse the argument after `/whiteboard`:
 | `/whiteboard zoom <region>` | Map one region in depth; works even with no overview yet       |
 | `/whiteboard defend [reg]`  | Run a defense session; no region means pick one (see defense)  |
 | `/whiteboard refresh`       | Check every mapped region for staleness and remap what changed |
+| `/whiteboard docs`          | Propose repo doc and comment fixes from the map, on a branch   |
 
 A `<region>` can be an existing region slug, a name from the Unexplored list, or
 a plain description ("the sync engine", "auth"). Resolve descriptions to paths
@@ -64,7 +68,8 @@ writing.
    `mapped_at` is no longer an ancestor of HEAD (rebased or force-pushed
    history), which makes the region stale by definition.
 3. Read `.map/defense/*.md` for pass status.
-4. Report in chat, compactly: regions with staleness counts and pass status, the
+4. Resolve any `proposed: <branch>` friction entries (see "Docs write-back").
+5. Report in chat, compactly: regions with staleness counts and pass status, the
    Unexplored list, and one recommended next step with a one-line reason.
    Example: "Sync engine is 38 commits stale; refresh it before defending."
    Report pass status only in chat, never in a committed file.
@@ -192,7 +197,9 @@ Each entry is typed:
 | ----------------- | ------------------------------------------------------------------ | ---------------- |
 | `unexplained`     | A significant decision with no recorded why                        | scout, zoom      |
 | `confusing`       | Misleading names, surprising indirection, comment contradicts code | zoom             |
-| `inconsistent`    | Two patterns doing the same job; docs disagree with code           | scout            |
+| `inconsistent`    | Two patterns doing the same job                                    | scout            |
+| `stale-doc`       | A doc claim (README, docs, AGENTS.md) contradicts the code         | scout, zoom      |
+| `undocumented`    | A region or entry point that no doc covers                         | scout, zoom      |
 | `cleanup`         | Dead code, abandoned dependency, ancient TODO                      | any              |
 | `suspected-bug`   | A concrete scenario where the code looks wrong or unhandled        | zoom, defense    |
 | `defense-exposed` | The user missed a question because the code misled them            | defense          |
@@ -232,11 +239,40 @@ Large or structural changes: remap the region. Either way:
 
 - Keep `[stated]` evidence unless the change contradicts it; if it does, move it
   to friction as `inconsistent` and flag it for the user.
+- Resolve `proposed: <branch>` entries the same way the bare command does.
 - Re-derive the region's core questions (see `references/defense.md`); keep pass
   status for any question whose underlying decision didn't change.
 - If `paths` no longer match anything, the region was moved or deleted; find
   where it went via `git log --follow` or rename detection, and ask before
   rewriting the boundary.
+
+## Docs write-back (`docs`)
+
+Carry what the map learned back into the repo's own docs. Read
+`references/docs.md` before starting; it covers inputs, targets, the comment
+check, content rules, and the PR. In short:
+
+1. **Check whether the map is shared:** `git ls-files docs/map` on the target
+   branch and `git check-ignore docs/map`. If it isn't tracked, ask once whether
+   to include the map in this PR or write self-contained docs, and record the
+   answer in `.map/scout.md`.
+2. **Propose** every candidate change in chat, grouped by target file, each with
+   a one-line summary and its source map entry. The user picks what to include.
+   Nothing is written before that.
+3. **Write** the selected changes in a `git worktree` on a new branch, as two
+   commits: docs first, then comments. The comments commit must pass the comment
+   check.
+4. **Push and open a PR only on an explicit yes**, after showing the diff stat.
+5. **Mark** each included friction entry `proposed: <branch>` in the map.
+
+When a later `/whiteboard` or `refresh` finds a proposed change reachable from
+HEAD, remove the entry and upgrade its evidence: `[stated]` rationale and
+answered `unexplained` decisions become `[documented: <path>]`. If the branch is
+gone and the change never landed, reopen the entry.
+
+Rationale that belongs in decision records is handed off by wording: tell the
+user these are candidates for decision records (ADRs). If they'd rather not, it
+goes into the repo's existing design-docs location instead.
 
 ## Defense phase
 
