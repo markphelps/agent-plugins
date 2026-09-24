@@ -194,15 +194,27 @@ Each entry is typed:
 | `confusing`       | Misleading names, surprising indirection, comment contradicts code | zoom             |
 | `inconsistent`    | Two patterns doing the same job; docs disagree with code           | scout            |
 | `cleanup`         | Dead code, abandoned dependency, ancient TODO                      | any              |
+| `suspected-bug`   | A concrete scenario where the code looks wrong or unhandled        | zoom, defense    |
 | `defense-exposed` | The user missed a question because the code misled them            | defense          |
 
 The signal here is simple: if an agent with full read access struggled to
 understand something, a new contributor will too. Keep entries to one line plus
 a receipt. Don't fix anything.
 
-When `unexplained` items accumulate, tell the user they are good candidates for
-decision records (ADRs) documenting the rationale. Use that plain wording and
-nothing more; this skill has no dependency on any records tooling.
+A `suspected-bug` entry must name the triggering scenario, not just a feeling:
+"two concurrent `Sync` calls both pass the `running` check before either sets it
+(`sync/engine.go:Run`)", not "possible race in sync." Don't investigate further
+or try to reproduce it; a suspected bug is a lead, and the map treats it as
+unverified. Leave the verdict slot empty (see `references/templates.md`) so a
+later verification pass can fill it in.
+
+Handoffs use plain wording and nothing more; this skill depends on no other
+tooling:
+
+- When `unexplained` items accumulate, tell the user they are good candidates
+  for decision records (ADRs) documenting the rationale.
+- When `suspected-bug` items exist, tell the user these suspected bugs could be
+  verified before anyone acts on them.
 
 ### Scout notes
 

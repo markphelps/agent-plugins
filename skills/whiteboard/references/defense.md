@@ -107,6 +107,12 @@ it, what would the alternative have cost.
 These are optional extras in a session, after core questions, and are often the
 most valuable part for repos the user owns.
 
+Suspected bugs with a `refuted` verdict make excellent `adversarial` questions,
+because the code looks wrong and isn't: "Two `Sync` calls can overlap here. Why
+isn't that a race?" The verdict's evidence is the ground truth, so these can be
+core questions. Entries still `unverified` or `unclear` are framed like inferred
+decisions: ask the user whether it's a real bug and why, and don't grade.
+
 ## Write-backs
 
 When the user gives a rationale for an inferred or unexplained decision that

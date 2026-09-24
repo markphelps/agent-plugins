@@ -107,9 +107,16 @@ short paragraph. State machines for anything with a lifecycle.>
 
 - **<Scenario>:** <what happens, and whether it's handled> (`<receipt>`)
 
+If a scenario looks unhandled, also log it as a `suspected-bug` below.
+
 ## Open questions & friction
 
 - `<type>` <one line> (`<receipt>`)
+- `suspected-bug` <triggering scenario> (`<receipt>`) — verdict: unverified
+
+A verification pass may later replace `unverified` with `confirmed: <evidence>`,
+`refuted: <why it isn't a bug>`, or `unclear: <what's missing>`. Preserve
+whatever verdict is there when refreshing.
 
 ## Zoom candidates
 
