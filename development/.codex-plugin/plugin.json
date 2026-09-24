@@ -1,7 +1,7 @@
 {
   "name": "development",
-  "version": "0.0.9",
-  "description": "Developer workflow skills for agent context, PR fixups, CLI design, codebase-grounded landing copy, architecture mapping and whiteboard defense, OSS readiness, OSS marketing, session log audits, bug verification, decision records, and GitHub Actions self-hosted runners.",
+  "version": "0.0.10",
+  "description": "Developer workflow skills for agent context, PR fixups, CLI design, codebase-grounded landing copy, architecture mapping and whiteboard defense, OSS readiness, OSS marketing, session log audits, agent feature maps, bug verification, decision records, and GitHub Actions self-hosted runners.",
   "author": {
     "name": "Mark Phelps"
   },
@@ -45,13 +45,19 @@
     "verify-bug",
     "bug-verification",
     "false-positives",
-    "triage"
+    "triage",
+    "feature-map",
+    "verification",
+    "qa",
+    "e2e",
+    "playwright",
+    "accessibility"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Development",
-    "shortDescription": "Agent context, PR fixup, CLI design, landing copy, architecture mapping and whiteboard defense, OSS readiness, marketing, session log audit, bug verification, decision records, and runner workflows",
-    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, writing product landing-page copy backed by shipped code, mapping codebase architecture and design rationale, preparing GitHub repos for open source release, sharpening OSS README positioning, mining local agent session logs for papercuts in your own tools, verifying whether claimed bugs are real, writing and maintaining decision and plan records (ADRs), and running GitHub Actions self-hosted runners on a Linux host.",
+    "shortDescription": "Agent context, PR fixup, CLI design, landing copy, architecture mapping and whiteboard defense, OSS readiness, marketing, session log audit, feature maps, bug verification, decision records, and runner workflows",
+    "longDescription": "Development workflow skills for auditing agent context files, fixing existing GitHub PRs, designing humane command-line interfaces, writing product landing-page copy backed by shipped code, mapping codebase architecture and design rationale, preparing GitHub repos for open source release, sharpening OSS README positioning, mining local agent session logs for papercuts in your own tools, building feature maps that let agents drive and verify an app, verifying whether claimed bugs are real, writing and maintaining decision and plan records (ADRs), and running GitHub Actions self-hosted runners on a Linux host.",
     "developerName": "Mark Phelps",
     "category": "Development",
     "capabilities": ["Read", "Write"],
@@ -64,6 +70,7 @@
       "Map this codebase into a layered architecture overview.",
       "Quiz me whiteboard-defense style on this system's flows, trade-offs, and failure modes.",
       "Turn this codebase map into doc and comment fixes on a branch.",
+      "Build a feature map so agents can drive and verify this app.",
       "Write landing-page copy for this product using only capabilities proven by its codebase.",
       "Fact-check this product pitch against the code that actually ships and provide an evidence table.",
       "Audit this repo for open source readiness and first-contributor friction.",
