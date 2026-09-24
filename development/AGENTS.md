@@ -37,6 +37,8 @@ agent context.
   release, emphasizing first-run and first-contribution developer experience
 - `session-log-audit`: mine local agent session logs (Claude Code, Pi, Codex)
   for papercuts in a project the user builds with agents, then rank the fixes
+- `verify-bug`: decide whether claimed bugs are real through an isolated
+  Prover/Skeptic/Referee hearing, with repro tests in throwaway worktrees
 
 ## Workflow Policy
 
@@ -54,6 +56,9 @@ agent context.
 - For whiteboard maps, never invent design rationale. Tag rationale claims with
   evidence, keep defense records local under `.map/`, and never modify source
   code while mapping or defending.
+- For bug verification, never touch the working tree (repros run only in a
+  `git worktree` under `.verify/`), never fix code or open issues, and post
+  verdicts to GitHub only after the user confirms each post.
 - For self-hosted runners, resolve the runner account instead of assuming a
   user or home directory, keep one namespaced instance per target, treat tokens
   as secrets that never reach a file that persists, and confirm no job is

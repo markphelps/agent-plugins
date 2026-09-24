@@ -3,8 +3,8 @@
 Developer workflow skills for repo-facing agent context, GitHub PR follow-up,
 command-line interface design, codebase-grounded landing copy, architecture
 mapping and whiteboard defense, open source release preparation, audits of your
-own agent session logs, decision records, and GitHub Actions self-hosted
-runners.
+own agent session logs, bug-claim verification, decision records, and GitHub
+Actions self-hosted runners.
 
 ## Skill Set
 
@@ -17,6 +17,7 @@ runners.
 | `github-pr-fixup`           | Addresses unresolved GitHub PR review comments and failing CI on the existing source branch.             | When a user gives you an existing PR URL and wants review feedback or CI failures fixed without a new PR.                                   |
 | `github-self-hosted-runner` | Installs, registers, verifies, or removes namespaced GitHub Actions self-hosted runners on a Linux host. | When a user gives a repository or organization URL and wants a persistent runner managed by systemd.                                        |
 | `whiteboard`                | Maps architecture and design rationale, then runs whiteboard-defense quizzes.                            | When the user explicitly invokes `/whiteboard` to map a codebase, explore a region, refresh a map, or defend their understanding.           |
+| `verify-bug`                | Rules on whether claimed bugs are real via an isolated Prover/Skeptic/Referee hearing.                   | When the user asks whether a bug is real, wants findings or review comments verified, or points at suspected bugs from a map.               |
 | `oss-marketing`             | Sharpens README and public-doc positioning for first-time visitors.                                      | When a repo needs launch copy, clearer positioning, or a README that explains what the project is.                                          |
 | `oss-repo-readiness`        | Audits and prepares a repo for open source release, focused on developer experience.                     | When making a repo public, writing CONTRIBUTING or issue templates, or running a pre-launch checklist.                                      |
 | `session-log-audit`         | Mines local agent session logs for papercuts and produces a ranked fix list.                             | When the user wants to know what is annoying about their own tool, or why they work around it.                                              |
@@ -40,6 +41,11 @@ runners.
 - Whiteboard is explicit-invocation only, never modifies source code, and keeps
   personal defense records under `.map/` while committed maps live under
   `docs/map/`.
+- Whiteboard logs `suspected-bug` leads without investigating them; `verify-bug`
+  rules on them. Neither skill depends on the other.
+- Bug verification never modifies the working tree. Repro tests run only in a
+  throwaway `git worktree` under `.verify/`, and GitHub replies are posted only
+  after the user confirms each one.
 - Codebase landing copy is for a product's own landing page and must trace
   claims to shipped code; use OSS marketing for open-source README positioning.
 - Session log audits need a project the user built with agents and used
