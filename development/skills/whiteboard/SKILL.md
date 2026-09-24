@@ -34,12 +34,21 @@ The skill has two halves that feed each other:
   exception is `/whiteboard docs`, which writes to a separate branch in a
   `git worktree`, and changes source files only in a comments-only commit that
   passes the comment check (see `references/docs.md`).
+- **Keep map artifacts local if desired.** Map files, supporting evidence under
+  the map root, and `.map/` may be untracked or gitignored. They are local
+  working state, not a requirement to change the repository's tracked files.
+- **Persist external receipts.** Any citation or evidence outside the map
+  artifacts—source code, existing docs, records, configuration, or similar
+  repository files—must point to a persistent path committed in `HEAD`. Never
+  cite an untracked, ignored, staged-only, or locally modified external file. If
+  an external change matters, ask the user to commit it first and then map the
+  new commit.
 - **Never invent rationale.** Every claim about why something is the way it is
   carries an evidence tag. If there is no evidence, say so and log it as an open
   question. A fabricated "why" is worse than a missing one, because the defense
   will then grade the user against fiction.
 - **Keep personal records out of shared files.** Defense logs and pass status
-  live only in `.map/`, which stays untracked.
+  live only in `.map/`, which may stay untracked.
 
 ## Commands
 
@@ -76,14 +85,28 @@ writing.
 
 ## Where the map lives
 
-- **Committed:** `docs/map/`. Before creating it, check for an existing
+- **Map artifacts:** `docs/map/`. Before creating it, check for an existing
   architecture or design-docs convention (`docs/architecture/`, `docs/design/`,
   `ARCHITECTURE.md`, `architecture/`). If one exists, ask the user once whether
   to put the map there instead, and record the choice in `.map/scout.md`.
+  Overview files, region files, and supporting evidence under this root may be
+  untracked or gitignored.
 - **Local only:** `.map/` at the repo root, holding `scout.md` and
   `defense/<region>.md`. On first run, add `.map/` to `.git/info/exclude` rather
   than `.gitignore`, so nothing personal or tool-specific touches the repo's
   tracked files. This matters most on repos the user doesn't own.
+
+## External evidence boundary
+
+Before scouting, run `git status --short`, resolve the source snapshot with
+`git rev-parse --verify HEAD`, and check external receipts with
+`git ls-tree -r --name-only HEAD`. The map root and `.map/` are explicit local
+artifacts and are exempt from this check. For every receipt outside those
+artifacts, read the committed version from `HEAD` (use `git show HEAD:<path>`
+when the working tree may differ) and do not use pending edits as evidence. If
+an external file is not present in `HEAD`, ask the user to commit it before
+citing it. Record the full `HEAD` SHA in map frontmatter so the external
+references can be checked later.
 
 File templates are in `references/templates.md`. Read it before writing any map
 file.

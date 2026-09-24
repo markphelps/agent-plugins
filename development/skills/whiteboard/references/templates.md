@@ -1,7 +1,8 @@
 # File templates
 
-Four files: the overview, region files, scout notes, and defense records. The
-first two are committed documentation; the last two are local-only in `.map/`.
+Four files: the overview, region files, scout notes, and defense records. Map
+files and supporting evidence may be local and gitignored. A receipt that points
+outside the map artifacts must refer to a persistent path committed in `HEAD`.
 
 ## Contents
 
@@ -65,7 +66,8 @@ down or slow, and where the system is known to be fragile. Receipts inline.>
 - ...
 ```
 
-Keep pass status and defense results out of this file. It's shared.
+Keep pass status and defense results out of this file. They belong in the local
+defense records.
 
 ## `docs/map/<region>.md`
 
