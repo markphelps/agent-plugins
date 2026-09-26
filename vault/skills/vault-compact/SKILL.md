@@ -191,8 +191,8 @@ Low-confidence items should remain separate; propose links only when useful.
   one is clearly obsolete or duplicative.
 - Canonical project state should live in Portent frontmatter, the main project
   PRD, README, or active index navigation according to the local convention.
-- Do not merge active, paused, shipped, and rejected rationales into one generic
-  project summary; lifecycle context matters.
+- Do not merge active, paused, shipped, abandoned, and rejected rationales into
+  one generic project summary; lifecycle context matters.
 - For shipped projects, run heavier compaction after the shipping transition.
   Merge temporary launch materials, tweet drafts, old outlines, research
   snippets, and implementation leftovers into one canonical shipped project

@@ -73,7 +73,8 @@ flowchart TD
   Rejected --> Lifecycle
   Lifecycle --> Active[projects/active/]
   Active --> Shipped[projects shipped]
-  Shipped --> Archive[archive/]
+  Active --> Abandoned[projects/abandoned/]
+  Shipped --> Archive[status: archived<br/>stays in place]
 
   Notes --> Concepts[vault-concepts]
   Active --> Concepts
@@ -145,8 +146,9 @@ flowchart TD
 - Any source used for synthesis is copied complete into
   `raw/processed/YYYY-MM-DD/`; summaries and briefs link back to those archived
   source records.
-- `archive/` is for archived curated material and is excluded from active
-  navigation by default.
+- Archived curated material stays in its lifecycle folder with
+  `status: archived` and `archived: true`, and is excluded from active
+  navigation by default. There is no `archive/` folder.
 - Repeated patterns should graduate into canonical concept pages instead of
   remaining only in reports.
 - Semantic overlap should be compacted only when passages do the same job;

@@ -49,7 +49,10 @@ vault-tracker [--mode report|apply-safe|apply] [--project NAME] [transition]
 - `exploring` — early investigation, not fully committed
 - `paused` — temporarily on hold
 - `shipped` — completed/delivered
-- `archived` — moved to `archive/`
+- `abandoned` — project or PRD dropped before shipping (in
+  `projects/abandoned/`, with `status: archived` and `archived: true`)
+- `archived` — kept in its lifecycle folder with `status: archived` and
+  `archived: true`; there is no `archive/` folder
 - `fleeting` — rough idea fragment (in `ideas/fleeting/`)
 - `incubating` — idea stage (in `ideas/incubating/`)
 - `someday` — intentionally parked idea (in `ideas/someday/`)
@@ -65,17 +68,20 @@ Portent frontmatter is authoritative for object meaning:
 
 ## Valid Transitions
 
-| From                                    | To            | Conditions         |
-| --------------------------------------- | ------------- | ------------------ |
-| `active` ↔ `exploring`                  | Bidirectional | Reclassification   |
-| `active\|exploring` → `paused`          | One-way       | Needs break point  |
-| `paused` → `active`                     | One-way       | Resuming work      |
-| `exploring` → `incubating`              | One-way       | Back to idea stage |
-| `active\|exploring\|paused` → `shipped` | One-way       | Completion         |
-| `shipped` → `archived`                  | One-way       | Final archival     |
-| `fleeting` → `incubating`               | One-way       | Idea has shape     |
-| `incubating` → `someday`                | One-way       | Park for later     |
-| `fleeting\|incubating` → `rejected`     | One-way       | Declined idea      |
+| From                                      | To            | Conditions         |
+| ----------------------------------------- | ------------- | ------------------ |
+| `active` ↔ `exploring`                    | Bidirectional | Reclassification   |
+| `active\|exploring` → `paused`            | One-way       | Needs break point  |
+| `paused` → `active`                       | One-way       | Resuming work      |
+| `exploring` → `incubating`                | One-way       | Back to idea stage |
+| `active\|exploring\|paused` → `shipped`   | One-way       | Completion         |
+| `active\|exploring\|paused` → `abandoned` | One-way       | Work dropped       |
+| `incubating\|rejected` → `abandoned`      | One-way       | PRD dropped        |
+| `abandoned` → `active`                    | One-way       | Revived            |
+| `shipped` → `archived`                    | One-way       | Final archival     |
+| `fleeting` → `incubating`                 | One-way       | Idea has shape     |
+| `incubating` → `someday`                  | One-way       | Park for later     |
+| `fleeting\|incubating` → `rejected`       | One-way       | Declined idea      |
 
 ## Mode Behavior
 
