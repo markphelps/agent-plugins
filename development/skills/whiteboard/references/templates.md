@@ -81,6 +81,7 @@ mapped_at: <full commit sha>
 mapped_on: <YYYY-MM-DD>
 paths: [<glob>, ...]
 entry_points: [<path or path:Symbol>, ...]
+features: [<feature-map slug>, ...] # optional: user-facing features this powers
 ---
 
 # <Human name>

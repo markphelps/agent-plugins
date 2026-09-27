@@ -22,6 +22,8 @@ agent context.
   capabilities that are proven by shipped code
 - `context-file-tuneup`: audit and rewrite `CLAUDE.md` / `AGENTS.md` files so
   they stay short, specific, and grounded in the repo
+- `feature-map`: build a repo-local verification skill listing each
+  user-facing feature, how to reach and drive it, and what to observe
 - `decision-records`: write or update decision and implementation-plan records
   (ADRs) in a repo's records directory, keep the registry table in sync, and
   preserve history through amendments and supersession
@@ -57,6 +59,9 @@ agent context.
   evidence, keep defense records local under `.map/`, and never modify the
   working tree. `/whiteboard docs` writes only to a worktree branch, keeps
   source edits to a comments-only commit, and pushes only on confirmation.
+- For feature maps, record only drive steps observed to work, drive local or
+  development environments only, never write secret values, and write only
+  inside the generated skill directory.
 - For bug verification, never touch the working tree (repros run only in a
   `git worktree` under `.verify/`), never fix code or open issues, and post
   verdicts to GitHub only after the user confirms each post.
