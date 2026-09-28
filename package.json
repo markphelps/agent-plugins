@@ -1,8 +1,8 @@
 {
-  "name": "agent-plugins",
+  "name": "skills",
   "version": "0.0.1",
   "private": true,
-  "description": "Reusable agent plugins and skills",
+  "description": "Skills and plugins for AI coding agents",
   "scripts": {
     "format": "prettier --write '**/*.{md,json}'",
     "format:check": "prettier --check '**/*.{md,json}'",

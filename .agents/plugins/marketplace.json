@@ -1,7 +1,7 @@
 {
-  "name": "markphelps-agent-plugins",
+  "name": "markphelps-skills",
   "interface": {
-    "displayName": "Mark Phelps Agent Plugins"
+    "displayName": "Mark Phelps Skills"
   },
   "plugins": [
     {

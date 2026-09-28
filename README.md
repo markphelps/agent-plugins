@@ -1,6 +1,7 @@
-# Agent Plugins
+# Skills
 
-Reusable agent plugins and skills following AGENTS/skills conventions.
+Reusable skills and plugins for AI coding agents, following the AGENTS.md and
+skills.sh conventions.
 
 ## Standards
 
@@ -35,7 +36,7 @@ Reusable agent plugins and skills following AGENTS/skills conventions.
 This repo also provides top-level installable skills under `skills/`.
 
 ```bash
-npx skills add markphelps/agent-plugins --skill cli-design
+npx skills add markphelps/skills --skill cli-design
 ```
 
 ## Development
