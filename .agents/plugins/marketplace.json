@@ -5,18 +5,6 @@
   },
   "plugins": [
     {
-      "name": "vault",
-      "source": {
-        "source": "local",
-        "path": "./vault"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "development",
       "source": {
         "source": "local",
