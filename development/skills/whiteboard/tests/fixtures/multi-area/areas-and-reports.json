@@ -1,0 +1,58 @@
+{
+  "inventory": [
+    {
+      "id": "auth",
+      "name": "Authentication",
+      "paths": ["src/auth/**"]
+    },
+    {
+      "id": "billing",
+      "name": "Billing",
+      "paths": ["src/billing/**"]
+    },
+    {
+      "id": "operations",
+      "name": "Operations",
+      "paths": ["ops/**"]
+    }
+  ],
+  "reports": [
+    {
+      "areaId": "auth",
+      "paths": ["src/auth/**"],
+      "disposition": "mapped",
+      "regionSlug": "auth",
+      "claims": [
+        {
+          "key": "auth-session-ttl",
+          "value": "Session tokens expire after 15 minutes.",
+          "receipt": "src/auth/session.js",
+          "rationale": true,
+          "evidenceTag": "[documented: design/decisions/auth.md]"
+        }
+      ]
+    },
+    {
+      "areaId": "billing",
+      "paths": ["src/billing/**"],
+      "disposition": "mapped",
+      "regionSlug": "billing",
+      "claims": [
+        {
+          "key": "billing-units",
+          "value": "Invoice totals use integer cents.",
+          "receipt": "src/billing/invoice.js",
+          "rationale": true,
+          "evidenceTag": "[documented: design/decisions/billing.md]"
+        }
+      ]
+    },
+    {
+      "areaId": "operations",
+      "paths": ["ops/**"],
+      "disposition": "unexplored",
+      "reason": "Only deployment configuration is present; defer mapping until its runtime flow is known.",
+      "claims": []
+    }
+  ]
+}

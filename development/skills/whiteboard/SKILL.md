@@ -54,14 +54,14 @@ The skill has two halves that feed each other:
 
 Parse the argument after `/whiteboard`:
 
-| Invocation                  | Action                                                         |
-| --------------------------- | -------------------------------------------------------------- |
-| `/whiteboard`               | Read state, report it, propose the next step (see below)       |
-| `/whiteboard map`           | Build or rebuild the overview (`docs/map/index.md`)            |
-| `/whiteboard zoom <region>` | Map one region in depth; works even with no overview yet       |
-| `/whiteboard defend [reg]`  | Run a defense session; no region means pick one (see defense)  |
-| `/whiteboard refresh`       | Check every mapped region for staleness and remap what changed |
-| `/whiteboard docs`          | Propose repo doc and comment fixes from the map, on a branch   |
+| Invocation                  | Action                                                                   |
+| --------------------------- | ------------------------------------------------------------------------ |
+| `/whiteboard`               | Read state, report it, propose the next step (see below)                 |
+| `/whiteboard map`           | Build or rebuild the overview and map every identified architecture area |
+| `/whiteboard zoom <region>` | Map one region in depth; works even with no overview yet                 |
+| `/whiteboard defend [reg]`  | Run a defense session; no region means pick one (see defense)            |
+| `/whiteboard refresh`       | Check every mapped region for staleness and remap what changed           |
+| `/whiteboard docs`          | Propose repo doc and comment fixes from the map, on a branch             |
 
 A `<region>` can be an existing region slug, a name from the Unexplored list, or
 a plain description ("the sync engine", "auth"). Resolve descriptions to paths
@@ -109,7 +109,7 @@ citing it. Record the full `HEAD` SHA in map frontmatter so the external
 references can be checked later.
 
 File templates are in `references/templates.md`. Read it before writing any map
-file.
+file. Skill-maintainer fixture checks are documented in `references/testing.md`.
 
 ## Evidence tiers
 
@@ -166,26 +166,48 @@ boundaries and flows you're about to draw.
 
 ### Delegation
 
-If the harness can delegate to subagents, do the first scout pass yourself,
-identify the major components, then give each component to a subagent with: its
-paths, the evidence sources found, and instructions to return a compact summary
-(responsibility, key flows, key decisions with evidence tags and receipts,
-friction found) rather than raw file contents. This keeps the main context free
-for writing the map and running the defense. Without subagents, work component
-by component and write each section before moving on.
+For `/whiteboard map`, complete the first scout pass yourself and make an
+inventory of the major architecture areas before delegating. Give every area a
+clear, non-overlapping path scope; note its neighbors and the evidence sources
+found. Do not let a delegate silently redefine or omit its scope. If a delegate
+finds a distinct area outside the inventory, add it to the inventory and assign
+it before finishing the map.
 
-### Overview (`map`)
+When the harness supports subagents, assign every inventoried area to a
+subagent, using bounded batches if needed. Give each delegate its scope,
+neighbors, evidence sources, the committed `HEAD` snapshot, and instructions to
+return a compact summary—not raw file contents or map files—with responsibility,
+key flows, decisions tagged with evidence and persistent receipts, and friction
+or open questions. Delegates do not write map artifacts. The main mapper
+reconciles their reports and writes the overview and region files using the
+existing templates.
 
-Write `docs/map/index.md` at high altitude: the major components and their
-responsibilities, the boundaries between them (process, network, trust,
-package), the one or two flows that matter most, and the decisions that shape
-the whole system. Aim for something a person could redraw on a whiteboard from
-memory after reading it twice. If a detail wouldn't survive that test, it
-belongs in a region file, not the overview.
+Before finishing, compare the full inventory with the output: every area must
+have a mapped region or a justified Unexplored entry; no area may disappear, and
+overlapping scopes, duplicate coverage, or conflicting reports must be surfaced
+rather than silently merged. Preserve disagreements as open questions or
+friction with their receipts. Check that rationale remains evidence-tagged and
+every external receipt points to a path committed in `HEAD`. If delegation is
+unavailable, cover the same inventory component by component yourself and apply
+the same completeness and reconciliation checks.
 
-End `index.md` with an **Unexplored** list: components noticed but not mapped,
-each with its paths, rough size, and one line on why it might matter. This is
-the menu for zooms.
+### Full architecture map (`map`)
+
+`/whiteboard map` builds the overview and maps every inventoried major area; it
+does not stop after writing the overview. First write `docs/map/index.md` at
+high altitude: the major components and their responsibilities, the boundaries
+between them (process, network, trust, package), the one or two flows that
+matter most, and the decisions that shape the whole system. Aim for something a
+person could redraw on a whiteboard from memory after reading it twice. If a
+detail wouldn't survive that test, it belongs in a region file, not the
+overview.
+
+Then write a `docs/map/<region-slug>.md` for each mapped area, link it from
+`index.md`, and preserve each area's path boundary and evidence. End `index.md`
+with an **Unexplored** list for any inventoried areas not mapped in this pass;
+include their paths, rough size, why they might matter, and why they remain
+unmapped. Do not leave an area out of both Regions and Unexplored. The list
+remains the menu for zooms into deferred areas or deeper subregions.
 
 ### Zoom (`zoom <region>`)
 

@@ -1,0 +1,30 @@
+{
+  "missingAreaId": "billing",
+  "uncommittedReceipt": "src/auth/uncommitted.js",
+  "duplicateScope": {
+    "areaId": "billing",
+    "paths": ["src/auth/**"]
+  },
+  "duplicateRegionIdentifier": {
+    "areaId": "billing",
+    "regionSlug": "auth"
+  },
+  "conflictingClaims": [
+    {
+      "areaId": "auth",
+      "claim": {
+        "key": "request-retry-policy",
+        "value": "The gateway retries failed requests up to three times.",
+        "receipt": "src/auth/session.js"
+      }
+    },
+    {
+      "areaId": "billing",
+      "claim": {
+        "key": "request-retry-policy",
+        "value": "The gateway never retries failed requests.",
+        "receipt": "src/billing/invoice.js"
+      }
+    }
+  ]
+}
